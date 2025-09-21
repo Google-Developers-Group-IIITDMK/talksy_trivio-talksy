@@ -22,10 +22,13 @@ import speech_recognition as sr
 # LLM + YouTube
 import google.generativeai as genai
 from googleapiclient.discovery import build
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ================== CONFIG ==================
-GENAI_API_KEY = "AIzaSyCfV11qMQht9xw32RR8BoxaBialCHFAL7w"
-YOUTUBE_API_KEY = "AIzaSyB_PqmZjeMwiSm9b1FmAqbHIqRAj-thIpo"
+GENAI_API_KEY = os.getenv("GENAI_API_KEY")
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 genai.configure(api_key=GENAI_API_KEY)
 youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
