@@ -30,7 +30,7 @@ if platform.system() == "Windows":
 def listen_once(timeout=5, phrase_time_limit=10):
     """Capture one phrase from the microphone."""
     with sr.Microphone() as source:
-        print("🎤 Listening...")
+        print("Listening...")
         recognizer.adjust_for_ambient_noise(source, duration=0.3)
         audio = recognizer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
     try:
