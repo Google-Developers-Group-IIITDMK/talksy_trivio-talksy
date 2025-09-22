@@ -1,0 +1,267 @@
+.call-controls-container {
+  @apply absolute bottom-0 left-0 right-0 p-6 space-y-4 z-50;
+}
+
+/* Settings Panel */
+.settings-panel {
+  @apply absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4;
+  @apply w-80 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-6;
+  backdrop-filter: blur(20px);
+  animation: slideUp 0.3s ease-out;
+}
+
+.settings-content {
+  @apply space-y-4;
+}
+
+.settings-title {
+  @apply text-lg font-semibold text-center mb-6;
+  color: var(--theme-accent);
+}
+
+.setting-group {
+  @apply space-y-2;
+}
+
+.setting-label {
+  @apply block text-sm font-medium text-gray-300;
+}
+
+.volume-control {
+  @apply flex items-center gap-3;
+}
+
+.volume-slider {
+  @apply flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  @apply appearance-none w-4 h-4 rounded-full cursor-pointer;
+  background: var(--theme-accent);
+  box-shadow: 0 0 10px var(--theme-glow);
+}
+
+.volume-display {
+  @apply text-sm text-gray-400 min-w-[3rem] text-right;
+}
+
+.setting-select {
+  @apply w-full px-3 py-2 rounded-lg;
+  @apply bg-white/5 border border-white/20 text-white;
+  @apply focus:outline-none focus:border-[var(--theme-accent)];
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  @apply relative inline-block w-12 h-6;
+}
+
+.toggle-switch input[type="checkbox"] {
+  @apply opacity-0 w-0 h-0;
+}
+
+.toggle-label {
+  @apply absolute cursor-pointer top-0 left-0 right-0 bottom-0;
+  @apply bg-gray-600 rounded-full transition-all duration-300;
+}
+
+.toggle-label:before {
+  @apply absolute content-[''] h-5 w-5 left-0.5 bottom-0.5;
+  @apply bg-white rounded-full transition-all duration-300;
+}
+
+input:checked + .toggle-label {
+  background-color: var(--theme-accent);
+}
+
+input:checked + .toggle-label:before {
+  transform: translateX(24px);
+}
+
+/* Main Controls */
+.call-controls {
+  @apply flex items-center justify-center gap-6;
+}
+
+.control-button {
+  @apply relative flex flex-col items-center gap-2 p-4 rounded-2xl;
+  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-lg transition-all duration-300;
+  @apply transform hover:scale-105 hover:-translate-y-1;
+  @apply focus:outline-none;
+  backdrop-filter: blur(15px);
+}
+
+.control-button:hover {
+  border-color: var(--theme-accent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px var(--theme-glow);
+}
+
+.control-button.active {
+  border-color: var(--theme-accent);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.control-button.muted {
+  @apply bg-red-500/20 border-red-500/50;
+}
+
+.control-button.danger {
+  @apply bg-red-500/20 border-red-500/50 hover:bg-red-500/30;
+}
+
+.control-button.danger:hover {
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3), 0 0 20px rgba(239, 68, 68, 0.5);
+}
+
+.button-inner {
+  @apply relative w-12 h-12 rounded-full flex items-center justify-center;
+  background: radial-gradient(circle, var(--theme-accent), transparent 70%);
+}
+
+.control-icon {
+  @apply text-2xl relative z-10;
+}
+
+.button-glow {
+  @apply absolute inset-0 rounded-full opacity-0 transition-opacity duration-300;
+  background: radial-gradient(circle, var(--theme-glow), transparent);
+}
+
+.control-button:hover .button-glow {
+  opacity: 0.3;
+}
+
+.control-label {
+  @apply text-xs text-gray-300 font-medium;
+  transition: color 0.3s ease;
+}
+
+.control-button:hover .control-label {
+  color: var(--theme-accent);
+}
+
+/* Connection Status */
+.connection-status {
+  @apply flex items-center justify-between px-4 py-2;
+  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg;
+  backdrop-filter: blur(15px);
+}
+
+.status-indicator {
+  @apply flex items-center gap-2;
+}
+
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.status-dot.connected {
+  @apply bg-green-400;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-text {
+  @apply text-xs text-gray-300;
+}
+
+.call-timer {
+  @apply flex items-center gap-1;
+}
+
+.timer-text {
+  @apply text-xs font-mono text-gray-400;
+}
+
+/* Quick Actions */
+.quick-actions {
+  @apply flex items-center justify-center gap-3;
+}
+
+.quick-action {
+  @apply w-10 h-10 rounded-full flex items-center justify-center;
+  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-lg text-lg;
+  @apply transition-all duration-300 hover:scale-110;
+  @apply focus:outline-none;
+  backdrop-filter: blur(10px);
+}
+
+.quick-action:hover {
+  border-color: var(--theme-accent);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 0 10px var(--theme-glow);
+}
+
+/* Animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .call-controls-container {
+    @apply px-4;
+  }
+  
+  .call-controls {
+    @apply gap-4;
+  }
+  
+  .control-button {
+    @apply p-3;
+  }
+  
+  .button-inner {
+    @apply w-10 h-10;
+  }
+  
+  .control-icon {
+    @apply text-xl;
+  }
+  
+  .settings-panel {
+    @apply w-72;
+  }
+  
+  .quick-actions {
+    @apply gap-2;
+  }
+  
+  .quick-action {
+    @apply w-8 h-8 text-sm;
+  }
+}
+
+@media (max-width: 480px) {
+  .call-controls {
+    @apply flex-wrap gap-3;
+  }
+  
+  .connection-status {
+    @apply order-first w-full;
+  }
+  
+  .control-button {
+    @apply flex-1 min-w-0;
+  }
+  
+  .control-label {
+    @apply text-[10px];
+  }
+}

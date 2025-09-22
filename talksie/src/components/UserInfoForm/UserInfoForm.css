@@ -1,0 +1,185 @@
+.user-info-screen {
+  @apply fixed inset-0 flex items-center justify-center p-4 overflow-hidden;
+}
+
+.form-container {
+  @apply relative max-w-5xl w-full flex items-center justify-between gap-12;
+  z-index: 10;
+}
+
+/* Hologram Assistant */
+.hologram-container {
+  @apply hidden lg:flex flex-col items-center justify-center flex-1;
+}
+
+.hologram-circle {
+  @apply relative w-80 h-80 flex items-center justify-center;
+}
+
+.hologram-avatar {
+  @apply relative w-32 h-32 rounded-full flex items-center justify-center;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(139, 92, 246, 0.2));
+  border: 2px solid rgba(0, 212, 255, 0.5);
+  backdrop-filter: blur(10px);
+  animation: float 3s ease-in-out infinite;
+}
+
+.avatar-inner {
+  @apply w-full h-full rounded-full flex items-center justify-center;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.1), transparent);
+}
+
+.hologram-rings {
+  @apply absolute inset-0;
+}
+
+.hologram-rings::before,
+.hologram-rings::after {
+  content: '';
+  @apply absolute inset-0 rounded-full border-2 border-neon-blue opacity-30;
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+.hologram-rings::after {
+  animation-delay: 1s;
+}
+
+.form-card {
+  @apply flex-1 max-w-lg bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-lg p-8 space-y-8;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-header {
+  @apply text-center space-y-3;
+}
+
+.form-title {
+  @apply text-3xl font-bold font-cyber;
+  background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.form-subtitle {
+  @apply text-gray-300 text-sm;
+}
+
+.form-body {
+  @apply space-y-6;
+}
+
+/* Input Styling */
+.input-group {
+  @apply space-y-2;
+}
+
+.input-wrapper {
+  @apply relative;
+}
+
+.floating-input {
+  @apply w-full px-4 py-4 rounded-lg transition-all duration-300;
+  @apply bg-white/5 border border-white/20 backdrop-blur-sm;
+  @apply focus:outline-none focus:border-neon-blue focus:bg-white/10;
+  @apply placeholder-transparent text-white;
+}
+
+.floating-input:focus ~ .floating-label,
+.floating-input:not(:placeholder-shown) ~ .floating-label {
+  @apply -translate-y-8 text-xs text-neon-blue;
+}
+
+.floating-input.error {
+  @apply border-red-500 focus:border-red-400;
+}
+
+.floating-label {
+  @apply absolute left-4 top-4 text-gray-400 transition-all duration-300 pointer-events-none;
+  @apply transform origin-left;
+}
+
+.error-message {
+  @apply text-red-400 text-xs mt-1 block;
+}
+
+/* Submit Button */
+.submit-button {
+  @apply w-full py-4 px-6 rounded-lg font-semibold text-white;
+  @apply transition-all duration-300 transform hover:scale-105;
+  @apply bg-gradient-to-r from-neon-blue to-neon-purple;
+  @apply shadow-lg hover:shadow-neon-blue/50;
+  @apply border border-neon-blue/30;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+  @apply flex items-center justify-center gap-2;
+}
+
+.submit-button:not(:disabled):hover {
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+}
+
+.submit-button.submitting {
+  @apply bg-gradient-to-r from-gray-600 to-gray-700;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  @apply w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin;
+}
+
+/* Custom Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .hologram-container {
+    @apply hidden;
+  }
+  
+  .form-container {
+    @apply justify-center;
+  }
+}
+
+@media (max-width: 640px) {
+  .form-card {
+    @apply p-6;
+  }
+  
+  .form-title {
+    @apply text-2xl;
+  }
+  
+  .floating-input {
+    @apply py-3;
+  }
+  
+  .floating-label {
+    @apply top-3;
+  }
+  
+  .floating-input:focus ~ .floating-label,
+  .floating-input:not(:placeholder-shown) ~ .floating-label {
+    @apply -translate-y-7;
+  }
+}

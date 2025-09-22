@@ -1,0 +1,280 @@
+.character-selection-screen {
+  @apply fixed inset-0 flex items-center justify-center p-4 overflow-hidden;
+  min-height: 100vh;
+}
+
+.selection-container {
+  @apply relative max-w-7xl w-full space-y-12 z-10;
+}
+
+/* Header */
+.selection-header {
+  @apply text-center space-y-4;
+}
+
+.selection-title {
+  @apply text-4xl md:text-5xl font-bold font-cyber;
+  background: linear-gradient(135deg, #00d4ff, #8b5cf6, #ff0080);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: glow 3s ease-in-out infinite;
+}
+
+.selection-subtitle {
+  @apply text-xl text-gray-300 font-light;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Character Grid */
+.character-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4;
+}
+
+.character-card {
+  @apply relative cursor-pointer transition-all duration-500 transform;
+  @apply hover:scale-105 hover:-translate-y-2;
+  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-6;
+  @apply hover:border-opacity-50;
+  min-height: 320px;
+  backdrop-filter: blur(20px);
+}
+
+.character-card:hover {
+  border-color: var(--theme-color);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px var(--theme-glow);
+}
+
+.character-card.selected {
+  border-color: var(--theme-color);
+  box-shadow: 0 0 40px var(--theme-glow);
+  transform: scale(1.02) translateY(-4px);
+}
+
+/* Card Effects */
+.card-glow {
+  @apply absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500;
+  background: radial-gradient(circle at center, var(--theme-glow), transparent 70%);
+}
+
+.character-card:hover .card-glow,
+.character-card.selected .card-glow {
+  opacity: 0.1;
+}
+
+.card-content {
+  @apply relative z-10 h-full flex flex-col items-center text-center space-y-4;
+}
+
+/* Character Avatar */
+.character-avatar {
+  @apply relative w-20 h-20 flex items-center justify-center;
+}
+
+.character-emoji {
+  @apply text-5xl relative z-10;
+}
+
+.avatar-ring {
+  @apply absolute inset-0 rounded-full border-2 border-white/30;
+  animation: rotate 10s linear infinite;
+}
+
+.character-card:hover .avatar-ring {
+  border-color: var(--theme-color);
+  box-shadow: 0 0 20px var(--theme-glow);
+}
+
+/* Character Info */
+.character-info {
+  @apply flex-1 space-y-3;
+}
+
+.character-name {
+  @apply text-xl font-bold text-white;
+}
+
+.character-description {
+  @apply text-sm text-gray-300;
+}
+
+.character-personality {
+  @apply text-xs text-gray-400 italic;
+}
+
+/* Tags */
+.character-tags {
+  @apply flex flex-wrap justify-center gap-2 mt-4;
+}
+
+.character-tag {
+  @apply px-2 py-1 text-xs rounded-full;
+  @apply bg-white/10 text-gray-300 border border-white/20;
+  @apply transition-colors duration-300;
+}
+
+.character-card:hover .character-tag {
+  background-color: var(--theme-color);
+  @apply text-black border-transparent;
+}
+
+/* Selection Indicator */
+.selection-indicator {
+  @apply absolute top-4 right-4 flex items-center gap-2;
+}
+
+.selection-pulse {
+  @apply w-3 h-3 rounded-full;
+  background-color: var(--theme-color);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.selection-text {
+  @apply text-xs font-semibold;
+  color: var(--theme-color);
+}
+
+/* Hover Effect */
+.card-hover-effect {
+  @apply absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300;
+  background: linear-gradient(135deg, transparent, var(--theme-glow), transparent);
+  background-size: 200% 200%;
+  animation: shimmer-hover 3s ease-in-out infinite;
+}
+
+.character-card:hover .card-hover-effect {
+  opacity: 0.05;
+}
+
+/* Continue Button */
+.continue-container {
+  @apply flex justify-center pt-8;
+  animation: slideUp 0.5s ease-out;
+}
+
+.continue-button {
+  @apply px-8 py-4 rounded-xl font-semibold text-white;
+  @apply transition-all duration-300 transform hover:scale-105;
+  @apply flex items-center gap-3;
+  background: linear-gradient(135deg, var(--theme-color), var(--theme-glow));
+  border: 1px solid var(--theme-color);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.continue-button:hover {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px var(--theme-glow);
+}
+
+.button-arrow {
+  @apply transition-transform duration-300;
+}
+
+.continue-button:hover .button-arrow {
+  transform: translateX(4px);
+}
+
+/* Ambient Particles */
+.ambient-particles {
+  @apply absolute inset-0 pointer-events-none;
+}
+
+.ambient-particle {
+  @apply absolute w-1 h-1 bg-white/30 rounded-full;
+  animation: float-particle 15s linear infinite;
+}
+
+/* Animations */
+@keyframes glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 40px rgba(139, 92, 246, 0.7));
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+}
+
+@keyframes shimmer-hover {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .selection-title {
+    @apply text-3xl;
+  }
+  
+  .selection-subtitle {
+    @apply text-lg;
+  }
+  
+  .character-grid {
+    @apply grid-cols-1 gap-6;
+  }
+  
+  .character-card {
+    min-height: 280px;
+  }
+  
+  .continue-button {
+    @apply px-6 py-3 text-sm;
+  }
+}
+
+@media (max-width: 1024px) {
+  .character-grid {
+    @apply grid-cols-2;
+  }
+}

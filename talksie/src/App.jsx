@@ -1,35 +1,76 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import SplashScreen from './components/SplashScreen/SplashScreen';
+import UserInfoForm from './components/UserInfoForm/UserInfoForm';
+import CharacterSelection from './components/CharacterSelection/CharacterSelection';
+import CharacterRoom from './components/CharacterRoom/CharacterRoom';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentScreen, setCurrentScreen] = useState('splash');
+  const [userData, setUserData] = useState(null);
+  const [selectedCharacter, setSelectedCharacter] = useState(null);
+
+  // Screen navigation handlers
+  const handleLoadingComplete = () => {
+    setCurrentScreen('userInfo');
+  };
+
+  const handleUserFormSubmit = (data) => {
+    setUserData(data);
+    setCurrentScreen('characterSelection');
+  };
+
+  const handleCharacterSelect = (character) => {
+    setSelectedCharacter(character);
+    setCurrentScreen('characterRoom');
+  };
+
+  const handleEndCall = () => {
+    setSelectedCharacter(null);
+    setCurrentScreen('characterSelection');
+  };
+
+  const handleChangeCharacter = () => {
+    setSelectedCharacter(null);
+    setCurrentScreen('characterSelection');
+  };
+
+  // Render current screen
+  const renderCurrentScreen = () => {
+    switch (currentScreen) {
+      case 'splash':
+        return <SplashScreen onLoadingComplete={handleLoadingComplete} />;
+      
+      case 'userInfo':
+        return <UserInfoForm onFormSubmit={handleUserFormSubmit} />;
+      
+      case 'characterSelection':
+        return (
+          <CharacterSelection 
+            onCharacterSelect={handleCharacterSelect}
+            userData={userData}
+          />
+        );
+      
+      case 'characterRoom':
+        return (
+          <CharacterRoom 
+            character={selectedCharacter}
+            userData={userData}
+            onEndCall={handleEndCall}
+            onChangeCharacter={handleChangeCharacter}
+          />
+        );
+      
+      default:
+        return <SplashScreen onLoadingComplete={handleLoadingComplete} />;
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="App">
+      {renderCurrentScreen()}
+    </div>
+  );
 }
 
-export default App
+export default App;
