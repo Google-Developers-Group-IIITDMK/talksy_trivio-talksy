@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import speech_recognition as sr
 import google.generativeai as genai
 from elevenlabs import generate, play, set_api_key 
-
+import re
 
 load_dotenv()  
 
@@ -22,6 +22,28 @@ set_api_key(ELEVEN_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
 recognizer = sr.Recognizer()
+
+
+
+def chunk_text(text, max_len=250):
+    """
+    Split text into smaller chunks for TTS.
+    max_len = approx characters per chunk
+    """
+    sentences = re.split(r'(?<=[.!?]) +', text)
+    chunks = []
+    current = ""
+    for s in sentences:
+        if len(current) + len(s) + 1 > max_len:
+            if current:
+                chunks.append(current.strip())
+            current = s
+        else:
+            current += " " + s
+    if current:
+        chunks.append(current.strip())
+    return chunks
+
 
 if platform.system() == "Windows":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -42,12 +64,14 @@ def listen_once(timeout=5, phrase_time_limit=10):
 
 
 def speak_eleven(text, voice="Rachel"):
-    """Convert text to speech using ElevenLabs and play it."""
     if not text:
         return
-    print(f"Bot :: {text}")
-    audio = generate(text=text, voice=voice, model="eleven_multilingual_v2")
-    play(audio)
+    print(f"Bot :: {text}\n")
+    chunks = chunk_text(text, max_len=250)  # split text
+
+    for chunk in chunks:
+        audio = generate(text=chunk, voice=voice, model="eleven_multilingual_v2")
+        play(audio)
 
 
 def main():
