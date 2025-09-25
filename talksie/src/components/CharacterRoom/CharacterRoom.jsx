@@ -120,6 +120,15 @@ function Model({ modelPath, character }) {
 const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) => {
   const navigate = useNavigate();
   const modelContainerRef = useRef(null);
+  const videoRef = useRef(null);
+  
+  // State declarations - moved to the top before any useEffect hooks
+  const [currentMessage, setCurrentMessage] = useState('');
+  const [isCharacterSpeaking, setIsCharacterSpeaking] = useState(false);
+  const [isUserSpeaking, setIsUserSpeaking] = useState(false);
+  const [isCameraOn, setIsCameraOn] = useState(true);
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [facialExpression, setFacialExpression] = useState('neutral');
   
   // Redirect to appropriate screen if prerequisites are missing
   useEffect(() => {
@@ -177,13 +186,6 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
       }
     };
   }, [isCameraOn, isMicOn]);
-  const [currentMessage, setCurrentMessage] = useState('');
-  const [isCharacterSpeaking, setIsCharacterSpeaking] = useState(false);
-  const [isUserSpeaking, setIsUserSpeaking] = useState(false);
-  const [isCameraOn, setIsCameraOn] = useState(true);
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [facialExpression, setFacialExpression] = useState('neutral');
-  const videoRef = useRef(null);
 
   // Get user name safely
   const userName = userData?.name || 'friend';
