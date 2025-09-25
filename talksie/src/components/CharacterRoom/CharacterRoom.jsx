@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense, Component } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF, PerspectiveCamera, Environment } from '@react-three/drei';
@@ -7,14 +7,67 @@ import './CharacterRoom.css';
 import './CharacterRoomAnimations.css';
 import './VideoCallStyle.css';
 
+// Add debug logging
+console.log('CharacterRoom component loaded');
+
+// Error Boundary for handling rendering errors
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    // Log the error
+    console.error("Error caught by boundary:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // Render fallback UI
+      return this.props.fallback || <div>Something went wrong.</div>;
+    }
+
+    return this.props.children;
+  }
+}
+
 // Model component that loads and renders the 3D model for video call style
 function Model({ modelPath, character }) {
-  const { scene } = useGLTF(modelPath);
+  console.log('Model component rendering with path:', modelPath);
+  
   const modelRef = useRef();
+  
+  // Use error boundary pattern for hooks
+  const [hasError, setHasError] = useState(false);
+  
+  // Safe model loading
+  const { scene } = useGLTF(modelPath, 
+    // Success callback
+    undefined,
+    // Error callback 
+    (error) => {
+      console.error('Error loading model:', error);
+      setHasError(true);
+    }
+  );
+  
+  // Log successful load
+  useEffect(() => {
+    if (scene) {
+      console.log('Model loaded successfully:', scene);
+    }
+  }, [scene]);
   
   // Set up positioning and animation for video call style
   React.useEffect(() => {
     if (scene) {
+      console.log('Setting up model position for character:', character?.id);
       // Position the character for a video call framing (head and upper body visible)
       scene.position.y = 0;
       
@@ -46,6 +99,12 @@ function Model({ modelPath, character }) {
     return () => cancelAnimationFrame(animationId);
   }, []);
   
+  // Return nothing if we had an error loading the model
+  if (hasError || !scene) {
+    console.log('Model error or scene not loaded');
+    return null;
+  }
+  
   // Return the 3D primitive with video call positioning
   return (
     <primitive 
@@ -70,10 +129,61 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
       navigate('/user-info');
     }
   }, [character, userData, navigate]);
+
+  // User camera and microphone handling
+  useEffect(() => {
+    let mediaStream = null;
+    
+    const setupMedia = async () => {
+      try {
+        // Stop any existing tracks
+        if (videoRef.current && videoRef.current.srcObject) {
+          const existingTracks = videoRef.current.srcObject.getTracks();
+          existingTracks.forEach(track => track.stop());
+          videoRef.current.srcObject = null;
+        }
+        
+        // Only get media if camera or mic is on
+        if (isCameraOn || isMicOn) {
+          mediaStream = await navigator.mediaDevices.getUserMedia({ 
+            video: isCameraOn,
+            audio: isMicOn
+          });
+          
+          if (videoRef.current && isCameraOn) {
+            videoRef.current.srcObject = mediaStream;
+          }
+          
+          // If only mic is on but camera is off
+          if (!isCameraOn && isMicOn) {
+            // Keep the audio tracks only
+            const audioTracks = mediaStream.getAudioTracks();
+            if (audioTracks.length > 0) {
+              audioTracks[0].enabled = true;
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error accessing media devices:", err);
+      }
+    };
+    
+    setupMedia();
+    
+    return () => {
+      // Cleanup all media tracks on unmount
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [isCameraOn, isMicOn]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isCharacterSpeaking, setIsCharacterSpeaking] = useState(false);
   const [isUserSpeaking, setIsUserSpeaking] = useState(false);
+  const [isCameraOn, setIsCameraOn] = useState(true);
+  const [isMicOn, setIsMicOn] = useState(true);
   const [facialExpression, setFacialExpression] = useState('neutral');
+  const videoRef = useRef(null);
 
   // Get user name safely
   const userName = userData?.name || 'friend';
@@ -193,6 +303,66 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
     };
   }, [userName, character?.id]);
 
+  // Handle end call function
+  const handleEndCall = () => {
+    // Stop all media tracks before ending the call
+    if (videoRef.current && videoRef.current.srcObject) {
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach(track => track.stop());
+    }
+    
+    // Call the parent component's end call handler
+    if (onEndCall) onEndCall();
+  };
+  
+  // User camera and microphone handling
+  useEffect(() => {
+    let mediaStream = null;
+    
+    const setupMedia = async () => {
+      try {
+        // Stop any existing tracks
+        if (videoRef.current && videoRef.current.srcObject) {
+          const existingTracks = videoRef.current.srcObject.getTracks();
+          existingTracks.forEach(track => track.stop());
+          videoRef.current.srcObject = null;
+        }
+        
+        // Only get media if camera or mic is on
+        if (isCameraOn || isMicOn) {
+          mediaStream = await navigator.mediaDevices.getUserMedia({ 
+            video: isCameraOn,
+            audio: isMicOn
+          });
+          
+          if (videoRef.current && isCameraOn) {
+            videoRef.current.srcObject = mediaStream;
+          }
+          
+          // If only mic is on but camera is off
+          if (!isCameraOn && isMicOn) {
+            // Keep the audio tracks only
+            const audioTracks = mediaStream.getAudioTracks();
+            if (audioTracks.length > 0) {
+              audioTracks[0].enabled = true;
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error accessing media devices:", err);
+      }
+    };
+    
+    setupMedia();
+    
+    return () => {
+      // Cleanup all media tracks on unmount
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [isCameraOn, isMicOn]);
+
   const getThemeStyles = () => {
     // Default theme if no character is selected
     if (!character) return {
@@ -286,13 +456,30 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                 <div className="character-name-banner">
                   {character?.name || character?.id || 'Character'}
                 </div>
-
-                <Canvas
+                
+                {/* Add error boundary for 3D rendering */}
+                <ErrorBoundary
+                  fallback={
+                    <div className="model-error-fallback">
+                      <img 
+                        src={`/assets/${character?.id || 'character'}.jpg`} 
+                        alt={character?.name || 'Character'} 
+                        onError={(e) => { e.target.src = "/assets/character-1.jpg" }}
+                      />
+                      <div className="error-message">
+                        Using 2D fallback image
+                      </div>
+                    </div>
+                  }
+                >
+                  <Canvas
                   gl={{ antialias: true, alpha: true }}
                   style={{ width: '100%', height: '100%' }}
                   shadows
                   dpr={[1, 2]} // Dynamic pixel ratio for better performance
                   performance={{ min: 0.5 }} // Performance optimizations
+                  onCreated={state => console.log('Canvas created:', state)}
+                  onError={error => console.error('Canvas error:', error)}
                 >
                   {/* Camera setup for video call style */}
                   <PerspectiveCamera makeDefault position={[0, 0, 3]} fov={40} />
@@ -362,8 +549,13 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                     </>
                   )}
                   
-                  {/* Fall back to a spinner or nothing while the model loads */}
-                  <Suspense fallback={null}>
+                  {/* Fall back to a loading indicator while the model loads */}
+                  <Suspense fallback={
+                    <mesh position={[0, 0, 0]}>
+                      <sphereGeometry args={[1, 32, 32]} />
+                      <meshStandardMaterial color="#ffffff" wireframe />
+                    </mesh>
+                  }>
                     <Model modelPath={getModelPath()} character={character} />
                   </Suspense>
                   
@@ -378,6 +570,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                     rotateSpeed={0.2}
                   />
                 </Canvas>
+                </ErrorBoundary>
                 
                 {/* Character-specific overlay effects */}
                 {character?.id === 'voldemort' && (
@@ -438,35 +631,42 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                   </>
                 )}
                 
-                {/* Video Call UI */}
+                {/* Video Call UI - Three Buttons Only */}
                 <div className="video-call-ui">
+                  {/* Camera On/Off Button */}
                   <button 
-                    className="video-call-button mute"
-                    onClick={() => setIsUserSpeaking(!isUserSpeaking)}
-                    aria-label={isUserSpeaking ? 'Mute' : 'Unmute'}
+                    className={`video-call-button ${!isCameraOn ? 'disabled' : ''}`}
+                    onClick={() => setIsCameraOn(!isCameraOn)}
+                    aria-label={isCameraOn ? 'Turn Camera Off' : 'Turn Camera On'}
                   >
-                    {isUserSpeaking ? '🎤' : '🔇'}
+                    {isCameraOn ? '📹' : '�'}
                   </button>
+                  
+                  {/* Mic On/Off Button */}
+                  <button 
+                    className={`video-call-button ${!isUserSpeaking ? 'disabled' : ''}`}
+                    onClick={() => setIsUserSpeaking(!isUserSpeaking)}
+                    aria-label={isUserSpeaking ? 'Mute Mic' : 'Unmute Mic'}
+                  >
+                    {isUserSpeaking ? '🎤' : '�'}
+                  </button>
+                  
+                  {/* End Call Button */}
                   <button 
                     className="video-call-button end-call"
                     onClick={onEndCall || (() => navigate('/characters'))}
                     aria-label="End Call"
                   >
-                    📞
-                  </button>
-                  <button 
-                    className="video-call-button"
-                    onClick={onChangeCharacter || (() => navigate('/characters'))}
-                    aria-label="Change Character"
-                  >
-                    👥
+                    �
                   </button>
                 </div>
                 
-                {/* User camera preview */}
-                <div className="user-camera-preview">
-                  {/* This would be a real camera in a full implementation */}
-                </div>
+                {/* User camera preview - visibility based on camera state */}
+                {isCameraOn && (
+                  <div className="user-camera-preview">
+                    {/* This would be a real camera in a full implementation */}
+                  </div>
+                )}
                 
                 {/* Speaking indicator */}
                 <div className="speaking-indicator">
@@ -726,6 +926,45 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
               {currentMessage}
             </div>
           </div>
+        </div>
+      )}
+      
+      {/* Character name banner */}
+      <div className="character-name-banner">
+        {character?.name || 'Character'}
+      </div>
+      
+      {/* Video call UI buttons */}
+      <div className="video-call-ui">
+        <button 
+          className={`video-call-button ${!isCameraOn ? 'disabled' : ''}`}
+          onClick={() => setIsCameraOn(!isCameraOn)}
+          aria-label={isCameraOn ? "Turn off camera" : "Turn on camera"}
+        >
+          <i className={`fas ${isCameraOn ? 'fa-video' : 'fa-video-slash'}`}></i>
+        </button>
+        
+        <button 
+          className={`video-call-button ${!isMicOn ? 'disabled' : ''}`}
+          onClick={() => setIsMicOn(!isMicOn)}
+          aria-label={isMicOn ? "Turn off microphone" : "Turn on microphone"}
+        >
+          <i className={`fas ${isMicOn ? 'fa-microphone' : 'fa-microphone-slash'}`}></i>
+        </button>
+        
+        <button 
+          className="video-call-button end-call"
+          onClick={handleEndCall}
+          aria-label="End call"
+        >
+          <i className="fas fa-phone-slash"></i>
+        </button>
+      </div>
+      
+      {/* User camera preview */}
+      {isCameraOn && (
+        <div className="user-camera-preview">
+          <video ref={videoRef} autoPlay playsInline muted />
         </div>
       )}
     </div>
