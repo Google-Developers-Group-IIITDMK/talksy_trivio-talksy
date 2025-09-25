@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './UserInfoForm.css';
 
 const UserInfoForm = ({ onFormSubmit }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const selectedCharacter = location.state?.selectedCharacter;
+  const [userName, setUserName] = useState('');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+const UserInfoForm = ({ onFormSubmit, selectedCharacter }) => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
   const [error, setError] = useState('');
@@ -60,9 +68,11 @@ const UserInfoForm = ({ onFormSubmit }) => {
     
     // Simulate API call
     setTimeout(() => {
-      onFormSubmit({ name: userName });
+      onFormSubmit({ 
+        name: userName,
+        selectedCharacter 
+      });
       setIsSubmitting(false);
-      // Navigate to character room after form submission
       navigate('/character-room');
     }, 1800);
   };
@@ -119,13 +129,19 @@ const UserInfoForm = ({ onFormSubmit }) => {
         <div className="character-preview">
           <div className="character-preview-circle">
             <div className="character-preview-avatar">
-              <img src="/assets/character-1.jpg" alt="Character Avatar" className="character-image" />
+              <img 
+                src={selectedCharacter?.image || '/assets/character-1.jpg'} 
+                alt={`${selectedCharacter?.name || 'Character'} Avatar`} 
+                className="character-image" 
+              />
             </div>
             <div className="preview-rings"></div>
           </div>
           <div className="character-preview-text">
             <span id="welcomeName">Hello, there</span>
-            <p className="preview-message">I'm excited to meet you!</p>
+            <p className="preview-message">
+              {selectedCharacter?.name ? `I'm ${selectedCharacter.name}, excited to meet you!` : "I'm excited to meet you!"}
+            </p>
           </div>
         </div>
 
@@ -133,7 +149,7 @@ const UserInfoForm = ({ onFormSubmit }) => {
         <div className="form-card">
           <div className="form-header">
             <h1 className="form-title">What's your <span>name</span>?</h1>
-            <p className="form-subtitle">Let's get to know each other</p>
+            <p className="form-subtitle">Let's begin your conversation with {selectedCharacter?.name || 'your character'}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="form-body">
@@ -150,7 +166,6 @@ const UserInfoForm = ({ onFormSubmit }) => {
                   autoComplete="off"
                   autoFocus
                 />
-                <label className="floating-label">Your Name</label>
                 <div className="input-highlight"></div>
               </div>
               {error && <span className="error-message">{error}</span>}
@@ -168,7 +183,7 @@ const UserInfoForm = ({ onFormSubmit }) => {
                   <span>Let's Go...</span>
                 </>
               ) : (
-                <span>Meet Your Character</span>
+                <span>Start Chatting with {selectedCharacter?.name || 'Your Character'}</span>
               )}
             </button>
             

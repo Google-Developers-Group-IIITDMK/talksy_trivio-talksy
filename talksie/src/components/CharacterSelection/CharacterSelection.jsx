@@ -80,7 +80,7 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
       if (userData) {
         navigate('/character-room');
       } else {
-        navigate('/user-info');
+        navigate('/user-info', { state: { selectedCharacter: character } });
       }
     }, 800);
   };
@@ -167,7 +167,7 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
                 if (userData) {
                   navigate('/character-room');
                 } else {
-                  navigate('/user-info');
+                  navigate('/user-info', { state: { selectedCharacter } });
                 }
               }}
             >
