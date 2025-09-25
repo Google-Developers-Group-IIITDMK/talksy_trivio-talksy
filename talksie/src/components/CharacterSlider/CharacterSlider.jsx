@@ -6,83 +6,43 @@ import './CharacterSlider.css';
 const characters = [
   {
     id: 1,
-    name: 'Sherlock Holmes',
-    type: 'Literature • Detective',
+    name: 'Lord Voldemort',
+    type: 'Literature • Fantasy • Villain',
     image: '/assets/character-1.jpg',
-    rating: 4.9,
-    talks: '24k',
+    rating: 4.8,         
+    talks: '12k',         
     popular: true,
-    badges: ['Top Rated', 'Popular']
+    badges: ['Top Rated', 'Villain Icon', 'Dark Wizard']
   },
   {
     id: 2,
-    name: 'Princess Leia',
-    type: 'Sci-Fi • Royalty',
+    name: 'Harry Potter',
+    type: 'Literature • Fantasy • Wizard',
     image: '/assets/character-2.jpg',
-    rating: 4.8,
-    talks: '19k',
+    rating: 4.9,           
+    talks: '30k',
     popular: true,
-    badges: ['Trending']
+    badges: ['Popular', 'Hero', 'Popular']
   },
   {
     id: 3,
-    name: 'Tony Stark',
-    type: 'Superhero • Genius',
+    name: 'Doraemon',
+    type: 'Anime • Robot • Kids Show',
     image: '/assets/character-3.jpg',
-    rating: 4.7,
-    talks: '32k',
+    rating: 4.9,          
+    talks: '40k',          
     popular: true,
-    badges: ['Most Talked']
+    badges: ['Most Loved', 'Classic', 'Most Loved']
   },
   {
     id: 4,
-    name: 'Elizabeth Bennet',
-    type: 'Literature • Romance',
+    name: 'Nobita Nobi',
+    type: 'Anime • Kids Show • Student',
     image: '/assets/character-4.jpg',
-    rating: 4.6,
-    talks: '15k',
+    rating: 4.5,          
+    talks: '25k',          
     popular: true,
-    badges: []
-  },
-  {
-    id: 5,
-    name: 'Albert Einstein',
-    type: 'Historical • Scientist',
-    image: '/assets/character-5.jpg',
-    rating: 4.5,
-    talks: '21k',
-    popular: true,
-    badges: ['Educational']
-  },
-  {
-    id: 6,
-    name: 'Wonder Woman',
-    type: 'Superhero • Warrior',
-    image: '/assets/character-6.jpg',
-    rating: 4.4,
-    talks: '18k',
-    popular: true,
-    badges: ['New']
-  },
-  {
-    id: 7,
-    name: 'Harry Potter',
-    type: 'Fantasy • Wizard',
-    image: '/assets/character-1.jpg',
-    rating: 4.9,
-    talks: '30k',
-    popular: true,
-    badges: ['Fan Favorite']
-  },
-  {
-    id: 8,
-    name: 'Marie Curie',
-    type: 'Historical • Scientist',
-    image: '/assets/character-2.jpg',
-    rating: 4.7,
-    talks: '12k',
-    popular: true,
-    badges: ['Educational']
+    badges: ['Classic', 'Lovable', 'Funny']
   }
 ];
 
@@ -110,10 +70,10 @@ const CharacterSlider = () => {
     handleResize();
     window.addEventListener('resize', handleResize);
     
-    // Auto slide every 5 seconds
+    // Auto slide every 7 seconds
     const autoSlide = setInterval(() => {
       nextSlide();
-    }, 5000);
+    }, 7000);
     
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -160,82 +120,69 @@ const CharacterSlider = () => {
   );
 
   return (
-    <section className="character-slider-section">
-      <div className="section-background"></div>
-      <div className="container">
-        <div className="section-header">
-          <div>
-            <h2 className="slider-title">
-              Meet <span className="gradient-text">Our Characters</span>
+    <section id="characterSliderSection">
+      <div id="sliderBackground">
+        <div id="sliderShape1" className="floating-shape"></div>
+        <div id="sliderShape2" className="floating-shape"></div>
+        <div id="sliderShape3" className="floating-shape"></div>
+        <div id="sliderShape4" className="floating-shape"></div>
+      </div>
+      <div id="characterSliderContainer">
+        <div id="sectionHeader">
+          <div id="headerContent">
+            <h2 id="sliderTitle">
+              Meet <span id="gradientTitleText">Our Characters</span>
             </h2>
-            <p className="slider-subtitle">
+            <p id="sliderSubtitle">
               Start a conversation with our most popular characters
             </p>
-          </div>
-          <div className="slider-controls">
-            <button 
-              className="slider-arrow prev" 
-              onClick={prevSlide}
-              aria-label="Previous characters"
-            >
-              <i className="fas fa-chevron-left"></i>
-            </button>
-            <div className="slider-pagination">
-              {Array.from({ length: Math.ceil((characters.length - cardsToShow + 1) / 1) }).map((_, idx) => (
-                <span 
-                  key={idx}
-                  className={`slider-dot ${idx === Math.floor(activeSlide / 1) ? 'active' : ''}`}
-                  onClick={() => setActiveSlide(idx * 1)}
-                ></span>
-              ))}
-            </div>
-            <button 
-              className="slider-arrow next" 
-              onClick={nextSlide}
-              aria-label="Next characters"
-            >
-              <i className="fas fa-chevron-right"></i>
-            </button>
           </div>
         </div>
         
         <div 
-          className="character-slider"
+          id="characterSlider"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
           <div 
-            className="slider-track"
+            id="sliderTrack"
             style={{ transform: `translateX(-${activeSlide * (100 / cardsToShow)}%)` }}
           >
             {characters.map((character) => (
-              <div className="character-card" key={character.id}>
-                <div className="character-image">
-                  <img src={character.image} alt={character.name} />
+              <div id={`characterCard${character.id}`} key={character.id}>
+                <div id={`imageContainer${character.id}`}>
+                  <div id={`characterGlow${character.id}`}></div>
+                  <img 
+                    src={character.image} 
+                    alt={character.name} 
+                    id={`characterImage${character.id}`} 
+                  />
                   {character.badges.length > 0 && (
-                    <div className="character-badge">{character.badges[0]}</div>
+                    <div id={`characterBadge${character.id}`}>{character.badges[0]}</div>
                   )}
-                  <div className="character-hover-info">
+                  <div id={`characterHoverInfo${character.id}`}>
                     <p>"{character.name} is waiting to talk with you..."</p>
-                    <Link to={`/character/${character.id}`} className="btn-talk-now">
-                      Talk Now
+                    <Link to={`/character/${character.id}`} id={`talkNowBtn${character.id}`}>
+                      <span>Talk Now</span>
+                      <div id={`talkNowBtnGlow${character.id}`}></div>
                     </Link>
                   </div>
                 </div>
-                <div className="character-info">
-                  <h3>{character.name}</h3>
-                  <p className="character-type">{character.type}</p>
-                  <div className="character-meta">
-                    <span className="character-rating">
+                <div id={`characterInfo${character.id}`}>
+                  <h3 id={`characterName${character.id}`}>{character.name}</h3>
+                  <p id={`characterType${character.id}`}>{character.type}</p>
+                  <div id={`characterMeta${character.id}`}>
+                    <span id={`characterRating${character.id}`}>
                       <i className="fas fa-star"></i> {character.rating}
                     </span>
-                    <span className="character-talks">
+                    <span id={`characterTalks${character.id}`}>
                       <i className="fas fa-comment"></i> {character.talks} talks
                     </span>
                   </div>
-                  <Link to={`/character/${character.id}`} className="btn-talk">
-                    Start Talking <i className="fas fa-arrow-right"></i>
+                  <Link to={`/character/${character.id}`} id={`startTalkingBtn${character.id}`}>
+                    <span>Start Talking</span> <i className="fas fa-arrow-right"></i>
+                    <div id={`startTalkingBtnGlow${character.id}`}></div>
                   </Link>
                 </div>
               </div>
@@ -243,10 +190,11 @@ const CharacterSlider = () => {
           </div>
         </div>
         
-        <div className="view-all-container">
-          <Link to="/characters" className="btn-view-all">
-            View All Characters
+        <div id="viewAllContainer">
+          <Link to="/characters" id="viewAllBtn">
+            <span>View All Characters</span>
             <i className="fas fa-arrow-right"></i>
+            <div id="viewAllBtnGlow"></div>
           </Link>
         </div>
       </div>
