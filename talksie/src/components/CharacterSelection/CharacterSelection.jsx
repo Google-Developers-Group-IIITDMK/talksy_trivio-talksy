@@ -75,12 +75,8 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
 
   const handleCharacterClick = (character) => {
     setSelectedCharacter(character);
-    // Store the selected character in the App state
     onCharacterSelect(character);
-    // Add a small delay for animation effect before redirecting
     setTimeout(() => {
-      // If user data already exists, go directly to character room
-      // Otherwise redirect to user info form
       if (userData) {
         navigate('/character-room');
       } else {
