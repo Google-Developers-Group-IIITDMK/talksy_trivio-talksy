@@ -316,54 +316,6 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
     // Call the parent component's end call handler
     if (onEndCall) onEndCall();
   };
-  
-  // User camera and microphone handling
-  useEffect(() => {
-    let mediaStream = null;
-    
-    const setupMedia = async () => {
-      try {
-        // Stop any existing tracks
-        if (videoRef.current && videoRef.current.srcObject) {
-          const existingTracks = videoRef.current.srcObject.getTracks();
-          existingTracks.forEach(track => track.stop());
-          videoRef.current.srcObject = null;
-        }
-        
-        // Only get media if camera or mic is on
-        if (isCameraOn || isMicOn) {
-          mediaStream = await navigator.mediaDevices.getUserMedia({ 
-            video: isCameraOn,
-            audio: isMicOn
-          });
-          
-          if (videoRef.current && isCameraOn) {
-            videoRef.current.srcObject = mediaStream;
-          }
-          
-          // If only mic is on but camera is off
-          if (!isCameraOn && isMicOn) {
-            // Keep the audio tracks only
-            const audioTracks = mediaStream.getAudioTracks();
-            if (audioTracks.length > 0) {
-              audioTracks[0].enabled = true;
-            }
-          }
-        }
-      } catch (err) {
-        console.error("Error accessing media devices:", err);
-      }
-    };
-    
-    setupMedia();
-    
-    return () => {
-      // Cleanup all media tracks on unmount
-      if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
-      }
-    };
-  }, [isCameraOn, isMicOn]);
 
   const getThemeStyles = () => {
     // Default theme if no character is selected
@@ -633,36 +585,6 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                   </>
                 )}
                 
-                {/* Video Call UI - Three Buttons Only */}
-                <div className="video-call-ui">
-                  {/* Camera On/Off Button */}
-                  <button 
-                    className={`video-call-button ${!isCameraOn ? 'disabled' : ''}`}
-                    onClick={() => setIsCameraOn(!isCameraOn)}
-                    aria-label={isCameraOn ? 'Turn Camera Off' : 'Turn Camera On'}
-                  >
-                    {isCameraOn ? '📹' : '�'}
-                  </button>
-                  
-                  {/* Mic On/Off Button */}
-                  <button 
-                    className={`video-call-button ${!isUserSpeaking ? 'disabled' : ''}`}
-                    onClick={() => setIsUserSpeaking(!isUserSpeaking)}
-                    aria-label={isUserSpeaking ? 'Mute Mic' : 'Unmute Mic'}
-                  >
-                    {isUserSpeaking ? '🎤' : '�'}
-                  </button>
-                  
-                  {/* End Call Button */}
-                  <button 
-                    className="video-call-button end-call"
-                    onClick={onEndCall || (() => navigate('/characters'))}
-                    aria-label="End Call"
-                  >
-                    �
-                  </button>
-                </div>
-                
                 {/* User camera preview - visibility based on camera state */}
                 {isCameraOn && (
                   <div className="user-camera-preview">
@@ -757,167 +679,6 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
             </div>
           )}
         </div>
-
-        {/* Call Controls */}
-        <CallControls 
-          onEndCall={onEndCall}
-          onChangeCharacter={onChangeCharacter}
-          character={character}
-        />
-      </div>
-
-      {/* Ambient Effects */}
-      <div className="ambient-effects">
-        {/* Floating Elements */}
-        <div className="floating-elements">
-          {Array.from({ length: 8 }, (_, i) => (
-            <div
-              key={i}
-              className="floating-element"
-              style={{
-                left: `${20 + Math.random() * 60}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${6 + Math.random() * 3}s`
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Theme-specific Effects */}
-        <div className={`theme-effects ${character?.id || ''}`}>
-          {character?.id === 'voldemort' && (
-            <div className="dark-environment">
-              <div className="dark-wisps">
-                {Array.from({ length: 8 }, (_, i) => (
-                  <div 
-                    key={i} 
-                    className="dark-wisp" 
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      animationDelay: `${Math.random() * 5}s`,
-                      width: `${100 + Math.random() * 200}px`
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="skull-particles">
-                {Array.from({ length: 3 }, (_, i) => (
-                  <div 
-                    key={i} 
-                    className="skull-particle"
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      animationDelay: `${Math.random() * 10}s`
-                    }}
-                  >
-                    💀
-                  </div>
-                ))}
-              </div>
-              <div className="dark-mist"></div>
-            </div>
-          )}
-          
-          {character?.id === 'harry' && (
-            <div className="magical-environment">
-              <div className="magic-wisps">
-                {Array.from({ length: 10 }, (_, i) => (
-                  <div 
-                    key={i} 
-                    className="magic-wisp" 
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      animationDelay: `${Math.random() * 5}s`
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="magical-objects">
-                {Array.from({ length: 4 }, (_, i) => (
-                  <div 
-                    key={i} 
-                    className="magical-object"
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${20 + Math.random() * 60}%`,
-                      animationDelay: `${Math.random() * 10}s`
-                    }}
-                  >
-                    {['⚡', '🧹', '🪄', '🧙‍♂️'][i]}
-                  </div>
-                ))}
-              </div>
-              <div className="hogwarts-sky"></div>
-            </div>
-          )}
-          
-          {character?.id === 'doraemon' && (
-            <div className="doraemon-environment">
-              <div className="magic-sparkles">
-                {Array.from({ length: 15 }, (_, i) => (
-                  <div 
-                    key={i} 
-                    className="sparkle"
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
-                      animationDelay: `${Math.random() * 5}s`
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="floating-gadgets">
-                {Array.from({ length: 4 }, (_, i) => (
-                  <div 
-                    key={i} 
-                    className="floating-gadget"
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${10 + Math.random() * 80}%`,
-                      animationDelay: `${Math.random() * 10}s`
-                    }}
-                  >
-                    {['🚪', '🔔', '🧸', '🎒'][i]}
-                  </div>
-                ))}
-              </div>
-              <div className="blue-clouds"></div>
-            </div>
-          )}
-          
-          {character?.id === 'nobita' && (
-            <div className="nobita-environment">
-              <div className="school-items">
-                {Array.from({ length: 5 }, (_, i) => (
-                  <div 
-                    key={i} 
-                    className="school-item"
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${10 + Math.random() * 80}%`,
-                      animationDelay: `${Math.random() * 8}s`
-                    }}
-                  >
-                    {['📚', '✏️', '📝', '🎒', '🥪'][i]}
-                  </div>
-                ))}
-              </div>
-              <div className="dream-clouds">
-                {Array.from({ length: 3 }, (_, i) => (
-                  <div 
-                    key={i} 
-                    className="dream-cloud"
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      animationDelay: `${Math.random() * 15}s`
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="sunshine-effect"></div>
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Video Call Message Display */}
@@ -936,7 +697,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
         {character?.name || 'Character'}
       </div>
       
-      {/* Video call UI buttons */}
+      {/* Video call UI buttons - ONLY THREE BUTTONS: Camera, Mic, End Call */}
       <div className="video-call-ui">
         <button 
           className={`video-call-button ${!isCameraOn ? 'disabled' : ''}`}
