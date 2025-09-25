@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './UserInfoForm.css';
 
 const UserInfoForm = ({ onFormSubmit }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     bio: '',
@@ -66,6 +68,8 @@ const UserInfoForm = ({ onFormSubmit }) => {
     setTimeout(() => {
       onFormSubmit(formData);
       setIsSubmitting(false);
+      // Navigate to character room after form submission
+      navigate('/character-room');
     }, 1500);
   };
 

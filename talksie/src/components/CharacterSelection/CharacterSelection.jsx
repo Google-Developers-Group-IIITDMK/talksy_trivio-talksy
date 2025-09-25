@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CharacterSelection.css';
 import Navbar from '../Navbar/Navbar';
 import Footer from '../Footer/Footer';
@@ -16,7 +17,13 @@ const characters = [
     description: 'The Dark Lord of the Wizarding World',
     image: character1,
     personality: 'Mysterious, powerful, and commanding',
-    tags: ['Villain', 'Dark Magic', 'Powerful']
+    tags: ['Villain', 'Dark Magic', 'Powerful'],
+    theme: {
+      primary: '#1a1a2e',
+      secondary: '#4a4e69',
+      accent: '#8b0000',
+      glow: 'rgba(139, 0, 0, 0.4)'
+    }
   },
   {
     id: 'harry',
@@ -24,7 +31,13 @@ const characters = [
     description: 'The Boy Who Lived, wizard and hero',
     image: character2,
     personality: 'Brave, loyal, and determined',
-    tags: ['Wizard', 'Hero', 'Gryffindor']
+    tags: ['Wizard', 'Hero', 'Gryffindor'],
+    theme: {
+      primary: '#740001',
+      secondary: '#d3a625',
+      accent: '#0e1a40',
+      glow: 'rgba(211, 166, 37, 0.4)'
+    }
   },
   {
     id: 'doraemon',
@@ -32,7 +45,13 @@ const characters = [
     description: 'The robotic cat from the future',
     image: character3,
     personality: 'Friendly, helpful, and resourceful',
-    tags: ['Robot', 'Future', 'Gadgets']
+    tags: ['Robot', 'Future', 'Gadgets'],
+    theme: {
+      primary: '#00a0e9',
+      secondary: '#ffffff',
+      accent: '#ff0000',
+      glow: 'rgba(0, 160, 233, 0.4)'
+    }
   },
   {
     id: 'nobita',
@@ -40,18 +59,33 @@ const characters = [
     description: 'Doraemon\'s best friend and companion',
     image: character4,
     personality: 'Kind-hearted, clumsy, and imaginative',
-    tags: ['Student', 'Friend', 'Adventure']
+    tags: ['Student', 'Friend', 'Adventure'],
+    theme: {
+      primary: '#ffd700',
+      secondary: '#3cb371',
+      accent: '#ff6347',
+      glow: 'rgba(255, 215, 0, 0.4)'
+    }
   }
 ];
 
 const CharacterSelection = ({ onCharacterSelect, userData }) => {
   const [selectedCharacter, setSelectedCharacter] = useState(null);
+  const navigate = useNavigate();
 
   const handleCharacterClick = (character) => {
     setSelectedCharacter(character);
-    // Add a small delay for animation effect
+    // Store the selected character in the App state
+    onCharacterSelect(character);
+    // Add a small delay for animation effect before redirecting
     setTimeout(() => {
-      onCharacterSelect(character);
+      // If user data already exists, go directly to character room
+      // Otherwise redirect to user info form
+      if (userData) {
+        navigate('/character-room');
+      } else {
+        navigate('/user-info');
+      }
     }, 800);
   };
 
@@ -133,9 +167,15 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
           <div className="continue-container">
             <button
               className="continue-button"
-              onClick={() => onCharacterSelect(selectedCharacter)}
+              onClick={() => {
+                if (userData) {
+                  navigate('/character-room');
+                } else {
+                  navigate('/user-info');
+                }
+              }}
             >
-              <span>Start Conversation with {selectedCharacter.name}</span>
+              <span>Continue with {selectedCharacter.name}</span>
               <div className="button-glow"></div>
               <span className="button-arrow">→</span>
             </button>
