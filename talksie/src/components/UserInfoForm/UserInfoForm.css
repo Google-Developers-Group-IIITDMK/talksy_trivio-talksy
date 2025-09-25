@@ -1,23 +1,59 @@
+/* Using standard CSS properties instead of @apply directives */
+
 .user-info-screen {
-  @apply fixed inset-0 flex items-center justify-center p-4 overflow-hidden;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow: hidden;
 }
 
 .form-container {
-  @apply relative max-w-5xl w-full flex items-center justify-between gap-12;
+  position: relative;
+  max-width: 64rem; /* max-w-5xl */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem; /* gap-12 */
   z-index: 10;
 }
 
 /* Hologram Assistant */
 .hologram-container {
-  @apply hidden lg:flex flex-col items-center justify-center flex-1;
+  display: none; /* hidden by default */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+/* lg:flex - display flex on large screens */
+@media (min-width: 1024px) {
+  .hologram-container {
+    display: flex;
+  }
 }
 
 .hologram-circle {
-  @apply relative w-80 h-80 flex items-center justify-center;
+  position: relative;
+  width: 20rem; /* w-80 */
+  height: 20rem; /* h-80 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hologram-avatar {
-  @apply relative w-32 h-32 rounded-full flex items-center justify-center;
+  position: relative;
+  width: 8rem; /* w-32 */
+  height: 8rem; /* h-32 */
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(139, 92, 246, 0.2));
   border: 2px solid rgba(0, 212, 255, 0.5);
   backdrop-filter: blur(10px);
@@ -25,18 +61,28 @@
 }
 
 .avatar-inner {
-  @apply w-full h-full rounded-full flex items-center justify-center;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: radial-gradient(circle, rgba(0, 212, 255, 0.1), transparent);
 }
 
 .hologram-rings {
-  @apply absolute inset-0;
+  position: absolute;
+  inset: 0;
 }
 
 .hologram-rings::before,
 .hologram-rings::after {
   content: '';
-  @apply absolute inset-0 rounded-full border-2 border-neon-blue opacity-30;
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid #00d4ff; /* border-neon-blue */
+  opacity: 0.3;
   animation: pulse-ring 2s ease-out infinite;
 }
 
@@ -45,17 +91,31 @@
 }
 
 .form-card {
-  @apply flex-1 max-w-lg bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-lg p-8 space-y-8;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex: 1;
+  max-width: 32rem; /* max-w-lg */
+  background-color: rgba(255, 255, 255, 0.1); /* bg-white/10 */
+  backdrop-filter: blur(12px); /* backdrop-blur-md */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* border-white/20 */
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+  padding: 2rem; /* p-8 */
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* space-y-8 */
 }
 
 .form-header {
-  @apply text-center space-y-3;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* space-y-3 */
 }
 
 .form-title {
-  @apply text-3xl font-bold font-cyber;
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem;
+  font-weight: 700; /* font-bold */
+  font-family: 'Orbitron', monospace; /* font-cyber */
   background: linear-gradient(135deg, #00d4ff, #8b5cf6);
   background-clip: text;
   -webkit-background-clip: text;
@@ -64,69 +124,132 @@
 }
 
 .form-subtitle {
-  @apply text-gray-300 text-sm;
+  color: rgb(209, 213, 219); /* text-gray-300 */
+  font-size: 0.875rem; /* text-sm */
 }
 
 .form-body {
-  @apply space-y-6;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* space-y-6 */
 }
 
 /* Input Styling */
 .input-group {
-  @apply space-y-2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* space-y-2 */
 }
 
 .input-wrapper {
-  @apply relative;
+  position: relative;
 }
 
 .floating-input {
-  @apply w-full px-4 py-4 rounded-lg transition-all duration-300;
-  @apply bg-white/5 border border-white/20 backdrop-blur-sm;
-  @apply focus:outline-none focus:border-neon-blue focus:bg-white/10;
-  @apply placeholder-transparent text-white;
+  width: 100%;
+  padding: 1rem 1rem; /* px-4 py-4 */
+  border-radius: 0.5rem; /* rounded-lg */
+  transition: all 0.3s; /* transition-all duration-300 */
+  background-color: rgba(255, 255, 255, 0.05); /* bg-white/5 */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* border border-white/20 */
+  backdrop-filter: blur(4px); /* backdrop-blur-sm */
+  outline: none;
+  color: white;
+  caret-color: white;
+}
+
+.floating-input::placeholder {
+  color: transparent; /* placeholder-transparent */
+}
+
+.floating-input:focus {
+  outline: none;
+  border-color: #00d4ff; /* focus:border-neon-blue */
+  background-color: rgba(255, 255, 255, 0.1); /* focus:bg-white/10 */
 }
 
 .floating-input:focus ~ .floating-label,
 .floating-input:not(:placeholder-shown) ~ .floating-label {
-  @apply -translate-y-8 text-xs text-neon-blue;
+  transform: translateY(-2rem) scale(0.85); /* -translate-y-8 */
+  font-size: 0.75rem; /* text-xs */
+  color: #00d4ff; /* text-neon-blue */
 }
 
 .floating-input.error {
-  @apply border-red-500 focus:border-red-400;
+  border-color: rgb(239, 68, 68); /* border-red-500 */
+}
+
+.floating-input.error:focus {
+  border-color: rgb(248, 113, 113); /* focus:border-red-400 */
 }
 
 .floating-label {
-  @apply absolute left-4 top-4 text-gray-400 transition-all duration-300 pointer-events-none;
-  @apply transform origin-left;
+  position: absolute;
+  left: 1rem; /* left-4 */
+  top: 1rem; /* top-4 */
+  color: rgb(156, 163, 175); /* text-gray-400 */
+  transition: all 0.3s; /* transition-all duration-300 */
+  pointer-events: none;
+  transform-origin: left top; /* transform origin-left */
 }
 
 .error-message {
-  @apply text-red-400 text-xs mt-1 block;
+  color: rgb(248, 113, 113); /* text-red-400 */
+  font-size: 0.75rem; /* text-xs */
+  margin-top: 0.25rem; /* mt-1 */
+  display: block;
 }
 
 /* Submit Button */
 .submit-button {
-  @apply w-full py-4 px-6 rounded-lg font-semibold text-white;
-  @apply transition-all duration-300 transform hover:scale-105;
-  @apply bg-gradient-to-r from-neon-blue to-neon-purple;
-  @apply shadow-lg hover:shadow-neon-blue/50;
-  @apply border border-neon-blue/30;
-  @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
-  @apply flex items-center justify-center gap-2;
+  width: 100%;
+  padding: 1rem 1.5rem; /* py-4 px-6 */
+  border-radius: 0.5rem; /* rounded-lg */
+  font-weight: 600; /* font-semibold */
+  color: white;
+  transition: all 0.3s; /* transition-all duration-300 */
+  transform-origin: center;
+  background: linear-gradient(to right, #00d4ff, #8b5cf6); /* bg-gradient-to-r from-neon-blue to-neon-purple */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+  border: 1px solid rgba(0, 212, 255, 0.3); /* border border-neon-blue/30 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* gap-2 */
 }
 
-.submit-button:not(:disabled):hover {
-  box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+.submit-button:hover:not(:disabled) {
+  transform: scale(1.05); /* hover:scale-105 */
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.5); /* hover:shadow-neon-blue/50 */
+}
+
+.submit-button:disabled {
+  opacity: 0.5; /* disabled:opacity-50 */
+  cursor: not-allowed; /* disabled:cursor-not-allowed */
+  transform: none; /* disabled:transform-none */
 }
 
 .submit-button.submitting {
-  @apply bg-gradient-to-r from-gray-600 to-gray-700;
+  background: linear-gradient(to right, rgb(75, 85, 99), rgb(55, 65, 81)); /* bg-gradient-to-r from-gray-600 to-gray-700 */
 }
 
 /* Loading Spinner */
 .loading-spinner {
-  @apply w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin;
+  width: 1.25rem; /* w-5 */
+  height: 1.25rem; /* h-5 */
+  border: 2px solid rgba(255, 255, 255, 0.3); /* border-2 border-white/30 */
+  border-top-color: white; /* border-t-white */
+  border-radius: 9999px; /* rounded-full */
+  animation: spin 1s linear infinite; /* animate-spin */
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Custom Animations */
@@ -153,33 +276,35 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .hologram-container {
-    @apply hidden;
+    display: none; /* hidden */
   }
   
   .form-container {
-    @apply justify-center;
+    justify-content: center; /* justify-center */
   }
 }
 
 @media (max-width: 640px) {
   .form-card {
-    @apply p-6;
+    padding: 1.5rem; /* p-6 */
   }
   
   .form-title {
-    @apply text-2xl;
+    font-size: 1.5rem; /* text-2xl */
+    line-height: 2rem;
   }
   
   .floating-input {
-    @apply py-3;
+    padding-top: 0.75rem; /* py-3 */
+    padding-bottom: 0.75rem;
   }
   
   .floating-label {
-    @apply top-3;
+    top: 0.75rem; /* top-3 */
   }
   
   .floating-input:focus ~ .floating-label,
   .floating-input:not(:placeholder-shown) ~ .floating-label {
-    @apply -translate-y-7;
+    transform: translateY(-1.75rem) scale(0.85); /* -translate-y-7 */
   }
 }
