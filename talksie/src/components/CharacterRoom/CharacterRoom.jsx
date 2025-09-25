@@ -1,30 +1,59 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import { OrbitControls, useGLTF, PerspectiveCamera, Environment } from '@react-three/drei';
 import CallControls from '../CallControls/CallControls';
 import './CharacterRoom.css';
 import './CharacterRoomAnimations.css';
+import './VideoCallStyle.css';
 
-// Model component that loads and renders the 3D model
-function Model({ modelPath }) {
+// Model component that loads and renders the 3D model for video call style
+function Model({ modelPath, character }) {
   const { scene } = useGLTF(modelPath);
+  const modelRef = useRef();
   
-  // Set up rotation animation
+  // Set up positioning and animation for video call style
   React.useEffect(() => {
     if (scene) {
-      // Initial position adjustments if needed
-      scene.position.y = -1;
+      // Position the character for a video call framing (head and upper body visible)
+      scene.position.y = 0;
+      
+      // Character-specific adjustments
+      if (character?.id === 'voldemort') {
+        scene.position.z = -2; // Move Voldemort slightly back for better framing
+      } else if (character?.id === 'harrypotter') {
+        scene.position.z = -1.5;
+      } else if (character?.id === 'doraemon') {
+        scene.position.z = -1;
+      }
     }
-  }, [scene]);
+  }, [scene, character]);
   
-  // Return the 3D primitive with appropriate scaling and positioning
+  // Subtle idle animation
+  useEffect(() => {
+    if (!modelRef.current) return;
+    
+    const animate = () => {
+      if (modelRef.current) {
+        // Subtle breathing movement
+        modelRef.current.rotation.y = Math.sin(Date.now() * 0.0005) * 0.05;
+        modelRef.current.position.y = Math.sin(Date.now() * 0.001) * 0.05;
+      }
+      requestAnimationFrame(animate);
+    };
+    
+    const animationId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationId);
+  }, []);
+  
+  // Return the 3D primitive with video call positioning
   return (
     <primitive 
+      ref={modelRef}
       object={scene} 
-      scale={2} 
-      position={[0, -2, 0]}
-      rotation={[0, Math.PI / 6, 0]} // Slightly rotate for better viewing angle
+      scale={3} // Larger scale for close-up view
+      position={[0, -0.5, -2]} // Position for head and shoulders view
+      rotation={[0, 0, 0]} // Face directly at camera
     />
   );
 }
@@ -248,86 +277,105 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
       <div className="room-content">
         {/* Character Display Area */}
         <div className="character-display">
-          {/* 3D Model Container */}
+          {/* 3D Model Container - Video Call Style */}
           <div className="model-container" ref={modelContainerRef}>
             {/* Use 3D model if available for this character */}
             {getModelPath() ? (
               <div className={`model-3d-container character-${character?.id}`}>
+                {/* Character name banner */}
+                <div className="character-name-banner">
+                  {character?.name || character?.id || 'Character'}
+                </div>
+
                 <Canvas
-                  camera={{ position: [0, 0, 5], fov: 50 }}
+                  gl={{ antialias: true, alpha: true }}
                   style={{ width: '100%', height: '100%' }}
                   shadows
                   dpr={[1, 2]} // Dynamic pixel ratio for better performance
                   performance={{ min: 0.5 }} // Performance optimizations
                 >
-                  {/* Ambient light for general illumination */}
-                  <ambientLight intensity={0.5} />
+                  {/* Camera setup for video call style */}
+                  <PerspectiveCamera makeDefault position={[0, 0, 3]} fov={40} />
                   
-                  {/* Main directional light with shadow */}
+                  {/* Ambient light for general illumination */}
+                  <ambientLight intensity={0.6} />
+                  
+                  {/* Main key light for video call style lighting */}
                   <directionalLight 
-                    position={[5, 10, 5]} 
-                    intensity={1} 
+                    position={[3, 3, 2]} 
+                    intensity={1.2} 
                     castShadow 
-                    shadow-mapSize={1024} 
+                    shadow-mapSize={1024}
                   />
                   
-                  {/* Character-specific lighting */}
+                  {/* Fill light for softer shadows */}
+                  <directionalLight 
+                    position={[-3, 2, 2]} 
+                    intensity={0.5} 
+                  />
+                  
+                  {/* Character-specific lighting for video call */}
                   {character?.id === 'voldemort' && (
                     <>
                       <spotLight 
-                        position={[0, 5, 2]} 
-                        intensity={0.8} 
+                        position={[0, 2, 3]} 
+                        intensity={1.2} 
                         color="#ff0000" 
-                        angle={Math.PI / 6} 
-                        penumbra={0.3} 
+                        angle={Math.PI / 5} 
+                        penumbra={0.5} 
                       />
-                      <fog attach="fog" args={['#000', 5, 15]} />
+                      <fog attach="fog" args={['#000', 8, 20]} />
+                      <Environment preset="night" />
                     </>
                   )}
                   
                   {character?.id === 'harrypotter' && (
                     <>
                       <spotLight 
-                        position={[0, 5, 2]} 
-                        intensity={1.2} 
+                        position={[0, 2, 3]} 
+                        intensity={1.5} 
                         color="#ffc500" 
-                        angle={Math.PI / 6} 
-                        penumbra={0.3} 
+                        angle={Math.PI / 5}
+                        penumbra={0.5} 
                       />
-                      <fog attach="fog" args={['#0e1a40', 8, 20]} />
+                      <fog attach="fog" args={['#0e1a40', 10, 25]} />
+                      <Environment preset="sunset" />
                     </>
                   )}
                   
                   {character?.id === 'doraemon' && (
                     <>
                       <spotLight 
-                        position={[0, 5, 2]} 
-                        intensity={1.5} 
+                        position={[0, 2, 3]} 
+                        intensity={1.8} 
                         color="#00a8ff" 
-                        angle={Math.PI / 5} 
-                        penumbra={0.2} 
+                        angle={Math.PI / 4}
+                        penumbra={0.4} 
                       />
                       <hemisphereLight 
-                        intensity={0.8}
+                        intensity={1.0}
                         color="#ffffff"
                         groundColor="#005bea"
                       />
-                      <fog attach="fog" args={['#e6f7ff', 10, 25]} />
+                      <fog attach="fog" args={['#e6f7ff', 12, 30]} />
+                      <Environment preset="dawn" />
                     </>
                   )}
                   
                   {/* Fall back to a spinner or nothing while the model loads */}
                   <Suspense fallback={null}>
-                    <Model modelPath={getModelPath()} />
+                    <Model modelPath={getModelPath()} character={character} />
                   </Suspense>
                   
-                  {/* Limited OrbitControls for better user experience */}
+                  {/* Limited OrbitControls for subtle user interaction */}
                   <OrbitControls 
                     enableZoom={false} 
                     enablePan={false}
-                    minPolarAngle={Math.PI / 4}
-                    maxPolarAngle={Math.PI / 2}
-                    rotateSpeed={0.5}
+                    minPolarAngle={Math.PI / 2.5}
+                    maxPolarAngle={Math.PI / 1.8}
+                    minAzimuthAngle={-Math.PI / 8}
+                    maxAzimuthAngle={Math.PI / 8}
+                    rotateSpeed={0.2}
                   />
                 </Canvas>
                 
@@ -390,14 +438,51 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                   </>
                 )}
                 
-                {/* User Speaking Indicator (Google-like voice animation) */}
-                <div className={`user-speaking-indicator ${isUserSpeaking ? 'active' : ''}`}>
-                  <div className="voice-wave">
-                    <div className="wave-bar"></div>
-                    <div className="wave-bar"></div>
-                    <div className="wave-bar"></div>
-                    <div className="wave-bar"></div>
-                  </div>
+                {/* Video Call UI */}
+                <div className="video-call-ui">
+                  <button 
+                    className="video-call-button mute"
+                    onClick={() => setIsUserSpeaking(!isUserSpeaking)}
+                    aria-label={isUserSpeaking ? 'Mute' : 'Unmute'}
+                  >
+                    {isUserSpeaking ? '🎤' : '🔇'}
+                  </button>
+                  <button 
+                    className="video-call-button end-call"
+                    onClick={onEndCall || (() => navigate('/characters'))}
+                    aria-label="End Call"
+                  >
+                    📞
+                  </button>
+                  <button 
+                    className="video-call-button"
+                    onClick={onChangeCharacter || (() => navigate('/characters'))}
+                    aria-label="Change Character"
+                  >
+                    👥
+                  </button>
+                </div>
+                
+                {/* User camera preview */}
+                <div className="user-camera-preview">
+                  {/* This would be a real camera in a full implementation */}
+                </div>
+                
+                {/* Speaking indicator */}
+                <div className="speaking-indicator">
+                  {isCharacterSpeaking ? (
+                    <>
+                      <span>Speaking</span>
+                      <div className="wave">
+                        <div className="wave-bar" style={{ height: '6px' }}></div>
+                        <div className="wave-bar" style={{ height: '12px' }}></div>
+                        <div className="wave-bar" style={{ height: '8px' }}></div>
+                        <div className="wave-bar" style={{ height: '10px' }}></div>
+                      </div>
+                    </>
+                  ) : (
+                    <span>Listening...</span>
+                  )}
                 </div>
               </div>
             ) : (
@@ -632,6 +717,17 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
           )}
         </div>
       </div>
+
+      {/* Video Call Message Display */}
+      {currentMessage && (
+        <div className="video-call-message">
+          <div className="message-bubble">
+            <div className="message-content">
+              {currentMessage}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

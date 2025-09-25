@@ -85,7 +85,12 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* space-y-6 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
 }
 
 .model-placeholder {
