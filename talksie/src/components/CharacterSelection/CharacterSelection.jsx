@@ -76,11 +76,17 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
   const handleCharacterClick = (character) => {
     setSelectedCharacter(character);
     onCharacterSelect(character);
+    // Pass character directly to UserInfoForm through state
     setTimeout(() => {
       if (userData) {
         navigate('/character-room');
       } else {
-        navigate('/user-info');
+        console.log('Navigating with character:', character); // Debug log
+        navigate('/user-info', { 
+          state: { 
+            selectedCharacter: character // Pass the character object directly
+          } 
+        });
       }
     }, 800);
   };
@@ -167,7 +173,12 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
                 if (userData) {
                   navigate('/character-room');
                 } else {
-                  navigate('/user-info');
+                  console.log('Continue with character:', selectedCharacter); // Debug log
+                  navigate('/user-info', { 
+                    state: { 
+                      selectedCharacter // Pass the character object directly
+                    } 
+                  });
                 }
               }}
             >

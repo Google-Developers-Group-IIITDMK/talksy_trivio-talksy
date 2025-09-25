@@ -1,0 +1,118 @@
+/* Additional character-specific animations */
+
+.magic-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.magic-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--theme-accent);
+  border-radius: 50%;
+  filter: blur(2px);
+  opacity: 0.7;
+  animation: sparkle 3s ease-in-out infinite;
+}
+
+.character-room[data-character="harrypotter"] .magic-particle {
+  background: #ffc500;
+  box-shadow: 0 0 10px #ffc500;
+}
+
+.floating-icons {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.floating-icon {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: var(--theme-accent);
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: float-gadget 8s ease-in-out infinite;
+}
+
+.character-room[data-character="doraemon"] .floating-icon {
+  background: #00a8ff;
+  box-shadow: 0 0 10px rgba(0, 168, 255, 0.8);
+}
+
+/* Character-specific model container styles */
+.model-3d-container.character-voldemort canvas {
+  background: radial-gradient(circle at 30% 30%, #3d0a1f 0%, #1a0b14 100%);
+}
+
+.model-3d-container.character-harrypotter canvas {
+  background: radial-gradient(circle at 30% 30%, #762c00 0%, #0e1a40 100%);
+}
+
+.model-3d-container.character-doraemon canvas {
+  background: radial-gradient(circle at 30% 30%, #ffffff 0%, #005bea 100%);
+}
+
+/* Add new animations */
+@keyframes magic-glow {
+  0% {
+    box-shadow: 0 0 10px var(--theme-glow);
+  }
+  50% {
+    box-shadow: 0 0 40px var(--theme-glow), 0 0 80px var(--theme-glow);
+  }
+  100% {
+    box-shadow: 0 0 10px var(--theme-glow);
+  }
+}
+
+@keyframes magical-sparkle {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.2);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.2);
+  }
+}
+
+@keyframes tech-pulse {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}
+
+/* Apply responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .model-3d-container {
+    width: 16rem;
+    height: 16rem;
+  }
+  
+  .model-container {
+    padding: 1rem;
+  }
+  
+  .room-content {
+    padding: 1rem;
+  }
+}

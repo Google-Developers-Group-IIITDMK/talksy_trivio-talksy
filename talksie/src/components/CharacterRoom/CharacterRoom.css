@@ -1,16 +1,42 @@
-/* Using standard CSS properties instead of @apply directives */
+/* Character Room Main Styles - Modernized with glass morphism and animations */
 
 .character-room {
   position: fixed;
   inset: 0;
   overflow: hidden;
   background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  color: white;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.5s ease-in-out;
+}
+
+/* Character-specific themes */
+.character-room[data-character="voldemort"] {
+  --theme-primary: #1a0b14;
+  --theme-secondary: #3d0a1f;
+  --theme-accent: #ff0000;
+  --theme-glow: rgba(255, 0, 0, 0.4);
+}
+
+.character-room[data-character="harrypotter"] {
+  --theme-primary: #0e1a40;
+  --theme-secondary: #762c00;
+  --theme-accent: #ffc500;
+  --theme-glow: rgba(255, 197, 0, 0.4);
+}
+
+.character-room[data-character="doraemon"] {
+  --theme-primary: #005bea;
+  --theme-secondary: #ffffff;
+  --theme-accent: #ff4757;
+  --theme-glow: rgba(0, 168, 255, 0.4);
 }
 
 /* Background */
 .room-background {
   position: absolute;
   inset: 0;
+  z-index: 0;
 }
 
 .background-gradient {
@@ -18,6 +44,7 @@
   inset: 0;
   background: radial-gradient(ellipse at center, var(--theme-secondary), var(--theme-primary));
   opacity: 0.8;
+  animation: pulse 8s infinite alternate;
 }
 
 .background-particles {
@@ -58,7 +85,12 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* space-y-6 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
 }
 
 .model-placeholder {
@@ -83,6 +115,27 @@
   border: 3px solid var(--theme-accent);
   box-shadow: 0 0 40px var(--theme-glow);
   backdrop-filter: blur(10px);
+}
+
+/* Character-specific face styling */
+.character-face.voldemort {
+  border: 3px solid #8b0000;
+  box-shadow: 0 0 50px rgba(139, 0, 0, 0.6);
+}
+
+.character-face.harry {
+  border: 3px solid #d3a625;
+  box-shadow: 0 0 50px rgba(211, 166, 37, 0.6);
+}
+
+.character-face.doraemon {
+  border: 3px solid #00a0e9;
+  box-shadow: 0 0 50px rgba(0, 160, 233, 0.6);
+}
+
+.character-face.nobita {
+  border: 3px solid #ffd700;
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
 }
 
 .face-background {
@@ -198,6 +251,39 @@
   inset: 2rem; /* inset-8 */
   animation: rotate 10s linear infinite;
 }
+
+/* User Speaking Indicator (Google-like voice animation) */
+.user-speaking-indicator {
+  position: absolute;
+  bottom: -3rem; /* bottom-12 */
+  left: 50%;
+  transform: translateX(-50%); /* -translate-x-1/2 */
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.user-speaking-indicator.active {
+  opacity: 1;
+}
+
+.voice-wave {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; /* gap-1 */
+}
+
+.wave-bar {
+  width: 0.5rem; /* w-2 */
+  height: 1rem; /* h-4 */
+  background-color: var(--theme-accent);
+  border-radius: 0.25rem; /* rounded */
+  animation: wave-animation 0.8s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(1) { animation-delay: 0s; }
+.wave-bar:nth-child(2) { animation-delay: 0.1s; }
+.wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.wave-bar:nth-child(4) { animation-delay: 0.3s; }
 
 /* Character Info Display */
 .character-info-display {
@@ -320,9 +406,16 @@
 .theme-effects {
   position: absolute;
   inset: 0;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* Voldemort Effects */
+.dark-environment {
+  position: absolute;
+  inset: 0;
+}
+
 .dark-wisps {
   position: absolute;
   inset: 0;
@@ -330,37 +423,79 @@
 
 .dark-wisp {
   position: absolute;
-  width: 8rem; /* w-32 */
   height: 0.25rem; /* h-1 */
   opacity: 0.2; /* opacity-20 */
-  background: linear-gradient(90deg, transparent, var(--theme-glow), transparent);
+  background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.6), transparent);
   animation: wisp 6s ease-in-out infinite;
 }
 
-/* Iron Man Effects */
-.tech-grid {
+.skull-particles {
   position: absolute;
   inset: 0;
-  opacity: 0.1; /* opacity-10 */
 }
 
-.grid-lines {
+.skull-particle {
   position: absolute;
-  background: linear-gradient(90deg, transparent 98%, var(--theme-accent) 100%);
+  font-size: 1.5rem;
+  opacity: 0.3;
+  animation: float-skull 15s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(139, 0, 0, 0.8));
 }
 
-.horizontal {
+.dark-mist {
+  position: absolute;
   inset: 0;
-  background-size: 100% 40px;
+  background: radial-gradient(circle at bottom, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+  mix-blend-mode: multiply;
+  opacity: 0.5;
 }
 
-.vertical {
+/* Harry Potter Effects */
+.magical-environment {
+  position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, transparent 98%, var(--theme-accent) 100%);
-  background-size: 40px 100%;
+}
+
+.magic-wisps {
+  position: absolute;
+  inset: 0;
+}
+
+.magic-wisp {
+  position: absolute;
+  width: 6rem; /* w-24 */
+  height: 0.25rem; /* h-1 */
+  opacity: 0.3; /* opacity-30 */
+  background: linear-gradient(90deg, transparent, rgba(211, 166, 37, 0.8), transparent);
+  animation: wisp-magic 8s ease-in-out infinite;
+}
+
+.magical-objects {
+  position: absolute;
+  inset: 0;
+}
+
+.magical-object {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.8;
+  animation: float-magic 20s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px rgba(211, 166, 37, 0.8));
+}
+
+.hogwarts-sky {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(14, 26, 64, 0.2), transparent 70%);
+  opacity: 0.4;
 }
 
 /* Doraemon Effects */
+.doraemon-environment {
+  position: absolute;
+  inset: 0;
+}
+
 .magic-sparkles {
   position: absolute;
   inset: 0;
@@ -371,9 +506,70 @@
   width: 0.5rem; /* w-2 */
   height: 0.5rem; /* h-2 */
   border-radius: 9999px; /* rounded-full */
-  background-color: var(--theme-accent);
+  background-color: white;
   animation: sparkle 3s ease-in-out infinite;
-  box-shadow: 0 0 10px var(--theme-glow);
+  box-shadow: 0 0 10px rgba(0, 160, 233, 0.8);
+}
+
+.floating-gadgets {
+  position: absolute;
+  inset: 0;
+}
+
+.floating-gadget {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.8;
+  animation: float-gadget 15s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(0, 160, 233, 0.6));
+}
+
+.blue-clouds {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top, rgba(0, 160, 233, 0.2), transparent 70%);
+  opacity: 0.5;
+}
+
+/* Nobita Effects */
+.nobita-environment {
+  position: absolute;
+  inset: 0;
+}
+
+.school-items {
+  position: absolute;
+  inset: 0;
+}
+
+.school-item {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.7;
+  animation: float-school 18s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+}
+
+.dream-clouds {
+  position: absolute;
+  inset: 0;
+}
+
+.dream-cloud {
+  position: absolute;
+  width: 6rem; /* w-24 */
+  height: 3rem; /* h-12 */
+  border-radius: 6rem; /* rounded-full */
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 215, 0, 0.3));
+  opacity: 0.2;
+  animation: float-cloud 25s ease-in-out infinite;
+}
+
+.sunshine-effect {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(255, 215, 0, 0.3), transparent 70%);
+  opacity: 0.5;
 }
 
 /* Animations */
@@ -504,6 +700,149 @@
   }
 }
 
+@keyframes wave-animation {
+  0%, 100% {
+    transform: scaleY(0.5);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scaleY(1.5);
+    opacity: 1;
+  }
+}
+
+@keyframes float-skull {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.3;
+  }
+  75% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-20vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes wisp-magic {
+  0% {
+    transform: translateY(0) rotate(0deg) scaleX(1);
+    opacity: 0;
+    left: -100px;
+  }
+  20% {
+    opacity: 0.3;
+  }
+  80% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-50px) rotate(5deg) scaleX(0.7);
+    opacity: 0;
+    left: 120%;
+  }
+}
+
+@keyframes float-magic {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.8;
+  }
+}
+
+@keyframes float-gadget {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.2;
+  }
+  33% {
+    transform: translate(20px, -10px) rotate(120deg);
+    opacity: 0.8;
+  }
+  66% {
+    transform: translate(-20px, -20px) rotate(240deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+    opacity: 0.2;
+  }
+}
+
+@keyframes float-school {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-15px) rotate(10deg);
+    opacity: 0.7;
+  }
+}
+
+@keyframes float-cloud {
+  0% {
+    transform: translate(-100%, 0) scale(1);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.2;
+  }
+  70% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translate(150%, -50px) scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-subtle {
+  0%, 100% {
+    transform: translateY(0) rotateX(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotateX(2deg);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.8;
+  }
+}
+
+@keyframes model-rotation {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .model-placeholder {
@@ -531,4 +870,135 @@
   .character-name-display {
     font-size: 1.25rem; /* text-xl */
   }
+}
+
+/* 3D Model Container Styling */
+
+.model-3d-container {
+  position: relative;
+  width: 22rem;
+  height: 22rem;
+  background: transparent;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+  box-shadow: 0 0 40px var(--theme-glow);
+  border: 3px solid var(--theme-accent);
+  transition: all 0.5s ease;
+}
+
+/* Character specific 3D containers */
+.character-room[data-character="voldemort"] .model-3d-container {
+  border-color: #8b0000;
+  box-shadow: 0 0 50px rgba(139, 0, 0, 0.6);
+}
+
+.character-room[data-character="harrypotter"] .model-3d-container {
+  border-color: #ffc500;
+  box-shadow: 0 0 50px rgba(255, 197, 0, 0.6);
+  border-style: double;
+  border-width: 5px;
+}
+
+.character-room[data-character="doraemon"] .model-3d-container {
+  border-color: #00a8ff;
+  box-shadow: 0 0 50px rgba(0, 168, 255, 0.6);
+  border-radius: 40%;
+}
+
+/* Ensure the Canvas sits properly in the container */
+.model-3d-container canvas {
+  display: block !important;
+  outline: none;
+  width: 100% !important;
+  height: 100% !important;
+  background: radial-gradient(circle at 30% 30%, var(--theme-secondary) 0%, var(--theme-primary) 100%);
+}
+
+/* Make sure the holographic overlay works with the 3D model */
+.model-3d-container .holographic-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    45deg, 
+    transparent 20%, 
+    var(--theme-accent) 45%, 
+    transparent 55%
+  );
+  opacity: 0.15;
+  animation: hologram 4s ease-in-out infinite;
+  mix-blend-mode: overlay;
+  z-index: 10;
+}
+
+/* Character-specific holographic overlay for 3D models */
+.model-3d-container .holographic-overlay.dark-magic {
+  background: linear-gradient(
+    45deg, 
+    transparent 20%, 
+    rgba(139, 0, 0, 0.8) 45%, 
+    transparent 55%
+  );
+  animation-duration: 5s;
+}
+
+.model-3d-container .holographic-overlay.magic-aura {
+  background: linear-gradient(
+    45deg, 
+    transparent 20%, 
+    rgba(255, 197, 0, 0.8) 45%, 
+    transparent 55%
+  );
+  animation-duration: 3s;
+}
+
+.model-3d-container .holographic-overlay.future-tech {
+  background: linear-gradient(
+    45deg, 
+    transparent 20%, 
+    rgba(0, 168, 255, 0.8) 45%, 
+    transparent 55%
+  );
+  animation-duration: 2s;
+}
+
+/* Make sure energy rings appear properly around the 3D model */
+.model-3d-container .energy-rings {
+  position: absolute;
+  inset: -10px;
+  transform-style: preserve-3d;
+  animation: pulse-subtle 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Make the energy rings for the 3D model */
+.model-3d-container .energy-ring {
+  position: absolute;
+  border-radius: 50%;
+  border-width: 2px;
+  border-style: solid;
+  opacity: 0.4;
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 15px var(--theme-glow);
+}
+
+/* Character-specific energy rings for 3D models */
+.character-room[data-character="voldemort"] .model-3d-container .energy-ring {
+  border-color: rgba(139, 0, 0, 0.8);
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.6);
+}
+
+/* User speaking indicator for 3D model */
+.model-3d-container .user-speaking-indicator {
+  position: absolute;
+  bottom: -3.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }

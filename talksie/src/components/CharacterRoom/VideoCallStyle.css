@@ -1,0 +1,329 @@
+/* Video Call Style for Character Room */
+
+/* Full-screen model container */
+.model-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+}
+
+/* Video call style 3D container */
+.model-3d-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  box-shadow: inset 0 0 100px var(--theme-glow);
+  border: none;
+}
+
+/* Video call style canvas */
+.model-3d-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  background: none !important;
+}
+
+/* Character-specific backgrounds */
+.character-room[data-character="voldemort"] .room-background {
+  background: radial-gradient(circle at center, rgba(61, 10, 31, 0.8) 0%, rgba(26, 11, 20, 1) 100%);
+}
+
+.character-room[data-character="harrypotter"] .room-background {
+  background: radial-gradient(circle at center, rgba(118, 44, 0, 0.8) 0%, rgba(14, 26, 64, 1) 100%);
+}
+
+.character-room[data-character="doraemon"] .room-background {
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, rgba(0, 91, 234, 1) 100%);
+}
+
+/* UI Elements for video call */
+.video-call-ui {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  gap: 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.video-call-button {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.video-call-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.video-call-button.end-call {
+  background: #ff3b30;
+}
+
+.video-call-button.end-call:hover {
+  background: #ff1a1a;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 59, 48, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 59, 48, 0);
+  }
+}
+
+.video-call-button.disabled {
+  background: #555;
+  position: relative;
+}
+
+.video-call-button.disabled:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 15%;
+  width: 70%;
+  height: 2px;
+  background: rgba(255, 0, 0, 0.7);
+  transform: rotate(-45deg);
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+/* Character name display */
+.character-name-banner {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.5rem 1.5rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+  z-index: 20;
+}
+
+/* User camera preview */
+.user-camera-preview {
+  position: absolute;
+  bottom: 6rem;
+  right: 1.5rem;
+  width: 120px;
+  height: 160px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 30;
+}
+
+.user-camera-preview:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Speaking indicators */
+.speaking-indicator {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 1rem;
+  backdrop-filter: blur(5px);
+  font-size: 0.875rem;
+  color: white;
+  z-index: 30;
+}
+
+/* Video call message display */
+.video-call-message {
+  position: absolute;
+  top: 5rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 40;
+}
+
+.video-call-message .message-bubble {
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(8px);
+  max-width: 70%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  font-size: 1.25rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: messageAppear 0.5s ease forwards;
+}
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.speaking-indicator .wave {
+  display: flex;
+  align-items: flex-end;
+  height: 12px;
+  width: 20px;
+}
+
+.speaking-indicator .wave-bar {
+  width: 3px;
+  margin: 0 1px;
+  border-radius: 1px;
+  background: white;
+  animation: wave-animation 0.8s infinite ease-in-out;
+}
+
+.speaking-indicator .wave-bar:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.speaking-indicator .wave-bar:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.speaking-indicator .wave-bar:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+@keyframes wave-animation {
+  0% {
+    height: 3px;
+  }
+  50% {
+    height: 12px;
+  }
+  100% {
+    height: 3px;
+  }
+}
+
+/* User camera preview */
+.user-camera-preview {
+  position: absolute;
+  bottom: 6rem;
+  right: 2rem;
+  width: 180px;
+  height: 135px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  z-index: 20;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Fallback for 3D model loading errors */
+.model-error-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 15;
+}
+
+.model-error-fallback img {
+  max-width: 50%;
+  max-height: 70%;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.model-error-fallback .error-message {
+  margin-top: 20px;
+  color: #fff;
+  font-size: 1rem;
+  background: rgba(255, 0, 0, 0.3);
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.user-camera-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .video-call-button {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 1.2rem;
+  }
+  
+  .video-call-ui {
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .user-camera-preview {
+    width: 120px;
+    height: 90px;
+    bottom: 5rem;
+  }
+}
