@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './UserInfoForm.css';
 
+// Import character images
+import character1 from '../../assets/character-1.jpg';
+import character2 from '../../assets/character-2.jpg';
+import character3 from '../../assets/character-3.jpg';
+import character4 from '../../assets/character-4.jpg';
+
 const UserInfoForm = ({ onFormSubmit }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -10,11 +16,11 @@ const UserInfoForm = ({ onFormSubmit }) => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-const UserInfoForm = ({ onFormSubmit, selectedCharacter }) => {
-  const navigate = useNavigate();
-  const [userName, setUserName] = useState('');
-  const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Debug log for character data
+  useEffect(() => {
+    console.log('Location State:', location.state);
+    console.log('Selected Character:', selectedCharacter);
+  }, [location.state, selectedCharacter]);
 
   // Add a typing animation effect when the component mounts
   useEffect(() => {
@@ -130,7 +136,7 @@ const UserInfoForm = ({ onFormSubmit, selectedCharacter }) => {
           <div className="character-preview-circle">
             <div className="character-preview-avatar">
               <img 
-                src={selectedCharacter?.image || '/assets/character-1.jpg'} 
+                src={selectedCharacter?.image || character1} 
                 alt={`${selectedCharacter?.name || 'Character'} Avatar`} 
                 className="character-image" 
               />
