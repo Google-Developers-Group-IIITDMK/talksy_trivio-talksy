@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CallControls from '../CallControls/CallControls';
 import './CharacterRoom.css';
 
 const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) => {
   const navigate = useNavigate();
+  const modelContainerRef = useRef(null);
   
   // Redirect to appropriate screen if prerequisites are missing
   useEffect(() => {
@@ -16,6 +17,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
   }, [character, userData, navigate]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isCharacterSpeaking, setIsCharacterSpeaking] = useState(false);
+  const [isUserSpeaking, setIsUserSpeaking] = useState(false);
   const [facialExpression, setFacialExpression] = useState('neutral');
 
   // Get user name safely
@@ -30,14 +32,71 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
     'The future holds many possibilities.'
   ];
 
+  // Character-specific messages based on character identity
+  const getCharacterSpecificMessages = () => {
+    switch(character?.id) {
+      case 'voldemort':
+        return [
+          `${userName}... I've been waiting for you.`,
+          "The Dark Arts are a pathway to many abilities some consider to be... unnatural.",
+          "Tell me, what brings you to seek the Dark Lord?",
+          "Muggles... they are so... insignificant.",
+          `Curious... very curious that our paths would cross, ${userName}.`
+        ];
+      case 'harry':
+        return [
+          `Hi ${userName}! Fancy a game of Quidditch?`,
+          "Hogwarts has always been there to welcome me home.",
+          "My friends are my greatest strength.",
+          "Expecto Patronum! That's how you cast a Patronus charm.",
+          "Dumbledore always said our choices show what we truly are."
+        ];
+      case 'doraemon':
+        return [
+          `Konnichiwa, ${userName}! I have many gadgets to show you!`,
+          "Would you like to try my Anywhere Door?",
+          "Oh no! I hope Nobita isn't in trouble again.",
+          "Time travel is very exciting, but also quite dangerous!",
+          "My favorite food is dorayaki. Do you have any?"
+        ];
+      case 'nobita':
+        return [
+          `Hi ${userName}, have you seen Doraemon?`,
+          "I should probably be studying, but adventures are more fun!",
+          "Shizuka is the smartest person I know.",
+          "Giant can be a bully sometimes, but he's not all bad.",
+          "I wish I had a Time Machine to redo my test!"
+        ];
+      default:
+        return messages;
+    }
+  };
+
   useEffect(() => {
+    // Set up 3D model interaction
+    if (modelContainerRef.current) {
+      // Code to initialize 3D model when available
+      // Will be replaced with actual model loader when .glb/.gltf files are provided
+    }
+    
+    // Simulate user speaking occasionally
+    const userSpeakingInterval = setInterval(() => {
+      setIsUserSpeaking(true);
+      
+      setTimeout(() => {
+        setIsUserSpeaking(false);
+      }, 1500);
+    }, 15000);
+    
     // Simulate character speaking
+    const characterMessages = getCharacterSpecificMessages();
+    
     const speakingInterval = setInterval(() => {
       setIsCharacterSpeaking(true);
-      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+      const randomMessage = characterMessages[Math.floor(Math.random() * characterMessages.length)];
       setCurrentMessage(randomMessage);
       
-      // Set random facial expression
+      // Set character-appropriate facial expression
       const expressions = ['neutral', 'speaking', 'thinking', 'smiling'];
       setFacialExpression(expressions[Math.floor(Math.random() * expressions.length)]);
 
@@ -50,8 +109,21 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
     // Initial greeting
     setTimeout(() => {
       setIsCharacterSpeaking(true);
-      const userName = userData?.name || 'friend';
-      setCurrentMessage(`Hello ${userName}, welcome to my realm.`);
+      
+      // Character-specific greeting
+      let greeting = `Hello ${userName}, welcome to my realm.`;
+      
+      if (character?.id === 'voldemort') {
+        greeting = `${userName}... I've been expecting you.`;
+      } else if (character?.id === 'harry') {
+        greeting = `Hi ${userName}! Welcome to Hogwarts!`;
+      } else if (character?.id === 'doraemon') {
+        greeting = `Konnichiwa, ${userName}! Let's have a fun adventure!`;
+      } else if (character?.id === 'nobita') {
+        greeting = `Hey ${userName}! Want to hang out with me today?`;
+      }
+      
+      setCurrentMessage(greeting);
       setFacialExpression('speaking');
       
       setTimeout(() => {
@@ -60,8 +132,11 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
       }, 3000);
     }, 1000);
 
-    return () => clearInterval(speakingInterval);
-  }, [userName]);
+    return () => {
+      clearInterval(speakingInterval);
+      clearInterval(userSpeakingInterval);
+    };
+  }, [userName, character?.id]);
 
   const getThemeStyles = () => {
     // Default theme if no character is selected
@@ -110,12 +185,19 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
         {/* Character Display Area */}
         <div className="character-display">
           {/* 3D Model Placeholder */}
-          <div className="model-container">
+          <div className="model-container" ref={modelContainerRef}>
             <div className="model-placeholder">
               {/* Character Avatar with Animated Face */}
-              <div className={`character-face ${facialExpression}`}>
+              <div className={`character-face ${facialExpression} ${character?.id || ''}`}>
                 <div className="face-background">
-                  <span className="character-emoji">{character.emoji}</span>
+                  {/* Will be replaced with actual 3D model when available */}
+                  <span className="character-emoji">
+                    {character?.id === 'voldemort' ? '🧙‍♂️' : 
+                     character?.id === 'harry' ? '⚡' : 
+                     character?.id === 'doraemon' ? '🐱' :
+                     character?.id === 'nobita' ? '👦' : 
+                     '👤'}
+                  </span>
                 </div>
                 
                 {/* Animated Features */}
@@ -136,6 +218,16 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                 <div className="energy-ring ring-1"></div>
                 <div className="energy-ring ring-2"></div>
                 <div className="energy-ring ring-3"></div>
+              </div>
+              
+              {/* User Speaking Indicator (Google-like voice animation) */}
+              <div className={`user-speaking-indicator ${isUserSpeaking ? 'active' : ''}`}>
+                <div className="voice-wave">
+                  <div className="wave-bar"></div>
+                  <div className="wave-bar"></div>
+                  <div className="wave-bar"></div>
+                  <div className="wave-bar"></div>
+                </div>
               </div>
             </div>
 
@@ -188,27 +280,137 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
         </div>
 
         {/* Theme-specific Effects */}
-        <div className={`theme-effects ${character.id}`}>
-          {character.id === 'voldemort' && (
-            <div className="dark-wisps">
-              {Array.from({ length: 5 }, (_, i) => (
-                <div key={i} className="dark-wisp" />
-              ))}
+        <div className={`theme-effects ${character?.id || ''}`}>
+          {character?.id === 'voldemort' && (
+            <div className="dark-environment">
+              <div className="dark-wisps">
+                {Array.from({ length: 8 }, (_, i) => (
+                  <div 
+                    key={i} 
+                    className="dark-wisp" 
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      animationDelay: `${Math.random() * 5}s`,
+                      width: `${100 + Math.random() * 200}px`
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="skull-particles">
+                {Array.from({ length: 3 }, (_, i) => (
+                  <div 
+                    key={i} 
+                    className="skull-particle"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      animationDelay: `${Math.random() * 10}s`
+                    }}
+                  >
+                    💀
+                  </div>
+                ))}
+              </div>
+              <div className="dark-mist"></div>
             </div>
           )}
           
-          {character.id === 'ironman' && (
-            <div className="tech-grid">
-              <div className="grid-lines horizontal"></div>
-              <div className="grid-lines vertical"></div>
+          {character?.id === 'harry' && (
+            <div className="magical-environment">
+              <div className="magic-wisps">
+                {Array.from({ length: 10 }, (_, i) => (
+                  <div 
+                    key={i} 
+                    className="magic-wisp" 
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      animationDelay: `${Math.random() * 5}s`
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="magical-objects">
+                {Array.from({ length: 4 }, (_, i) => (
+                  <div 
+                    key={i} 
+                    className="magical-object"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${20 + Math.random() * 60}%`,
+                      animationDelay: `${Math.random() * 10}s`
+                    }}
+                  >
+                    {['⚡', '🧹', '🪄', '🧙‍♂️'][i]}
+                  </div>
+                ))}
+              </div>
+              <div className="hogwarts-sky"></div>
             </div>
           )}
           
-          {character.id === 'doraemon' && (
-            <div className="magic-sparkles">
-              {Array.from({ length: 10 }, (_, i) => (
-                <div key={i} className="sparkle" />
-              ))}
+          {character?.id === 'doraemon' && (
+            <div className="doraemon-environment">
+              <div className="magic-sparkles">
+                {Array.from({ length: 15 }, (_, i) => (
+                  <div 
+                    key={i} 
+                    className="sparkle"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      animationDelay: `${Math.random() * 5}s`
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="floating-gadgets">
+                {Array.from({ length: 4 }, (_, i) => (
+                  <div 
+                    key={i} 
+                    className="floating-gadget"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${10 + Math.random() * 80}%`,
+                      animationDelay: `${Math.random() * 10}s`
+                    }}
+                  >
+                    {['🚪', '🔔', '🧸', '🎒'][i]}
+                  </div>
+                ))}
+              </div>
+              <div className="blue-clouds"></div>
+            </div>
+          )}
+          
+          {character?.id === 'nobita' && (
+            <div className="nobita-environment">
+              <div className="school-items">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <div 
+                    key={i} 
+                    className="school-item"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${10 + Math.random() * 80}%`,
+                      animationDelay: `${Math.random() * 8}s`
+                    }}
+                  >
+                    {['📚', '✏️', '📝', '🎒', '🥪'][i]}
+                  </div>
+                ))}
+              </div>
+              <div className="dream-clouds">
+                {Array.from({ length: 3 }, (_, i) => (
+                  <div 
+                    key={i} 
+                    className="dream-cloud"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      animationDelay: `${Math.random() * 15}s`
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="sunshine-effect"></div>
             </div>
           )}
         </div>

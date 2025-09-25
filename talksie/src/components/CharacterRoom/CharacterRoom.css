@@ -85,6 +85,27 @@
   backdrop-filter: blur(10px);
 }
 
+/* Character-specific face styling */
+.character-face.voldemort {
+  border: 3px solid #8b0000;
+  box-shadow: 0 0 50px rgba(139, 0, 0, 0.6);
+}
+
+.character-face.harry {
+  border: 3px solid #d3a625;
+  box-shadow: 0 0 50px rgba(211, 166, 37, 0.6);
+}
+
+.character-face.doraemon {
+  border: 3px solid #00a0e9;
+  box-shadow: 0 0 50px rgba(0, 160, 233, 0.6);
+}
+
+.character-face.nobita {
+  border: 3px solid #ffd700;
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
+}
+
 .face-background {
   position: absolute;
   inset: 0;
@@ -198,6 +219,39 @@
   inset: 2rem; /* inset-8 */
   animation: rotate 10s linear infinite;
 }
+
+/* User Speaking Indicator (Google-like voice animation) */
+.user-speaking-indicator {
+  position: absolute;
+  bottom: -3rem; /* bottom-12 */
+  left: 50%;
+  transform: translateX(-50%); /* -translate-x-1/2 */
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.user-speaking-indicator.active {
+  opacity: 1;
+}
+
+.voice-wave {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; /* gap-1 */
+}
+
+.wave-bar {
+  width: 0.5rem; /* w-2 */
+  height: 1rem; /* h-4 */
+  background-color: var(--theme-accent);
+  border-radius: 0.25rem; /* rounded */
+  animation: wave-animation 0.8s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(1) { animation-delay: 0s; }
+.wave-bar:nth-child(2) { animation-delay: 0.1s; }
+.wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.wave-bar:nth-child(4) { animation-delay: 0.3s; }
 
 /* Character Info Display */
 .character-info-display {
@@ -320,9 +374,16 @@
 .theme-effects {
   position: absolute;
   inset: 0;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* Voldemort Effects */
+.dark-environment {
+  position: absolute;
+  inset: 0;
+}
+
 .dark-wisps {
   position: absolute;
   inset: 0;
@@ -330,37 +391,79 @@
 
 .dark-wisp {
   position: absolute;
-  width: 8rem; /* w-32 */
   height: 0.25rem; /* h-1 */
   opacity: 0.2; /* opacity-20 */
-  background: linear-gradient(90deg, transparent, var(--theme-glow), transparent);
+  background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.6), transparent);
   animation: wisp 6s ease-in-out infinite;
 }
 
-/* Iron Man Effects */
-.tech-grid {
+.skull-particles {
   position: absolute;
   inset: 0;
-  opacity: 0.1; /* opacity-10 */
 }
 
-.grid-lines {
+.skull-particle {
   position: absolute;
-  background: linear-gradient(90deg, transparent 98%, var(--theme-accent) 100%);
+  font-size: 1.5rem;
+  opacity: 0.3;
+  animation: float-skull 15s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(139, 0, 0, 0.8));
 }
 
-.horizontal {
+.dark-mist {
+  position: absolute;
   inset: 0;
-  background-size: 100% 40px;
+  background: radial-gradient(circle at bottom, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+  mix-blend-mode: multiply;
+  opacity: 0.5;
 }
 
-.vertical {
+/* Harry Potter Effects */
+.magical-environment {
+  position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, transparent 98%, var(--theme-accent) 100%);
-  background-size: 40px 100%;
+}
+
+.magic-wisps {
+  position: absolute;
+  inset: 0;
+}
+
+.magic-wisp {
+  position: absolute;
+  width: 6rem; /* w-24 */
+  height: 0.25rem; /* h-1 */
+  opacity: 0.3; /* opacity-30 */
+  background: linear-gradient(90deg, transparent, rgba(211, 166, 37, 0.8), transparent);
+  animation: wisp-magic 8s ease-in-out infinite;
+}
+
+.magical-objects {
+  position: absolute;
+  inset: 0;
+}
+
+.magical-object {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.8;
+  animation: float-magic 20s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px rgba(211, 166, 37, 0.8));
+}
+
+.hogwarts-sky {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(14, 26, 64, 0.2), transparent 70%);
+  opacity: 0.4;
 }
 
 /* Doraemon Effects */
+.doraemon-environment {
+  position: absolute;
+  inset: 0;
+}
+
 .magic-sparkles {
   position: absolute;
   inset: 0;
@@ -371,9 +474,70 @@
   width: 0.5rem; /* w-2 */
   height: 0.5rem; /* h-2 */
   border-radius: 9999px; /* rounded-full */
-  background-color: var(--theme-accent);
+  background-color: white;
   animation: sparkle 3s ease-in-out infinite;
-  box-shadow: 0 0 10px var(--theme-glow);
+  box-shadow: 0 0 10px rgba(0, 160, 233, 0.8);
+}
+
+.floating-gadgets {
+  position: absolute;
+  inset: 0;
+}
+
+.floating-gadget {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.8;
+  animation: float-gadget 15s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(0, 160, 233, 0.6));
+}
+
+.blue-clouds {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top, rgba(0, 160, 233, 0.2), transparent 70%);
+  opacity: 0.5;
+}
+
+/* Nobita Effects */
+.nobita-environment {
+  position: absolute;
+  inset: 0;
+}
+
+.school-items {
+  position: absolute;
+  inset: 0;
+}
+
+.school-item {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.7;
+  animation: float-school 18s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+}
+
+.dream-clouds {
+  position: absolute;
+  inset: 0;
+}
+
+.dream-cloud {
+  position: absolute;
+  width: 6rem; /* w-24 */
+  height: 3rem; /* h-12 */
+  border-radius: 6rem; /* rounded-full */
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 215, 0, 0.3));
+  opacity: 0.2;
+  animation: float-cloud 25s ease-in-out infinite;
+}
+
+.sunshine-effect {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(255, 215, 0, 0.3), transparent 70%);
+  opacity: 0.5;
 }
 
 /* Animations */
@@ -501,6 +665,111 @@
   50% {
     transform: scale(1) rotate(180deg);
     opacity: 1;
+  }
+}
+
+@keyframes wave-animation {
+  0%, 100% {
+    transform: scaleY(0.5);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scaleY(1.5);
+    opacity: 1;
+  }
+}
+
+@keyframes float-skull {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.3;
+  }
+  75% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-20vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes wisp-magic {
+  0% {
+    transform: translateY(0) rotate(0deg) scaleX(1);
+    opacity: 0;
+    left: -100px;
+  }
+  20% {
+    opacity: 0.3;
+  }
+  80% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-50px) rotate(5deg) scaleX(0.7);
+    opacity: 0;
+    left: 120%;
+  }
+}
+
+@keyframes float-magic {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.8;
+  }
+}
+
+@keyframes float-gadget {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.2;
+  }
+  33% {
+    transform: translate(20px, -10px) rotate(120deg);
+    opacity: 0.8;
+  }
+  66% {
+    transform: translate(-20px, -20px) rotate(240deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+    opacity: 0.2;
+  }
+}
+
+@keyframes float-school {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-15px) rotate(10deg);
+    opacity: 0.7;
+  }
+}
+
+@keyframes float-cloud {
+  0% {
+    transform: translate(-100%, 0) scale(1);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.2;
+  }
+  70% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translate(150%, -50px) scale(1.5);
+    opacity: 0;
   }
 }
 
