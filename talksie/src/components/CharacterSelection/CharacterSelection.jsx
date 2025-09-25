@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './CharacterSelection.css';
 import Navbar from '../Navbar/Navbar';
-import Footer from '../Footer/footer';
+import Footer from '../Footer/Footer';
 
 // Import character images
 import character1 from '../../assets/character-1.jpg';
@@ -11,36 +11,36 @@ import character4 from '../../assets/character-4.jpg';
 
 const characters = [
   {
-    id: 'emma',
-    name: 'Emma Watson',
-    description: 'Actress, model and activist',
+    id: 'voldemort',
+    name: 'Lord Voldemort',
+    description: 'The Dark Lord of the Wizarding World',
     image: character1,
-    personality: 'Intelligent, passionate, and thoughtful',
-    tags: ['Actress', 'Activist', 'Inspiring']
+    personality: 'Mysterious, powerful, and commanding',
+    tags: ['Villain', 'Dark Magic', 'Powerful']
   },
   {
-    id: 'tony',
-    name: 'Tony Stark',
-    description: 'Genius, Billionaire, Playboy, Philanthropist',
+    id: 'harry',
+    name: 'Harry Potter',
+    description: 'The Boy Who Lived, wizard and hero',
     image: character2,
-    personality: 'Witty, intelligent, and innovative',
-    tags: ['Technology', 'Genius', 'Hero']
+    personality: 'Brave, loyal, and determined',
+    tags: ['Wizard', 'Hero', 'Gryffindor']
   },
   {
-    id: 'austen',
-    name: 'Jane Austen',
-    description: 'English novelist known for her romance fiction',
+    id: 'doraemon',
+    name: 'Doraemon',
+    description: 'The robotic cat from the future',
     image: character3,
-    personality: 'Insightful, clever, and observant',
-    tags: ['Writer', 'Romantic', 'Historical']
+    personality: 'Friendly, helpful, and resourceful',
+    tags: ['Robot', 'Future', 'Gadgets']
   },
   {
-    id: 'dumbledore',
-    name: 'Professor Dumbledore',
-    description: 'The greatest wizard of all time',
+    id: 'nobita',
+    name: 'Nobita Nobi',
+    description: 'Doraemon\'s best friend and companion',
     image: character4,
-    personality: 'Wise, eccentric, and compassionate',
-    tags: ['Magic', 'Wisdom', 'Leadership']
+    personality: 'Kind-hearted, clumsy, and imaginative',
+    tags: ['Student', 'Friend', 'Adventure']
   }
 ];
 
@@ -56,17 +56,19 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
   };
 
   return (
-    <section id="characterSelectionSection">
-      <div className="background-shapes">
-        <div className="floating-shape shape1"></div>
-        <div className="floating-shape shape2"></div>
-        <div className="floating-shape shape3"></div>
-        <div className="floating-shape shape4"></div>
-        <div className="floating-shape shape5"></div>
-      </div>
-      
-      <div className="selection-container">
-        {/* Header */}
+    <>
+      <Navbar />
+      <section id="characterSelectionSection">
+        <div className="background-shapes">
+          <div className="floating-shape shape1"></div>
+          <div className="floating-shape shape2"></div>
+          <div className="floating-shape shape3"></div>
+          <div className="floating-shape shape4"></div>
+          <div className="floating-shape shape5"></div>
+        </div>
+        
+        <div className="selection-container">
+          {/* Header */}
         <div className="selection-header">
           <h1 className="selection-title">
             Choose Your <span className="gradient-text">Character</span>
@@ -156,6 +158,8 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
         ))}
       </div>
     </section>
+    <Footer />
+    </>
   );
 };
 
