@@ -1,92 +1,110 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CharacterSelection.css';
+import Navbar from '../Navbar/Navbar';
+import Footer from '../Footer/Footer';
+
+// Import character images
+import character1 from '../../assets/character-1.jpg';
+import character2 from '../../assets/character-2.jpg';
+import character3 from '../../assets/character-3.jpg';
+import character4 from '../../assets/character-4.jpg';
 
 const characters = [
   {
     id: 'voldemort',
     name: 'Lord Voldemort',
     description: 'The Dark Lord of the Wizarding World',
-    emoji: '🐍',
-    theme: {
-      primary: '#0f172a',
-      secondary: '#1e293b',
-      accent: '#22c55e',
-      glow: '#16a34a'
-    },
+    image: character1,
     personality: 'Mysterious, powerful, and commanding',
-    tags: ['Dark Magic', 'Powerful', 'Mysterious']
+    tags: ['Villain', 'Dark Magic', 'Powerful'],
+    theme: {
+      primary: '#1a1a2e',
+      secondary: '#4a4e69',
+      accent: '#8b0000',
+      glow: 'rgba(139, 0, 0, 0.4)'
+    }
   },
   {
-    id: 'ironman',
-    name: 'Tony Stark',
-    description: 'Genius, Billionaire, Playboy, Philanthropist',
-    emoji: '🤖',
+    id: 'harry',
+    name: 'Harry Potter',
+    description: 'The Boy Who Lived, wizard and hero',
+    image: character2,
+    personality: 'Brave, loyal, and determined',
+    tags: ['Wizard', 'Hero', 'Gryffindor'],
     theme: {
-      primary: '#7f1d1d',
-      secondary: '#991b1b',
-      accent: '#fbbf24',
-      glow: '#f59e0b'
-    },
-    personality: 'Witty, intelligent, and innovative',
-    tags: ['Technology', 'Genius', 'Hero']
+      primary: '#740001',
+      secondary: '#d3a625',
+      accent: '#0e1a40',
+      glow: 'rgba(211, 166, 37, 0.4)'
+    }
   },
   {
     id: 'doraemon',
     name: 'Doraemon',
     description: 'The robotic cat from the future',
-    emoji: '🔵',
+    image: character3,
+    personality: 'Friendly, helpful, and resourceful',
+    tags: ['Robot', 'Future', 'Gadgets'],
     theme: {
-      primary: '#0ea5e9',
-      secondary: '#0284c7',
-      accent: '#fbbf24',
-      glow: '#38bdf8'
-    },
-    personality: 'Friendly, helpful, and adventurous',
-    tags: ['Future Tech', 'Friendly', 'Magical']
+      primary: '#00a0e9',
+      secondary: '#ffffff',
+      accent: '#ff0000',
+      glow: 'rgba(0, 160, 233, 0.4)'
+    }
+  },
+  {
+    id: 'nobita',
+    name: 'Nobita Nobi',
+    description: 'Doraemon\'s best friend and companion',
+    image: character4,
+    personality: 'Kind-hearted, clumsy, and imaginative',
+    tags: ['Student', 'Friend', 'Adventure'],
+    theme: {
+      primary: '#ffd700',
+      secondary: '#3cb371',
+      accent: '#ff6347',
+      glow: 'rgba(255, 215, 0, 0.4)'
+    }
   }
 ];
 
 const CharacterSelection = ({ onCharacterSelect, userData }) => {
   const [selectedCharacter, setSelectedCharacter] = useState(null);
-  const [hoveredCharacter, setHoveredCharacter] = useState(null);
+  const navigate = useNavigate();
 
   const handleCharacterClick = (character) => {
     setSelectedCharacter(character);
-    // Add a small delay for animation effect
+    onCharacterSelect(character);
     setTimeout(() => {
-      onCharacterSelect(character);
-    }, 500);
-  };
-
-  const getBackgroundStyle = () => {
-    const character = hoveredCharacter || selectedCharacter;
-    if (!character) {
-      return {
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #374151 100%)'
-      };
-    }
-
-    const { theme } = character;
-    return {
-      background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 50%, ${theme.primary} 100%)`,
-      transition: 'background 0.5s ease-in-out'
-    };
+      if (userData) {
+        navigate('/character-room');
+      } else {
+        navigate('/user-info');
+      }
+    }, 800);
   };
 
   return (
-    <div className="character-selection-screen" style={getBackgroundStyle()}>
-      {/* Background Overlay */}
-      <div className="absolute inset-0 bg-black/40"></div>
-
-      {/* Content */}
-      <div className="selection-container">
-        {/* Header */}
+    <>
+      <Navbar />
+      <section id="characterSelectionSection">
+        <div className="background-shapes">
+          <div className="floating-shape shape1"></div>
+          <div className="floating-shape shape2"></div>
+          <div className="floating-shape shape3"></div>
+          <div className="floating-shape shape4"></div>
+          <div className="floating-shape shape5"></div>
+        </div>
+        
+        <div className="selection-container">
+          {/* Header */}
         <div className="selection-header">
           <h1 className="selection-title">
-            Choose Your Character
+            Choose Your <span className="gradient-text">Character</span>
           </h1>
           <p className="selection-subtitle">
-            Hello {userData?.name}, who would you like to talk with today?
+            Hello {userData?.name || 'there'}, select a character to start an engaging conversation
           </p>
         </div>
 
@@ -96,31 +114,28 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
             <div
               key={character.id}
               className={`character-card ${selectedCharacter?.id === character.id ? 'selected' : ''}`}
-              onMouseEnter={() => setHoveredCharacter(character)}
-              onMouseLeave={() => setHoveredCharacter(null)}
               onClick={() => handleCharacterClick(character)}
-              style={{
-                '--theme-color': character.theme.accent,
-                '--theme-glow': character.theme.glow
-              }}
             >
-              {/* Card Background Glow */}
-              <div className="card-glow"></div>
-              
-              {/* Card Content */}
-              <div className="card-content">
-                {/* Character Avatar */}
-                <div className="character-avatar">
-                  <span className="character-emoji">{character.emoji}</span>
-                  <div className="avatar-ring"></div>
+              <div className="card-inner">
+                {/* Card Image */}
+                <div className="character-image-container">
+                  <div className="image-glow"></div>
+                  <img src={character.image} alt={character.name} className="character-image" />
+                  <div className="type-badge">{character.tags[0]}</div>
+                  <div className="image-overlay">
+                    <p className="character-personality">{character.personality}</p>
+                    <button className="select-button">
+                      <span>Select</span>
+                      <div className="button-glow"></div>
+                    </button>
+                  </div>
                 </div>
-
+                
                 {/* Character Info */}
                 <div className="character-info">
                   <h3 className="character-name">{character.name}</h3>
                   <p className="character-description">{character.description}</p>
-                  <p className="character-personality">{character.personality}</p>
-                  
+
                   {/* Tags */}
                   <div className="character-tags">
                     {character.tags.map((tag, index) => (
@@ -139,9 +154,6 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
                   </div>
                 )}
               </div>
-
-              {/* Hover Effect */}
-              <div className="card-hover-effect"></div>
             </div>
           ))}
         </div>
@@ -151,25 +163,28 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
           <div className="continue-container">
             <button
               className="continue-button"
-              style={{
-                '--theme-color': selectedCharacter.theme.accent,
-                '--theme-glow': selectedCharacter.theme.glow
+              onClick={() => {
+                if (userData) {
+                  navigate('/character-room');
+                } else {
+                  navigate('/user-info');
+                }
               }}
-              onClick={() => onCharacterSelect(selectedCharacter)}
             >
-              Start Conversation with {selectedCharacter.name}
+              <span>Continue with {selectedCharacter.name}</span>
+              <div className="button-glow"></div>
               <span className="button-arrow">→</span>
             </button>
           </div>
         )}
       </div>
 
-      {/* Ambient Particles */}
-      <div className="ambient-particles">
-        {Array.from({ length: 20 }, (_, i) => (
+      {/* Decorative Elements */}
+      <div className="decorative-particles">
+        {Array.from({ length: 15 }, (_, i) => (
           <div
             key={i}
-            className="ambient-particle"
+            className="decorative-particle"
             style={{
               left: `${Math.random() * 100}%`,
               animationDelay: `${Math.random() * 10}s`,
@@ -178,7 +193,9 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
           />
         ))}
       </div>
-    </div>
+    </section>
+    <Footer />
+    </>
   );
 };
 

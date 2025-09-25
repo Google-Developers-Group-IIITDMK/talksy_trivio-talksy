@@ -1,15 +1,29 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CallControls from '../CallControls/CallControls';
 import './CharacterRoom.css';
 
 const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) => {
+  const navigate = useNavigate();
+  
+  // Redirect to appropriate screen if prerequisites are missing
+  useEffect(() => {
+    if (!character) {
+      navigate('/characters');
+    } else if (!userData) {
+      navigate('/user-info');
+    }
+  }, [character, userData, navigate]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isCharacterSpeaking, setIsCharacterSpeaking] = useState(false);
   const [facialExpression, setFacialExpression] = useState('neutral');
 
+  // Get user name safely
+  const userName = userData?.name || 'friend';
+  
   // Sample conversation messages
   const messages = [
-    `Hello ${userData?.name}, it's a pleasure to meet you.`,
+    `Hello ${userName}, it's a pleasure to meet you.`,
     'What would you like to talk about today?',
     'I find your world quite interesting.',
     'Tell me more about yourself.',
@@ -36,7 +50,8 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
     // Initial greeting
     setTimeout(() => {
       setIsCharacterSpeaking(true);
-      setCurrentMessage(`Hello ${userData?.name}, welcome to my realm.`);
+      const userName = userData?.name || 'friend';
+      setCurrentMessage(`Hello ${userName}, welcome to my realm.`);
       setFacialExpression('speaking');
       
       setTimeout(() => {
@@ -46,14 +61,26 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
     }, 1000);
 
     return () => clearInterval(speakingInterval);
-  }, [userData?.name]);
+  }, [userName]);
 
-  const getThemeStyles = () => ({
-    '--theme-primary': character.theme.primary,
-    '--theme-secondary': character.theme.secondary,
-    '--theme-accent': character.theme.accent,
-    '--theme-glow': character.theme.glow
-  });
+  const getThemeStyles = () => {
+    // Default theme if no character is selected
+    if (!character || !character.theme) {
+      return {
+        '--theme-primary': '#3a86ff',
+        '--theme-secondary': '#8338ec',
+        '--theme-accent': '#ff006e',
+        '--theme-glow': 'rgba(58, 134, 255, 0.4)'
+      };
+    }
+    
+    return {
+      '--theme-primary': character.theme.primary,
+      '--theme-secondary': character.theme.secondary,
+      '--theme-accent': character.theme.accent,
+      '--theme-glow': character.theme.glow
+    };
+  };
 
   return (
     <div 

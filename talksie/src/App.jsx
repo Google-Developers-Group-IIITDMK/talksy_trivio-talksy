@@ -22,6 +22,7 @@ function App() {
 
   const handleCharacterSelect = (character) => {
     setSelectedCharacter(character);
+    // Note: Navigation is now handled in the CharacterSelection component
   };
 
   const handleEndCall = () => {
