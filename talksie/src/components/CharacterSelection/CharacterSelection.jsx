@@ -1,92 +1,78 @@
 import React, { useState } from 'react';
 import './CharacterSelection.css';
+import Navbar from '../Navbar/Navbar';
+import Footer from '../Footer/footer';
+
+// Import character images
+import character1 from '../../assets/character-1.jpg';
+import character2 from '../../assets/character-2.jpg';
+import character3 from '../../assets/character-3.jpg';
+import character4 from '../../assets/character-4.jpg';
 
 const characters = [
   {
-    id: 'voldemort',
-    name: 'Lord Voldemort',
-    description: 'The Dark Lord of the Wizarding World',
-    emoji: '🐍',
-    theme: {
-      primary: '#0f172a',
-      secondary: '#1e293b',
-      accent: '#22c55e',
-      glow: '#16a34a'
-    },
-    personality: 'Mysterious, powerful, and commanding',
-    tags: ['Dark Magic', 'Powerful', 'Mysterious']
+    id: 'emma',
+    name: 'Emma Watson',
+    description: 'Actress, model and activist',
+    image: character1,
+    personality: 'Intelligent, passionate, and thoughtful',
+    tags: ['Actress', 'Activist', 'Inspiring']
   },
   {
-    id: 'ironman',
+    id: 'tony',
     name: 'Tony Stark',
     description: 'Genius, Billionaire, Playboy, Philanthropist',
-    emoji: '🤖',
-    theme: {
-      primary: '#7f1d1d',
-      secondary: '#991b1b',
-      accent: '#fbbf24',
-      glow: '#f59e0b'
-    },
+    image: character2,
     personality: 'Witty, intelligent, and innovative',
     tags: ['Technology', 'Genius', 'Hero']
   },
   {
-    id: 'doraemon',
-    name: 'Doraemon',
-    description: 'The robotic cat from the future',
-    emoji: '🔵',
-    theme: {
-      primary: '#0ea5e9',
-      secondary: '#0284c7',
-      accent: '#fbbf24',
-      glow: '#38bdf8'
-    },
-    personality: 'Friendly, helpful, and adventurous',
-    tags: ['Future Tech', 'Friendly', 'Magical']
+    id: 'austen',
+    name: 'Jane Austen',
+    description: 'English novelist known for her romance fiction',
+    image: character3,
+    personality: 'Insightful, clever, and observant',
+    tags: ['Writer', 'Romantic', 'Historical']
+  },
+  {
+    id: 'dumbledore',
+    name: 'Professor Dumbledore',
+    description: 'The greatest wizard of all time',
+    image: character4,
+    personality: 'Wise, eccentric, and compassionate',
+    tags: ['Magic', 'Wisdom', 'Leadership']
   }
 ];
 
 const CharacterSelection = ({ onCharacterSelect, userData }) => {
   const [selectedCharacter, setSelectedCharacter] = useState(null);
-  const [hoveredCharacter, setHoveredCharacter] = useState(null);
 
   const handleCharacterClick = (character) => {
     setSelectedCharacter(character);
     // Add a small delay for animation effect
     setTimeout(() => {
       onCharacterSelect(character);
-    }, 500);
-  };
-
-  const getBackgroundStyle = () => {
-    const character = hoveredCharacter || selectedCharacter;
-    if (!character) {
-      return {
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #374151 100%)'
-      };
-    }
-
-    const { theme } = character;
-    return {
-      background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 50%, ${theme.primary} 100%)`,
-      transition: 'background 0.5s ease-in-out'
-    };
+    }, 800);
   };
 
   return (
-    <div className="character-selection-screen" style={getBackgroundStyle()}>
-      {/* Background Overlay */}
-      <div className="absolute inset-0 bg-black/40"></div>
-
-      {/* Content */}
+    <section id="characterSelectionSection">
+      <div className="background-shapes">
+        <div className="floating-shape shape1"></div>
+        <div className="floating-shape shape2"></div>
+        <div className="floating-shape shape3"></div>
+        <div className="floating-shape shape4"></div>
+        <div className="floating-shape shape5"></div>
+      </div>
+      
       <div className="selection-container">
         {/* Header */}
         <div className="selection-header">
           <h1 className="selection-title">
-            Choose Your Character
+            Choose Your <span className="gradient-text">Character</span>
           </h1>
           <p className="selection-subtitle">
-            Hello {userData?.name}, who would you like to talk with today?
+            Hello {userData?.name || 'there'}, select a character to start an engaging conversation
           </p>
         </div>
 
@@ -96,31 +82,28 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
             <div
               key={character.id}
               className={`character-card ${selectedCharacter?.id === character.id ? 'selected' : ''}`}
-              onMouseEnter={() => setHoveredCharacter(character)}
-              onMouseLeave={() => setHoveredCharacter(null)}
               onClick={() => handleCharacterClick(character)}
-              style={{
-                '--theme-color': character.theme.accent,
-                '--theme-glow': character.theme.glow
-              }}
             >
-              {/* Card Background Glow */}
-              <div className="card-glow"></div>
-              
-              {/* Card Content */}
-              <div className="card-content">
-                {/* Character Avatar */}
-                <div className="character-avatar">
-                  <span className="character-emoji">{character.emoji}</span>
-                  <div className="avatar-ring"></div>
+              <div className="card-inner">
+                {/* Card Image */}
+                <div className="character-image-container">
+                  <div className="image-glow"></div>
+                  <img src={character.image} alt={character.name} className="character-image" />
+                  <div className="type-badge">{character.tags[0]}</div>
+                  <div className="image-overlay">
+                    <p className="character-personality">{character.personality}</p>
+                    <button className="select-button">
+                      <span>Select</span>
+                      <div className="button-glow"></div>
+                    </button>
+                  </div>
                 </div>
-
+                
                 {/* Character Info */}
                 <div className="character-info">
                   <h3 className="character-name">{character.name}</h3>
                   <p className="character-description">{character.description}</p>
-                  <p className="character-personality">{character.personality}</p>
-                  
+
                   {/* Tags */}
                   <div className="character-tags">
                     {character.tags.map((tag, index) => (
@@ -139,9 +122,6 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
                   </div>
                 )}
               </div>
-
-              {/* Hover Effect */}
-              <div className="card-hover-effect"></div>
             </div>
           ))}
         </div>
@@ -151,25 +131,22 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
           <div className="continue-container">
             <button
               className="continue-button"
-              style={{
-                '--theme-color': selectedCharacter.theme.accent,
-                '--theme-glow': selectedCharacter.theme.glow
-              }}
               onClick={() => onCharacterSelect(selectedCharacter)}
             >
-              Start Conversation with {selectedCharacter.name}
+              <span>Start Conversation with {selectedCharacter.name}</span>
+              <div className="button-glow"></div>
               <span className="button-arrow">→</span>
             </button>
           </div>
         )}
       </div>
 
-      {/* Ambient Particles */}
-      <div className="ambient-particles">
-        {Array.from({ length: 20 }, (_, i) => (
+      {/* Decorative Elements */}
+      <div className="decorative-particles">
+        {Array.from({ length: 15 }, (_, i) => (
           <div
             key={i}
-            className="ambient-particle"
+            className="decorative-particle"
             style={{
               left: `${Math.random() * 100}%`,
               animationDelay: `${Math.random() * 10}s`,
@@ -178,7 +155,7 @@ const CharacterSelection = ({ onCharacterSelect, userData }) => {
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 };
 
