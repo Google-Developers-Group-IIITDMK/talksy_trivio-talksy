@@ -1,104 +1,139 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UserInfoForm.css';
 
 const UserInfoForm = ({ onFormSubmit }) => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: '',
-    bio: '',
-    password: ''
-  });
-
-  const [errors, setErrors] = useState({});
+  const [userName, setUserName] = useState('');
+  const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  // Add a typing animation effect when the component mounts
+  useEffect(() => {
+    const welcomeNames = ['there', 'friend', 'explorer', 'adventurer', 'traveler'];
+    const randomName = welcomeNames[Math.floor(Math.random() * welcomeNames.length)];
+    
+    let i = 0;
+    const typingInterval = setInterval(() => {
+      if (i <= randomName.length) {
+        document.getElementById('welcomeName').textContent = `Hello, ${randomName.substring(0, i)}`;
+        i++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 100);
+    
+    return () => clearInterval(typingInterval);
+  }, []);
+
+  const handleNameChange = (e) => {
+    setUserName(e.target.value);
     
     // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+    if (error) {
+      setError('');
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters';
+  const validateName = () => {
+    if (!userName.trim()) {
+      return 'Name is required';
+    } else if (userName.trim().length < 2) {
+      return 'Name must be at least 2 characters';
     }
-    
-    if (!formData.bio.trim()) {
-      newErrors.bio = 'Bio is required';
-    } else if (formData.bio.trim().length < 10) {
-      newErrors.bio = 'Bio must be at least 10 characters';
-    }
-    
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-    
-    return newErrors;
+    return '';
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    const validationError = validateName();
+    if (validationError) {
+      setError(validationError);
       return;
     }
     
     setIsSubmitting(true);
     
+    // Add confetti effect
+    createConfettiEffect();
+    
     // Simulate API call
     setTimeout(() => {
-      onFormSubmit(formData);
+      onFormSubmit({ name: userName });
       setIsSubmitting(false);
       // Navigate to character room after form submission
       navigate('/character-room');
-    }, 1500);
+    }, 1800);
+  };
+  
+  // Create a confetti effect when form is submitted successfully
+  const createConfettiEffect = () => {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti-container';
+    
+    // Create 50 confetti pieces
+    for (let i = 0; i < 50; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.animationDelay = `${Math.random() * 3}s`;
+      piece.style.backgroundColor = getRandomColor();
+      confetti.appendChild(piece);
+    }
+    
+    document.querySelector('.user-info-screen').appendChild(confetti);
+    
+    // Remove the confetti after animation
+    setTimeout(() => {
+      document.querySelector('.confetti-container')?.remove();
+    }, 4000);
+  };
+  
+  const getRandomColor = () => {
+    const colors = [
+      '#6c63ff', // Primary purple
+      '#63ffda', // Primary mint
+      '#5a51d3', // Dark purple
+      '#4ad6b6', // Dark mint
+      '#ebe6ff', // Lavender light
+      '#e6fff9', // Mint light
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
   };
 
   return (
     <div className="user-info-screen">
-      {/* Background */}
-      <div className="bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900 absolute inset-0">
-        <div className="absolute inset-0 bg-black/40"></div>
+      {/* Floating Shapes Background */}
+      <div className="floating-shapes">
+        <div className="floating-shape shape1"></div>
+        <div className="floating-shape shape2"></div>
+        <div className="floating-shape shape3"></div>
+        <div className="floating-shape shape4"></div>
+        <div className="floating-shape shape5"></div>
       </div>
 
       {/* Content */}
       <div className="form-container">
-        {/* Assistant Hologram */}
-        <div className="hologram-container">
-          <div className="hologram-circle">
-            <div className="hologram-avatar">
-              <div className="avatar-inner">
-                <span className="text-4xl">🤖</span>
-              </div>
+        {/* Character Avatar */}
+        <div className="character-preview">
+          <div className="character-preview-circle">
+            <div className="character-preview-avatar">
+              <img src="/assets/character-1.jpg" alt="Character Avatar" className="character-image" />
             </div>
-            <div className="hologram-rings"></div>
+            <div className="preview-rings"></div>
+          </div>
+          <div className="character-preview-text">
+            <span id="welcomeName">Hello, there</span>
+            <p className="preview-message">I'm excited to meet you!</p>
           </div>
         </div>
 
         {/* Form Card */}
         <div className="form-card">
           <div className="form-header">
-            <h1 className="form-title">Welcome to TalkSie</h1>
-            <p className="form-subtitle">Tell us about yourself to get started</p>
+            <h1 className="form-title">What's your <span>name</span>?</h1>
+            <p className="form-subtitle">Let's get to know each other</p>
           </div>
 
           <form onSubmit={handleSubmit} className="form-body">
@@ -108,46 +143,17 @@ const UserInfoForm = ({ onFormSubmit }) => {
                 <input
                   type="text"
                   name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
+                  value={userName}
+                  onChange={handleNameChange}
                   placeholder="Your Name"
-                  className={`floating-input ${errors.name ? 'error' : ''}`}
+                  className={`floating-input name-input ${error ? 'error' : ''}`}
+                  autoComplete="off"
+                  autoFocus
                 />
-                <label className="floating-label">Name</label>
+                <label className="floating-label">Your Name</label>
+                <div className="input-highlight"></div>
               </div>
-              {errors.name && <span className="error-message">{errors.name}</span>}
-            </div>
-
-            {/* Bio Input */}
-            <div className="input-group">
-              <div className="input-wrapper">
-                <textarea
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleInputChange}
-                  placeholder="Tell us a bit about yourself..."
-                  rows={4}
-                  className={`floating-input resize-none ${errors.bio ? 'error' : ''}`}
-                />
-                <label className="floating-label">Short Bio</label>
-              </div>
-              {errors.bio && <span className="error-message">{errors.bio}</span>}
-            </div>
-
-            {/* Password Input */}
-            <div className="input-group">
-              <div className="input-wrapper">
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  placeholder="Create a password"
-                  className={`floating-input ${errors.password ? 'error' : ''}`}
-                />
-                <label className="floating-label">Password</label>
-              </div>
-              {errors.password && <span className="error-message">{errors.password}</span>}
+              {error && <span className="error-message">{error}</span>}
             </div>
 
             {/* Submit Button */}
@@ -159,12 +165,16 @@ const UserInfoForm = ({ onFormSubmit }) => {
               {isSubmitting ? (
                 <>
                   <div className="loading-spinner"></div>
-                  Creating Profile...
+                  <span>Let's Go...</span>
                 </>
               ) : (
-                'Start Talking'
+                <span>Meet Your Character</span>
               )}
             </button>
+            
+            <div className="privacy-note">
+              We value your privacy. Your name is only used to personalize your experience.
+            </div>
           </form>
         </div>
       </div>
