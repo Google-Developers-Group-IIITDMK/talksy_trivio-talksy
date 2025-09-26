@@ -74,8 +74,10 @@ function Model({ modelPath, character }) {
       // Character-specific adjustments
       if (character?.id === 'voldemort') {
         scene.position.z = -2; // Move Voldemort slightly back for better framing
-      } else if (character?.id === 'harrypotter') {
-        scene.position.z = -1.5;
+      } else if (character?.id === 'harry') { // Changed from 'harrypotter' to match the ID in CharacterSelection.jsx
+        scene.position.z = -1.0; // Move Harry closer to the camera
+        scene.position.y = -3.0; // Adjust height to bring face to center
+        scene.rotation.x = 0.1; // Slight tilt to face camera properly
       } else if (character?.id === 'doraemon') {
         scene.position.z = -1;
       }
@@ -351,7 +353,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
         textColor: '#1f1f1f', // Dark text with light hints of black
         borderColor: '#3d0a1f' // Darker border
       },
-      harrypotter: {
+      harry: {
         primary: '#fafafa', // Light background
         secondary: '#e8eaf6', // Light blue-ish secondary
         accent: '#b71c1c', // Gryffindor red
@@ -401,8 +403,8 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
     switch(character?.id) {
       case 'voldemort':
         return '/assets/voldemort.glb'; // Path to your voldemort.glb file in the public/assets folder
-      case 'harrypotter':
-        return '/assets/harrypotter.glb'; // Path to Harry Potter model when available
+      case 'harry': // Changed from 'harrypotter' to match the ID in CharacterSelection.jsx
+        return '/assets/harrypotter.glb'; // Path to Harry Potter model in the public/assets folder
       case 'doraemon':
         return '/assets/doraemon.glb'; // Path to Doraemon model when available
       default:
@@ -507,7 +509,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                     </>
                   )}
                   
-                  {character?.id === 'harrypotter' && (
+                  {character?.id === 'harry' && (
                     <>
                       <spotLight 
                         position={[0, 2, 3]} 
@@ -578,7 +580,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                   </>
                 )}
                 
-                {character?.id === 'harrypotter' && (
+                {character?.id === 'harry' && (
                   <>
                     {/* Magic overlay */}
                     <div className="holographic-overlay magic-aura"></div>
@@ -803,8 +805,8 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
 
 // Preload models for better performance
 useGLTF.preload('/assets/voldemort.glb');
-// Uncomment these when the models are available
-// useGLTF.preload('/assets/harrypotter.glb');
+useGLTF.preload('/assets/harrypotter.glb'); // This still uses the file name harrypotter.glb
+// Uncomment this when the model is available
 // useGLTF.preload('/assets/doraemon.glb');
 
 // Add character-specific message and animation logic for new characters

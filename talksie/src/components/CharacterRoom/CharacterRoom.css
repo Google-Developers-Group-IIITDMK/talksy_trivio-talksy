@@ -18,7 +18,7 @@
   --theme-glow: rgba(255, 0, 0, 0.4);
 }
 
-.character-room[data-character="harrypotter"] {
+.character-room[data-character="harry"] {
   --theme-primary: #0e1a40;
   --theme-secondary: #762c00;
   --theme-accent: #ffc500;

@@ -35,7 +35,7 @@
   background: radial-gradient(circle at center, rgba(245, 245, 245, 1) 0%, rgba(224, 224, 224, 0.9) 70%, rgba(156, 0, 0, 0.2) 100%);
 }
 
-.character-room[data-character="harrypotter"] .room-background {
+.character-room[data-character="harry"] .room-background {
   background: radial-gradient(circle at center, rgba(250, 250, 250, 1) 0%, rgba(232, 234, 246, 0.9) 70%, rgba(14, 26, 64, 0.2) 100%);
 }
 
