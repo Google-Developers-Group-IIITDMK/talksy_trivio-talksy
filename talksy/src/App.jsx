@@ -30,17 +30,42 @@ const App = () => {
     });
   });
 
+const moveIntensity = 60; 
+const rotateIntensity = 1;
+
   useGSAP(() => {
     const main = mainRef.current;
     if (!main) return;
+    const container = document.querySelector(".main");
+    const imageElement = document.querySelector(".character");
+    // const handler = (e) => {
+    //   const xMove = (e.clientX / window.innerWidth - 0.5) * 40;
+    //   gsap.to(".imagesdiv .text", { x: `${xMove * 0.7}%` });
+    // };
+
+    // main.addEventListener("mousemove", handler);
 
     const handler = (e) => {
-      const xMove = (e.clientX / window.innerWidth - 0.5) * 40;
-      gsap.to(".imagesdiv .text", { x: `${xMove * 0.7}%` });
-      gsap.to(".sky", { x: `${xMove * 0.1}%` });
-      gsap.to(".bg", { x: `${xMove * 0.1}%` });
-    };
+     
+      const xPercent = e.clientX / window.innerWidth - 0.5;
+      const yPercent = e.clientY / window.innerHeight - 0.5;
 
+      const xMove = xPercent * moveIntensity;
+      const yMove = yPercent * moveIntensity;
+
+      const yRotate = xPercent * rotateIntensity;
+      const xRotate = -1 * yPercent * rotateIntensity;
+
+      
+      gsap.to(imageElement, {
+        x: xMove,
+        y: yMove,
+        rotateY: yRotate,
+        rotateX: xRotate,
+        ease: "power1.out", 
+        duration: 0.8, 
+      });
+    };
     main.addEventListener("mousemove", handler);
 
     return () => main.removeEventListener("mousemove", handler);
@@ -101,7 +126,7 @@ const App = () => {
             </div>
             <div className="imagesdiv w-full h-screen realtive overflow-hidden">
               <img
-                className="sky scale-[1.2] absolute top-0 left-0 w-full h-full object-cover"
+                className="character scale-[1.2] absolute top-0 left-0 w-full h-full object-cover"
                 src="./kprchar1.png"
               ></img>
               <img
@@ -119,16 +144,7 @@ const App = () => {
                 <h1 className="text-[160px] text-white font-[pricedown] translate-x-[280px]">
                   COMES ALIVE
                 </h1>
-                {/* <h1 className="text-[160px] text-white font-[pricedown] translate-x-[400px]">
-                  ALIVE
-                </h1> */}
               </div>
-
-              <img
-                className="absolute -bottom-[35%] left-1/2 -translate-x-1/2 scale-[1.1]"
-                src="./girlbg.png"
-                alt=""
-              />
             </div>
 
             <div className="btmbar text-white w-full py-10 px-10 absolute bottom-0 left-0 bg-gradient-to-t from-black to-transparent">
