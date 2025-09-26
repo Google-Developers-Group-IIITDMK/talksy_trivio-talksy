@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const container = useRef();
+  const heroRef = useRef(); 
+
+  useGSAP(() => {
+    
+    gsap.set(".panel", {
+      rotationY: -90,
+      transformOrigin: "center center",
+    });
+
+    
+    const tl = gsap.timeline({
+        defaults: { duration: 1.8, ease: "power3.inOut" }
+    });
+
+   
+    tl.to(heroRef.current, {
+      width: "100vw",
+      height: "100vh",
+      borderRadius: "0px",
+    });
+
+   
+    tl.to(".panel", {
+      rotationY: 0,
+    }, "<");
+
+  }, { scope: container });
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+   
+    <div ref={container} style={{ perspective: '1200px' }} className="main bg-white w-full h-screen flex items-center justify-center">
+      
+      <div 
+        ref={heroRef} 
+        className="hero relative w-[50vw] h-[80vh] md:w-[30vw] md:h-[75vh] rounded-3xl overflow-hidden"
+      >
+        <div
+          className="absolute left-0 top-0 panel w-full h-full"
+          style={{
+            backgroundImage: `url(./kprchar1.png)`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default App
+export default App;
