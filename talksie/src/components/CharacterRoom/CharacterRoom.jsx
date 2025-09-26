@@ -76,8 +76,9 @@ function Model({ modelPath, character }) {
         scene.position.z = -2; // Move Voldemort slightly back for better framing
       } else if (character?.id === 'harry') { // Changed from 'harrypotter' to match the ID in CharacterSelection.jsx
         scene.position.z = -1.0; // Move Harry closer to the camera
-        scene.position.y = -3.0; // Adjust height to bring face to center
-        scene.rotation.x = 0.1; // Slight tilt to face camera properly
+        scene.position.y = -0.01; // Adjust height to bring face to center
+        scene.rotation.x = 0; // No tilt
+        scene.rotation.y = Math.PI * 1.5; // Rotate 270 degrees (180 + 90) to face the camera
       } else if (character?.id === 'doraemon') {
         scene.position.z = -1;
       }
@@ -88,10 +89,12 @@ function Model({ modelPath, character }) {
   useEffect(() => {
     if (!modelRef.current) return;
     
+    const baseRotationY = character?.id === 'harry' ? Math.PI * 1.5 : 0; // Base rotation for Harry is 270 degrees to face camera
+    
     const animate = () => {
       if (modelRef.current) {
-        // Subtle breathing movement - just rotate slightly, don't change position
-        modelRef.current.rotation.y = Math.sin(Date.now() * 0.0005) * 0.05;
+        // Subtle breathing movement - just rotate slightly while maintaining base rotation
+        modelRef.current.rotation.y = baseRotationY + Math.sin(Date.now() * 0.0005) * 0.05;
         // Removed vertical movement to keep the face centered
       }
       requestAnimationFrame(animate);
@@ -99,7 +102,7 @@ function Model({ modelPath, character }) {
     
     const animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, []);
+  }, [character]);
   
   // Return nothing if we had an error loading the model
   if (hasError || !scene) {
@@ -112,9 +115,9 @@ function Model({ modelPath, character }) {
     <primitive 
       ref={modelRef}
       object={scene} 
-      scale={3} // Larger scale for close-up view
-      position={[0, -2.5, -2]} // Much lower position to center the face in view
-      rotation={[0, 0, 0]} // Face directly at camera
+      scale={character?.id === 'harry' ? 3.5 : 3} // Larger scale for Harry Potter
+      position={character?.id === 'harry' ? [0, -2.5, -1.5] : [0, -2.5, -2]} // Adjusted position for Harry Potter
+      rotation={character?.id === 'harry' ? [0, Math.PI * 1.5, 0] : [0, 0, 0]} // Rotate Harry 270 degrees to face camera
     />
   );
 }
@@ -475,7 +478,11 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                   onError={error => console.error('Canvas error:', error)}
                 >
                   {/* Camera setup for video call style */}
-                  <PerspectiveCamera makeDefault position={[0, -2.0, 3]} fov={40} />
+                  <PerspectiveCamera 
+                    makeDefault 
+                    position={character?.id === 'harry' ? [0, -1.5, 3] : [0, -2.0, 3]} 
+                    fov={character?.id === 'harry' ? 35 : 40} 
+                  />
                   
                   {/* Ambient light for general illumination */}
                   <ambientLight intensity={0.6} />
@@ -511,14 +518,23 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                   
                   {character?.id === 'harry' && (
                     <>
+                      {/* Key light from the front to highlight the face */}
                       <spotLight 
-                        position={[0, 2, 3]} 
-                        intensity={1.5} 
+                        position={[0, 0, 4]} 
+                        intensity={1.8} 
                         color="#ffc500" 
-                        angle={Math.PI / 5}
+                        angle={Math.PI / 4}
                         penumbra={0.5} 
                       />
-                      <fog attach="fog" args={['#0e1a40', 10, 25]} />
+                      {/* Rim light from behind to create depth */}
+                      <spotLight 
+                        position={[1, 2, -2]} 
+                        intensity={1.0} 
+                        color="#ffffff" 
+                        angle={Math.PI / 6}
+                        penumbra={0.7} 
+                      />
+                      <fog attach="fog" args={['#0e1a40', 15, 30]} />
                       <Environment preset="sunset" />
                     </>
                   )}
