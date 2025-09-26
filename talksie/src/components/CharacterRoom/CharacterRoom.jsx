@@ -69,7 +69,7 @@ function Model({ modelPath, character }) {
     if (scene) {
       console.log('Setting up model position for character:', character?.id);
       // Position the character for a video call framing (head and upper body visible)
-      scene.position.y = 0;
+      scene.position.y = -1.0; // Lower the model significantly to center it
       
       // Character-specific adjustments
       if (character?.id === 'voldemort') {
@@ -88,9 +88,9 @@ function Model({ modelPath, character }) {
     
     const animate = () => {
       if (modelRef.current) {
-        // Subtle breathing movement
+        // Subtle breathing movement - just rotate slightly, don't change position
         modelRef.current.rotation.y = Math.sin(Date.now() * 0.0005) * 0.05;
-        modelRef.current.position.y = Math.sin(Date.now() * 0.001) * 0.05;
+        // Removed vertical movement to keep the face centered
       }
       requestAnimationFrame(animate);
     };
@@ -111,7 +111,7 @@ function Model({ modelPath, character }) {
       ref={modelRef}
       object={scene} 
       scale={3} // Larger scale for close-up view
-      position={[0, -0.5, -2]} // Position for head and shoulders view
+      position={[0, -2.5, -2]} // Much lower position to center the face in view
       rotation={[0, 0, 0]} // Face directly at camera
     />
   );
@@ -129,6 +129,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
   const [facialExpression, setFacialExpression] = useState('neutral');
+  const [isCallEnded, setIsCallEnded] = useState(false); // Track if call has ended
   
   // Redirect to appropriate screen if prerequisites are missing
   useEffect(() => {
@@ -436,7 +437,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                   onError={error => console.error('Canvas error:', error)}
                 >
                   {/* Camera setup for video call style */}
-                  <PerspectiveCamera makeDefault position={[0, 0, 3]} fov={40} />
+                  <PerspectiveCamera makeDefault position={[0, -2.0, 3]} fov={40} />
                   
                   {/* Ambient light for general illumination */}
                   <ambientLight intensity={0.6} />
