@@ -149,12 +149,27 @@ const App = () => {
               </div>
             </div>
           </div>
-          <div className="relative w-full h-screen">
+          <div className="relative w-full h-screen overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-screen bg-no-repeat">
               <img src="./0.png" className="w-full h-screen object-cover" alt="" />
             </div>
-            <div className="absolute top-0 left-0 w-full h-screen bg-no-repeat">
-              <img src="./1.png" className="w-full h-screen object-cover" alt="" />
+            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
+              <img src="./mount21.png" className="w-full h-screen object-cover" alt="" />
+            </div>
+            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
+              <img src="./mount31.png" className="w-full h-screen object-cover" alt="" />
+            </div>
+            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
+              <img src="./mount41.png" className="w-full h-screen object-cover" alt="" />
+            </div>
+            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
+              <img src="./mount51.png" className="w-full h-screen object-cover" alt="" />
+            </div>
+            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
+              <img src="./mount61.png" className="w-full h-screen object-cover" alt="" />
+            </div>
+            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
+              <img src="./characs1.png" className="w-full h-screen object-cover" alt="" />
             </div>
           </div>
         </>
