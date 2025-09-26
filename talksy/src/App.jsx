@@ -30,8 +30,8 @@ const App = () => {
     });
   });
 
-const moveIntensity = 60; 
-const rotateIntensity = 1;
+  const moveIntensity = 60;
+  const rotateIntensity = 1;
 
   useGSAP(() => {
     const main = mainRef.current;
@@ -46,7 +46,6 @@ const rotateIntensity = 1;
     // main.addEventListener("mousemove", handler);
 
     const handler = (e) => {
-     
       const xPercent = e.clientX / window.innerWidth - 0.5;
       const yPercent = e.clientY / window.innerHeight - 0.5;
 
@@ -56,19 +55,18 @@ const rotateIntensity = 1;
       const yRotate = xPercent * rotateIntensity;
       const xRotate = -1 * yPercent * rotateIntensity;
 
-      
       gsap.to(imageElement, {
         x: xMove,
         y: yMove,
         rotateY: yRotate,
         rotateX: xRotate,
-        ease: "power1.out", 
-        duration: 0.8, 
+        ease: "power1.out",
+        duration: 0.8,
       });
       gsap.to(".imagesdiv .text", {
         x: xMove,
-        ease: "power1.out", 
-        duration: 0.8, 
+        ease: "power1.out",
+        duration: 0.8,
       });
     };
     main.addEventListener("mousemove", handler);
@@ -117,37 +115,49 @@ const rotateIntensity = 1;
         </svg>
       </div>
       {showContent && (
-        <div ref={mainRef} className="main w-full">
-          <div className="relative landing w-full h-screen bg-white overflow-hidden">
-            <div className="navbar absolute top-0 left-0 z-10 w-full p-10">
-              <div className="logo flex gap-5 items-center">
-                <div className="lines flex flex-col gap-1">
-                  <div className="line w-10 h-1 bg-white"></div>
-                  <div className="line w-8 h-1 bg-white"></div>
-                  <div className="line w-5 h-1 bg-white"></div>
+        <>
+          <div ref={mainRef} className="main w-full">
+            <div className="relative landing w-full h-screen bg-white overflow-hidden">
+              <div className="navbar absolute top-0 left-0 z-10 w-full p-10">
+                <div className="logo flex gap-5 items-center">
+                  <div className="lines flex flex-col gap-1">
+                    <div className="line w-10 h-1 bg-white"></div>
+                    <div className="line w-8 h-1 bg-white"></div>
+                    <div className="line w-5 h-1 bg-white"></div>
+                  </div>
+                  <h3 className="text-5xl text-white font-[pricedown]">
+                    TALKSY
+                  </h3>
                 </div>
-                <h3 className="text-5xl text-white font-[pricedown]">TALKSY</h3>
               </div>
-            </div>
-            <div className="imagesdiv w-full h-screen realtive overflow-hidden">
-              <img
-                className="character scale-[1.2] absolute top-0 left-0 w-full h-full object-cover"
-                src="./kprchar1.png"
-              ></img>
-              <div className="text absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col space-y-[-80px]">
-                <h1 className="text-[160px] text-white font-[pricedown] translate-x-[-300px]">
-                  WHERE
-                </h1>
-                <h1 className="text-[160px] text-white font-[pricedown] translate-x-[-20px]">
-                  CHARACTERS
-                </h1>
-                <h1 className="text-[160px] text-white font-[pricedown] translate-x-[280px]">
-                  COMES ALIVE
-                </h1>
+              <div className="imagesdiv w-full h-screen realtive overflow-hidden">
+                <img
+                  className="character scale-[1.2] absolute top-0 left-0 w-full h-full object-cover"
+                  src="./kprchar1.png"
+                ></img>
+                <div className="text absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col space-y-[-80px]">
+                  <h1 className="text-[160px] text-white font-[pricedown] translate-x-[-300px]">
+                    WHERE
+                  </h1>
+                  <h1 className="text-[160px] text-white font-[pricedown] translate-x-[-20px]">
+                    CHARACTERS
+                  </h1>
+                  <h1 className="text-[160px] text-white font-[pricedown] translate-x-[280px]">
+                    COMES ALIVE
+                  </h1>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+          <div className="relative w-full h-screen">
+            <div className="absolute top-0 left-0 w-full h-screen bg-no-repeat">
+              <img src="./0.png" className="w-full h-screen object-cover" alt="" />
+            </div>
+            <div className="absolute top-0 left-0 w-full h-screen bg-no-repeat">
+              <img src="./1.png" className="w-full h-screen object-cover" alt="" />
+            </div>
+          </div>
+        </>
       )}
     </>
   );
