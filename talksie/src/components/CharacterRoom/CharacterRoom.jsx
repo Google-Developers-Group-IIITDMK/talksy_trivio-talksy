@@ -335,42 +335,64 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
   const getThemeStyles = () => {
     // Default theme if no character is selected
     if (!character) return {
-      '--theme-primary': '#3a86ff',
-      '--theme-secondary': '#8338ec',
-      '--theme-accent': '#ff006e',
-      '--theme-glow': 'rgba(58, 134, 255, 0.4)'
+      '--theme-primary': '#f0f4f8',
+      '--theme-secondary': '#dbe4ff',
+      '--theme-accent': '#4263eb',
+      '--theme-glow': 'rgba(66, 99, 235, 0.3)'
     };
     
-    // Character-specific themes
+    // Character-specific themes - all made lighter with character-appropriate accents
     const themes = {
       voldemort: {
-        primary: '#1a0b14', // Dark purple/black
-        secondary: '#3d0a1f', // Dark red
-        accent: '#ff0000', // Bright red
-        glow: 'rgba(255, 0, 0, 0.4)' // Red glow
+        primary: '#f5f5f5', // Light background
+        secondary: '#e0e0e0', // Light secondary
+        accent: '#9c0000', // Dark red accent
+        glow: 'rgba(156, 0, 0, 0.3)', // Red glow
+        textColor: '#1f1f1f', // Dark text with light hints of black
+        borderColor: '#3d0a1f' // Darker border
       },
       harrypotter: {
-        primary: '#0e1a40', // Deep blue
-        secondary: '#762c00', // Burgundy
-        accent: '#ffc500', // Gold
-        glow: 'rgba(255, 197, 0, 0.4)' // Gold glow
+        primary: '#fafafa', // Light background
+        secondary: '#e8eaf6', // Light blue-ish secondary
+        accent: '#b71c1c', // Gryffindor red
+        glow: 'rgba(255, 197, 0, 0.4)', // Gold glow
+        textColor: '#212121', // Dark text with light hints of black
+        borderColor: '#0e1a40' // Darker border
       },
       doraemon: {
-        primary: '#005bea', // Bright blue
-        secondary: '#ffffff', // White
-        accent: '#ff4757', // Red
-        glow: 'rgba(0, 168, 255, 0.4)' // Light blue glow
+        primary: '#e3f2fd', // Very light blue
+        secondary: '#ffffff', // Bright white
+        accent: '#0091ea', // Doraemon blue
+        glow: 'rgba(0, 145, 234, 0.4)', // Blue sparkle
+        textColor: '#0277bd', // Blue text
+        borderColor: '#4fc3f7' // Light blue border
+      },
+      nobita: {
+        primary: '#fff9c4', // Very light yellow
+        secondary: '#ffffff', // Bright white
+        accent: '#ffab00', // Yellow accent
+        glow: 'rgba(255, 171, 0, 0.4)', // Yellow sparkle
+        textColor: '#ff6f00', // Orange-ish text
+        borderColor: '#ffcc80' // Light orange border
       }
     };
     
     // Use character theme if available, otherwise fall back to predefined themes
-    const theme = character.theme || themes[character.id] || themes.voldemort;
+    // If the character ID is 'nobita' but it's not in our themes, use the nobita theme
+    let themeToUse;
+    if (character.id === 'nobita') {
+      themeToUse = themes.nobita;
+    } else {
+      themeToUse = character.theme || themes[character.id] || themes.voldemort;
+    }
     
     return {
-      '--theme-primary': theme.primary,
-      '--theme-secondary': theme.secondary,
-      '--theme-accent': theme.accent,
-      '--theme-glow': theme.glow
+      '--theme-primary': themeToUse.primary,
+      '--theme-secondary': themeToUse.secondary,
+      '--theme-accent': themeToUse.accent,
+      '--theme-glow': themeToUse.glow,
+      '--theme-text-color': themeToUse.textColor || '#212121',
+      '--theme-border-color': themeToUse.borderColor || themeToUse.accent
     };
   };
 

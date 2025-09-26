@@ -30,17 +30,21 @@
   background: none !important;
 }
 
-/* Character-specific backgrounds */
+/* Character-specific backgrounds - updated with light themes */
 .character-room[data-character="voldemort"] .room-background {
-  background: radial-gradient(circle at center, rgba(61, 10, 31, 0.8) 0%, rgba(26, 11, 20, 1) 100%);
+  background: radial-gradient(circle at center, rgba(245, 245, 245, 1) 0%, rgba(224, 224, 224, 0.9) 70%, rgba(156, 0, 0, 0.2) 100%);
 }
 
 .character-room[data-character="harrypotter"] .room-background {
-  background: radial-gradient(circle at center, rgba(118, 44, 0, 0.8) 0%, rgba(14, 26, 64, 1) 100%);
+  background: radial-gradient(circle at center, rgba(250, 250, 250, 1) 0%, rgba(232, 234, 246, 0.9) 70%, rgba(14, 26, 64, 0.2) 100%);
 }
 
 .character-room[data-character="doraemon"] .room-background {
-  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, rgba(0, 91, 234, 1) 100%);
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%, rgba(227, 242, 253, 0.9) 100%);
+}
+
+.character-room[data-character="nobita"] .room-background {
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%, rgba(255, 249, 196, 0.9) 100%);
 }
 
 /* UI Elements for video call */
@@ -335,7 +339,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(255, 255, 255, 0.9); /* Lighter background for light theme */
   z-index: 1000;
   display: flex;
   justify-content: center;
@@ -344,9 +348,9 @@
 }
 
 .call-ended-content {
-  background-color: var(--theme-primary, #1a1a1a);
-  border: 2px solid var(--theme-accent, #ff006e);
-  box-shadow: 0 0 30px var(--theme-glow, rgba(255, 0, 110, 0.4));
+  background-color: var(--theme-primary, #ffffff);
+  border: 2px solid var(--theme-border-color, #4263eb);
+  box-shadow: 0 0 30px var(--theme-glow, rgba(66, 99, 235, 0.3));
   border-radius: 15px;
   padding: 2.5rem;
   text-align: center;
@@ -366,7 +370,7 @@
 }
 
 .call-ended-animation i {
-  color: var(--theme-accent, #ff006e);
+  color: var(--theme-accent, #4263eb);
   font-size: 2.5rem;
   z-index: 2;
   animation: pulse 2s infinite;
@@ -377,18 +381,19 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  border: 3px solid var(--theme-accent, #ff006e);
+  border: 3px solid var(--theme-accent, #4263eb);
   animation: ripple 2s infinite;
 }
 
 .call-ended-content h2 {
-  color: white;
+  color: var(--theme-text-color, #212121);
   font-size: 1.8rem;
   margin-bottom: 0.5rem;
 }
 
 .call-ended-content p {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--theme-text-color, #212121);
+  opacity: 0.8;
   margin-bottom: 2rem;
 }
 
@@ -400,8 +405,8 @@
 
 .navigation-button {
   background-color: transparent;
-  color: white;
-  border: 2px solid var(--theme-accent, #ff006e);
+  color: var(--theme-text-color, #212121);
+  border: 2px solid var(--theme-accent, #4263eb);
   border-radius: 8px;
   padding: 0.8rem 1rem;
   font-size: 1rem;
@@ -418,17 +423,18 @@
 }
 
 .navigation-button:hover {
-  background-color: var(--theme-accent, #ff006e);
+  background-color: var(--theme-accent, #4263eb);
+  color: white;
   transform: translateY(-2px);
 }
 
 .home-button {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .characters-button {
-  background-color: var(--theme-secondary, #8338ec);
-  opacity: 0.9;
+  background-color: var(--theme-secondary, #dbe4ff);
+  border-color: var(--theme-accent, #4263eb);
 }
 
 .characters-button:hover {
