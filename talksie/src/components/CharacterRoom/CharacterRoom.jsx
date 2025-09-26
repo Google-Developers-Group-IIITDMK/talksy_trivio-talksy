@@ -704,7 +704,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
           onClick={() => setIsCameraOn(!isCameraOn)}
           aria-label={isCameraOn ? "Turn off camera" : "Turn on camera"}
         >
-          <i className={`fas ${isCameraOn ? 'fa-video' : 'fa-video-slash'}`}></i>
+          <i className={`fa-solid ${isCameraOn ? 'fa-video' : 'fa-video-slash'}`}></i>
         </button>
         
         <button 
@@ -712,7 +712,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
           onClick={() => setIsMicOn(!isMicOn)}
           aria-label={isMicOn ? "Turn off microphone" : "Turn on microphone"}
         >
-          <i className={`fas ${isMicOn ? 'fa-microphone' : 'fa-microphone-slash'}`}></i>
+          <i className={`fa-solid ${isMicOn ? 'fa-microphone' : 'fa-microphone-slash'}`}></i>
         </button>
         
         <button 
@@ -720,7 +720,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
           onClick={handleEndCall}
           aria-label="End call"
         >
-          <i className="fas fa-phone-slash"></i>
+          <i className="fa-solid fa-phone-slash"></i>
         </button>
       </div>
       
