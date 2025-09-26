@@ -69,13 +69,16 @@ function Model({ modelPath, character }) {
     if (scene) {
       console.log('Setting up model position for character:', character?.id);
       // Position the character for a video call framing (head and upper body visible)
-      scene.position.y = 0;
+      scene.position.y = -1.0; // Lower the model significantly to center it
       
       // Character-specific adjustments
       if (character?.id === 'voldemort') {
         scene.position.z = -2; // Move Voldemort slightly back for better framing
-      } else if (character?.id === 'harrypotter') {
-        scene.position.z = -1.5;
+      } else if (character?.id === 'harry') { // Changed from 'harrypotter' to match the ID in CharacterSelection.jsx
+        scene.position.z = -1.0; // Move Harry closer to the camera
+        scene.position.y = -0.01; // Adjust height to bring face to center
+        scene.rotation.x = 0; // No tilt
+        scene.rotation.y = Math.PI * 1.5; // Rotate 270 degrees (180 + 90) to face the camera
       } else if (character?.id === 'doraemon') {
         scene.position.z = -1;
       }
@@ -86,18 +89,20 @@ function Model({ modelPath, character }) {
   useEffect(() => {
     if (!modelRef.current) return;
     
+    const baseRotationY = character?.id === 'harry' ? Math.PI * 1.5 : 0; // Base rotation for Harry is 270 degrees to face camera
+    
     const animate = () => {
       if (modelRef.current) {
-        // Subtle breathing movement
-        modelRef.current.rotation.y = Math.sin(Date.now() * 0.0005) * 0.05;
-        modelRef.current.position.y = Math.sin(Date.now() * 0.001) * 0.05;
+        // Subtle breathing movement - just rotate slightly while maintaining base rotation
+        modelRef.current.rotation.y = baseRotationY + Math.sin(Date.now() * 0.0005) * 0.05;
+        // Removed vertical movement to keep the face centered
       }
       requestAnimationFrame(animate);
     };
     
     const animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, []);
+  }, [character]);
   
   // Return nothing if we had an error loading the model
   if (hasError || !scene) {
@@ -110,9 +115,9 @@ function Model({ modelPath, character }) {
     <primitive 
       ref={modelRef}
       object={scene} 
-      scale={3} // Larger scale for close-up view
-      position={[0, -0.5, -2]} // Position for head and shoulders view
-      rotation={[0, 0, 0]} // Face directly at camera
+      scale={character?.id === 'harry' ? 3.5 : 3} // Larger scale for Harry Potter
+      position={character?.id === 'harry' ? [0, -2.5, -1.5] : [0, -2.5, -2]} // Adjusted position for Harry Potter
+      rotation={character?.id === 'harry' ? [0, Math.PI * 1.5, 0] : [0, 0, 0]} // Rotate Harry 270 degrees to face camera
     />
   );
 }
@@ -129,6 +134,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
   const [facialExpression, setFacialExpression] = useState('neutral');
+  const [isCallEnded, setIsCallEnded] = useState(false); // Track if call has ended
   
   // Redirect to appropriate screen if prerequisites are missing
   useEffect(() => {
@@ -313,49 +319,85 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
       tracks.forEach(track => track.stop());
     }
     
-    // Call the parent component's end call handler
+    // Show call ended screen instead of immediately ending call
+    setIsCallEnded(true);
+    setCurrentMessage("Call ended. Thank you for the conversation!");
+  };
+  
+  // Handle navigation after call ends
+  const handleNavigation = (destination) => {
+    // First, call the parent component's end call handler
     if (onEndCall) onEndCall();
+    
+    // Then navigate to the selected destination
+    if (destination === 'home') {
+      navigate('/');
+    } else if (destination === 'characters') {
+      navigate('/characters');
+    }
   };
 
   const getThemeStyles = () => {
     // Default theme if no character is selected
     if (!character) return {
-      '--theme-primary': '#3a86ff',
-      '--theme-secondary': '#8338ec',
-      '--theme-accent': '#ff006e',
-      '--theme-glow': 'rgba(58, 134, 255, 0.4)'
+      '--theme-primary': '#f0f4f8',
+      '--theme-secondary': '#dbe4ff',
+      '--theme-accent': '#4263eb',
+      '--theme-glow': 'rgba(66, 99, 235, 0.3)'
     };
     
-    // Character-specific themes
+    // Character-specific themes - all made lighter with character-appropriate accents
     const themes = {
       voldemort: {
-        primary: '#1a0b14', // Dark purple/black
-        secondary: '#3d0a1f', // Dark red
-        accent: '#ff0000', // Bright red
-        glow: 'rgba(255, 0, 0, 0.4)' // Red glow
+        primary: '#f5f5f5', // Light background
+        secondary: '#e0e0e0', // Light secondary
+        accent: '#9c0000', // Dark red accent
+        glow: 'rgba(156, 0, 0, 0.3)', // Red glow
+        textColor: '#1f1f1f', // Dark text with light hints of black
+        borderColor: '#3d0a1f' // Darker border
       },
-      harrypotter: {
-        primary: '#0e1a40', // Deep blue
-        secondary: '#762c00', // Burgundy
-        accent: '#ffc500', // Gold
-        glow: 'rgba(255, 197, 0, 0.4)' // Gold glow
+      harry: {
+        primary: '#fafafa', // Light background
+        secondary: '#e8eaf6', // Light blue-ish secondary
+        accent: '#b71c1c', // Gryffindor red
+        glow: 'rgba(255, 197, 0, 0.4)', // Gold glow
+        textColor: '#212121', // Dark text with light hints of black
+        borderColor: '#0e1a40' // Darker border
       },
       doraemon: {
-        primary: '#005bea', // Bright blue
-        secondary: '#ffffff', // White
-        accent: '#ff4757', // Red
-        glow: 'rgba(0, 168, 255, 0.4)' // Light blue glow
+        primary: '#e3f2fd', // Very light blue
+        secondary: '#ffffff', // Bright white
+        accent: '#0091ea', // Doraemon blue
+        glow: 'rgba(0, 145, 234, 0.4)', // Blue sparkle
+        textColor: '#0277bd', // Blue text
+        borderColor: '#4fc3f7' // Light blue border
+      },
+      nobita: {
+        primary: '#fff9c4', // Very light yellow
+        secondary: '#ffffff', // Bright white
+        accent: '#ffab00', // Yellow accent
+        glow: 'rgba(255, 171, 0, 0.4)', // Yellow sparkle
+        textColor: '#ff6f00', // Orange-ish text
+        borderColor: '#ffcc80' // Light orange border
       }
     };
     
     // Use character theme if available, otherwise fall back to predefined themes
-    const theme = character.theme || themes[character.id] || themes.voldemort;
+    // If the character ID is 'nobita' but it's not in our themes, use the nobita theme
+    let themeToUse;
+    if (character.id === 'nobita') {
+      themeToUse = themes.nobita;
+    } else {
+      themeToUse = character.theme || themes[character.id] || themes.voldemort;
+    }
     
     return {
-      '--theme-primary': theme.primary,
-      '--theme-secondary': theme.secondary,
-      '--theme-accent': theme.accent,
-      '--theme-glow': theme.glow
+      '--theme-primary': themeToUse.primary,
+      '--theme-secondary': themeToUse.secondary,
+      '--theme-accent': themeToUse.accent,
+      '--theme-glow': themeToUse.glow,
+      '--theme-text-color': themeToUse.textColor || '#212121',
+      '--theme-border-color': themeToUse.borderColor || themeToUse.accent
     };
   };
 
@@ -364,8 +406,8 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
     switch(character?.id) {
       case 'voldemort':
         return '/assets/voldemort.glb'; // Path to your voldemort.glb file in the public/assets folder
-      case 'harrypotter':
-        return '/assets/harrypotter.glb'; // Path to Harry Potter model when available
+      case 'harry': // Changed from 'harrypotter' to match the ID in CharacterSelection.jsx
+        return '/assets/harrypotter.glb'; // Path to Harry Potter model in the public/assets folder
       case 'doraemon':
         return '/assets/doraemon.glb'; // Path to Doraemon model when available
       default:
@@ -436,7 +478,11 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                   onError={error => console.error('Canvas error:', error)}
                 >
                   {/* Camera setup for video call style */}
-                  <PerspectiveCamera makeDefault position={[0, 0, 3]} fov={40} />
+                  <PerspectiveCamera 
+                    makeDefault 
+                    position={character?.id === 'harry' ? [0, -1.5, 3] : [0, -2.0, 3]} 
+                    fov={character?.id === 'harry' ? 35 : 40} 
+                  />
                   
                   {/* Ambient light for general illumination */}
                   <ambientLight intensity={0.6} />
@@ -470,16 +516,25 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                     </>
                   )}
                   
-                  {character?.id === 'harrypotter' && (
+                  {character?.id === 'harry' && (
                     <>
+                      {/* Key light from the front to highlight the face */}
                       <spotLight 
-                        position={[0, 2, 3]} 
-                        intensity={1.5} 
+                        position={[0, 0, 4]} 
+                        intensity={1.8} 
                         color="#ffc500" 
-                        angle={Math.PI / 5}
+                        angle={Math.PI / 4}
                         penumbra={0.5} 
                       />
-                      <fog attach="fog" args={['#0e1a40', 10, 25]} />
+                      {/* Rim light from behind to create depth */}
+                      <spotLight 
+                        position={[1, 2, -2]} 
+                        intensity={1.0} 
+                        color="#ffffff" 
+                        angle={Math.PI / 6}
+                        penumbra={0.7} 
+                      />
+                      <fog attach="fog" args={['#0e1a40', 15, 30]} />
                       <Environment preset="sunset" />
                     </>
                   )}
@@ -541,7 +596,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
                   </>
                 )}
                 
-                {character?.id === 'harrypotter' && (
+                {character?.id === 'harry' && (
                   <>
                     {/* Magic overlay */}
                     <div className="holographic-overlay magic-aura"></div>
@@ -704,7 +759,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
           onClick={() => setIsCameraOn(!isCameraOn)}
           aria-label={isCameraOn ? "Turn off camera" : "Turn on camera"}
         >
-          <i className={`fas ${isCameraOn ? 'fa-video' : 'fa-video-slash'}`}></i>
+          <i className={`fa-solid ${isCameraOn ? 'fa-video' : 'fa-video-slash'}`}></i>
         </button>
         
         <button 
@@ -712,7 +767,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
           onClick={() => setIsMicOn(!isMicOn)}
           aria-label={isMicOn ? "Turn off microphone" : "Turn on microphone"}
         >
-          <i className={`fas ${isMicOn ? 'fa-microphone' : 'fa-microphone-slash'}`}></i>
+          <i className={`fa-solid ${isMicOn ? 'fa-microphone' : 'fa-microphone-slash'}`}></i>
         </button>
         
         <button 
@@ -720,7 +775,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
           onClick={handleEndCall}
           aria-label="End call"
         >
-          <i className="fas fa-phone-slash"></i>
+          <i className="fa-solid fa-phone-slash"></i>
         </button>
       </div>
       
@@ -730,14 +785,44 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
           <video ref={videoRef} autoPlay playsInline muted />
         </div>
       )}
+      
+      {/* Call Ended Overlay */}
+      {isCallEnded && (
+        <div className="call-ended-overlay">
+          <div className="call-ended-content">
+            <div className="call-ended-animation">
+              <i className="fa-solid fa-phone-slash"></i>
+              <div className="call-ended-ripple"></div>
+            </div>
+            <h2>Call Ended</h2>
+            <p>Thank you for chatting with {character?.name || 'the character'}!</p>
+            <div className="navigation-options">
+              <button 
+                className="navigation-button home-button"
+                onClick={() => handleNavigation('home')}
+              >
+                <i className="fa-solid fa-house"></i>
+                Return to Homepage
+              </button>
+              <button 
+                className="navigation-button characters-button"
+                onClick={() => handleNavigation('characters')}
+              >
+                <i className="fa-solid fa-users"></i>
+                Choose Another Character
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 // Preload models for better performance
 useGLTF.preload('/assets/voldemort.glb');
-// Uncomment these when the models are available
-// useGLTF.preload('/assets/harrypotter.glb');
+useGLTF.preload('/assets/harrypotter.glb'); // This still uses the file name harrypotter.glb
+// Uncomment this when the model is available
 // useGLTF.preload('/assets/doraemon.glb');
 
 // Add character-specific message and animation logic for new characters

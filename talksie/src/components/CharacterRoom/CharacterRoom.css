@@ -18,7 +18,7 @@
   --theme-glow: rgba(255, 0, 0, 0.4);
 }
 
-.character-room[data-character="harrypotter"] {
+.character-room[data-character="harry"] {
   --theme-primary: #0e1a40;
   --theme-secondary: #762c00;
   --theme-accent: #ffc500;
@@ -54,13 +54,13 @@
 
 .bg-particle {
   position: absolute;
-  width: 0.5rem; /* w-2 */
-  height: 0.5rem; /* h-2 */
+  width: 0.6rem; /* w-2.5 */
+  height: 0.6rem; /* h-2.5 */
   border-radius: 9999px; /* rounded-full */
-  opacity: 0.3; /* opacity-30 */
+  opacity: 0.5; /* opacity-50 */
   background-color: var(--theme-accent);
   animation: drift 12s linear infinite;
-  box-shadow: 0 0 10px var(--theme-glow);
+  box-shadow: 0 0 12px var(--theme-glow);
 }
 
 /* Main Content */

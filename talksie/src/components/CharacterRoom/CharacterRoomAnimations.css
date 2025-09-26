@@ -18,7 +18,7 @@
   animation: sparkle 3s ease-in-out infinite;
 }
 
-.character-room[data-character="harrypotter"] .magic-particle {
+.character-room[data-character="harry"] .magic-particle {
   background: #ffc500;
   box-shadow: 0 0 10px #ffc500;
 }
@@ -50,7 +50,7 @@
   background: radial-gradient(circle at 30% 30%, #3d0a1f 0%, #1a0b14 100%);
 }
 
-.model-3d-container.character-harrypotter canvas {
+.model-3d-container.character-harry canvas {
   background: radial-gradient(circle at 30% 30%, #762c00 0%, #0e1a40 100%);
 }
 
