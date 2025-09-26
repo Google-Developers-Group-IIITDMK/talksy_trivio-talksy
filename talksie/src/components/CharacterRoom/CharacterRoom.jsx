@@ -314,8 +314,22 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
       tracks.forEach(track => track.stop());
     }
     
-    // Call the parent component's end call handler
+    // Show call ended screen instead of immediately ending call
+    setIsCallEnded(true);
+    setCurrentMessage("Call ended. Thank you for the conversation!");
+  };
+  
+  // Handle navigation after call ends
+  const handleNavigation = (destination) => {
+    // First, call the parent component's end call handler
     if (onEndCall) onEndCall();
+    
+    // Then navigate to the selected destination
+    if (destination === 'home') {
+      navigate('/');
+    } else if (destination === 'characters') {
+      navigate('/characters');
+    }
   };
 
   const getThemeStyles = () => {
@@ -729,6 +743,36 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
       {isCameraOn && (
         <div className="user-camera-preview">
           <video ref={videoRef} autoPlay playsInline muted />
+        </div>
+      )}
+      
+      {/* Call Ended Overlay */}
+      {isCallEnded && (
+        <div className="call-ended-overlay">
+          <div className="call-ended-content">
+            <div className="call-ended-animation">
+              <i className="fa-solid fa-phone-slash"></i>
+              <div className="call-ended-ripple"></div>
+            </div>
+            <h2>Call Ended</h2>
+            <p>Thank you for chatting with {character?.name || 'the character'}!</p>
+            <div className="navigation-options">
+              <button 
+                className="navigation-button home-button"
+                onClick={() => handleNavigation('home')}
+              >
+                <i className="fa-solid fa-house"></i>
+                Return to Homepage
+              </button>
+              <button 
+                className="navigation-button characters-button"
+                onClick={() => handleNavigation('characters')}
+              >
+                <i className="fa-solid fa-users"></i>
+                Choose Another Character
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
