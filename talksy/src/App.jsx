@@ -1,24 +1,73 @@
-import React from 'react'
+import React from "react";
 
 const App = () => {
   return (
     <>
-      <div id="nav" className='flex justify-between items-center w-full h-24 fixed px-10'>
-        <h3 className='font-[gilroy] font-400 text-5xl cursor-pointer'>TALKSY</h3>
-        <button className='px-5 py-5 bg-black text-white text-4xl border-none font-[gilroy] rounded-4xl mt-0.5 cursor-pointer' >TRY NOW</button>
+      <div
+        id="nav"
+        className="flex justify-between items-center w-full h-24 fixed px-10"
+      >
+        <h3 className="font-[gilroy] font-400 text-5xl cursor-pointer">
+          TALKSY
+        </h3>
+        <button className="px-5 py-5 bg-black text-white text-4xl border-none font-[gilroy] rounded-4xl mt-0.5 cursor-pointer">
+          TRY NOW
+        </button>
 
         <div className="main">
           <div id="page">
             <div id="loop">
-              <h1><b>TALKSY</b> IS WHERE <b><i>CHARACTERS</i></b> <span>COME <b>ALIVE</b></span> IN THE <span><i>METAVERSE.</i></span></h1>
-              <h1><b>TALKSY</b> IS WHERE <b><i>CHARACTERS</i></b> <span>COME <b>ALIVE</b></span> IN THE <span><i>METAVERSE.</i></span></h1>
-              <h1><b>TALKSY</b> IS WHERE <b><i>CHARACTERS</i></b> <span>COME <b>ALIVE</b></span> IN THE <span><i>METAVERSE.</i></span></h1>
+              <h1>
+                <b>TALKSY</b> IS WHERE{" "}
+                <b>
+                  <i>CHARACTERS</i>
+                </b>{" "}
+                <span>
+                  COME <b>ALIVE</b>
+                </span>{" "}
+                IN THE{" "}
+                <span>
+                  <i>METAVERSE.</i>
+                </span>
+              </h1>
+              <h1>
+                <b>TALKSY</b> IS WHERE{" "}
+                <b>
+                  <i>CHARACTERS</i>
+                </b>{" "}
+                <span>
+                  COME <b>ALIVE</b>
+                </span>{" "}
+                IN THE{" "}
+                <span>
+                  <i>METAVERSE.</i>
+                </span>
+              </h1>
+              <h1>
+                <b>TALKSY</b> IS WHERE{" "}
+                <b>
+                  <i>CHARACTERS</i>
+                </b>{" "}
+                <span>
+                  COME <b>ALIVE</b>
+                </span>{" "}
+                IN THE{" "}
+                <span>
+                  <i>METAVERSE.</i>
+                </span>
+              </h1>
             </div>
+            <h3>
+              TALKSY AIMS TO BE A LIVING PLATFORM WHERE YOU CAN <br />
+              CHAT, PLAY, AND CONNECT WITH CHARACTERS IN A <br />
+              TRULY INTERACTIVE WORLD.
+            </h3>
+            <h4>...SCROLL TO EXPLORE</h4>
           </div>
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
