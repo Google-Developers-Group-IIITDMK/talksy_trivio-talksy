@@ -5,12 +5,23 @@
 }
 
 *{
-    margin: 0%;
-    padding: 0%;
-    box-sizing: border-box;
     font-family: gilroy;
 }
 html,body{
     height: 100%;
     width: 100%;
+}
+#loop h1 {
+  animation-name: anim;
+  animation-duration: 15s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes anim{
+    0%{
+        transform: translateX(0%);
+    }
+    100%{
+        transform: translateX(-100%);
+    }
 }
