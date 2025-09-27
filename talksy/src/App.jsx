@@ -4,7 +4,7 @@ import "locomotive-scroll/dist/locomotive-scroll.css";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { useGSAP } from "@gsap/react";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,45 +12,43 @@ const App = () => {
   const mainRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const LocomotiveScrollComponent = () => {
-    const scrollRef = useRef(null);
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
 
-    useEffect(() => {
-      gsap.registerPlugin(ScrollTrigger);
+    const locoScroll = new LocomotiveScroll({
+      el: mainRef.current,
+      smooth: true,
+    });
 
-      const locoScroll = new LocomotiveScroll({
-        el: scrollRef.current,
-        smooth: true,
-      });
+    locoScroll.on("scroll", ScrollTrigger.update);
 
-      locoScroll.on("scroll", ScrollTrigger.update);
+    ScrollTrigger.scrollerProxy(mainRef.current, {
+      scrollTop(value) {
+        return arguments.length
+          ? locoScroll.scrollTo(value, 0, 0)
+          : locoScroll.scroll.instance.scroll.y;
+      },
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+      },
+      pinType: mainRef.current.style.transform ? "transform" : "fixed",
+    });
 
-      ScrollTrigger.scrollerProxy(scrollRef.current, {
-        scrollTop(value) {
-          return arguments.length
-            ? locoScroll.scrollTo(value, 0, 0)
-            : locoScroll.scroll.instance.scroll.y;
-        },
-        getBoundingClientRect() {
-          return {
-            top: 0,
-            left: 0,
-            width: window.innerWidth,
-            height: window.innerHeight,
-          };
-        },
-        pinType: scrollRef.current.style.transform ? "transform" : "fixed",
-      });
+    function handleRefresh() {
+      locoScroll.update();
+    }
+    ScrollTrigger.addEventListener("refresh", handleRefresh);
 
-      ScrollTrigger.addEventListener("refresh", () => locoScroll.update());
-      ScrollTrigger.refresh();
-
-      return () => {
-        ScrollTrigger.removeEventListener("refresh", () => locoScroll.update());
-        locoScroll.destroy();
-      };
-    }, []);
-  };
+    return () => {
+      ScrollTrigger.removeEventListener("refresh", handleRefresh);
+      locoScroll.destroy();
+    };
+  }, []);
 
   useGSAP(() => {
     const canvas = canvasRef.current;
@@ -229,7 +227,9 @@ const App = () => {
         </div>
         <div className="relative w-full h-screen bg-[#f1f1f1]" id="page2">
           <div className="absolute top-[30%] left-[10%]" id="text1">
-            <h3 className="text-[#7c7c7c] text-[30px] font-normal">TALKSY / COME ALIVE</h3>
+            <h3 className="text-[#7c7c7c] text-[30px] font-normal">
+              TALKSY / COME ALIVE
+            </h3>
             <h1 className="text-[60px] leading-[1.5]">
               LET'S
               <br />
@@ -238,7 +238,10 @@ const App = () => {
               TOGETHER
             </h1>
           </div>
-          <div className="absolute top-[55%] right-[10%] w-4xl text-end text-3xl" id="text2">
+          <div
+            className="absolute top-[55%] right-[10%] w-4xl text-end text-3xl"
+            id="text2"
+          >
             <p className="text-[#7c7c7c] font-normal">
               STEP INTO A SPACE WHERE CHARACTERS AREN’T JUST AVATARS—THEY
               LISTEN, RESPOND, AND GROW WITH YOU. AGE, REGION, STATUS—NONE OF IT
@@ -248,19 +251,21 @@ const App = () => {
             </p>
           </div>
         </div>
-        
-<div id="page3">
-  <div id="text3">
-    <h3>TALKSY / DIGITAL PLAYGROUND</h3>
-    <h1>
-      THE METAVERSE
-      <br />
-      IS OUR
-      <br />
-      CONVERSATION SPACE
-    </h1>
-  </div>
-</div>
+
+        <div className="relative h-screen w-full bg-[#f1f1f1]" id="page3">
+          <div className="absolute top-[40%] right-[10%] text-end" id="text3">
+            <h3 className="font-normal text-[#7c7c7c] text-[40px]">
+              TALKSY / DIGITAL PLAYGROUND
+            </h3>
+            <h1 className="text-[70px]">
+              THE METAVERSE
+              <br />
+              IS OUR
+              <br />
+              CONVERSATION SPACE
+            </h1>
+          </div>
+        </div>
       </div>
     </>
   );
