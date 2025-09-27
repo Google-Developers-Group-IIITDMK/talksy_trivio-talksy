@@ -2,7 +2,7 @@ import React from "react";
 import LocomotiveScroll from "locomotive-scroll";
 import "locomotive-scroll/dist/locomotive-scroll.css";
 import gsap from "gsap";
-import {ScrollTrigger} from "gsap/all";
+import { ScrollTrigger } from "gsap/all";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
 
@@ -45,7 +45,6 @@ const App = () => {
       ScrollTrigger.addEventListener("refresh", () => locoScroll.update());
       ScrollTrigger.refresh();
 
-      
       return () => {
         ScrollTrigger.removeEventListener("refresh", () => locoScroll.update());
         locoScroll.destroy();
@@ -54,7 +53,6 @@ const App = () => {
   };
 
   useGSAP(() => {
-    
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     canvas.width = window.innerWidth;
@@ -64,17 +62,14 @@ const App = () => {
     const images = [];
     const imageSeq = { frame: 0 };
 
-   
-    const files = (i) => `/frames/frame_${String(i + 1).padStart(4, "0")}.jpg`;
+    const files = (i) => `./male${String(i + 1).padStart(4, "0")}.png`;
 
-   
     for (let i = 0; i < frameCount; i++) {
       const img = new Image();
       img.src = files(i);
       images.push(img);
     }
 
-   
     function setCanvasSize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -84,7 +79,6 @@ const App = () => {
     window.addEventListener("resize", setCanvasSize);
     setCanvasSize();
 
-    
     gsap.to(imageSeq, {
       frame: frameCount - 1,
       snap: "frame",
@@ -94,12 +88,11 @@ const App = () => {
         trigger: canvas,
         start: "top top",
         end: "600% top",
-        scroller: mainRef.current, 
+        scroller: mainRef.current,
       },
       onUpdate: render,
     });
 
-    
     images[0].onload = render;
 
     function render() {
@@ -126,7 +119,6 @@ const App = () => {
       );
     }
 
-    
     return () => {
       ScrollTrigger.getAll().forEach((st) => st.kill());
       window.removeEventListener("resize", setCanvasSize);
@@ -200,7 +192,10 @@ const App = () => {
           <h4 className="absolute top-[62%] left-[25%] font-500">
             ...SCROLL TO EXPLORE
           </h4>
-          <canvas ref={canvasRef} className="relative z-9 max-w-full max-h-screen"></canvas>
+          <canvas
+            ref={canvasRef}
+            className="relative z-9 max-w-full max-h-screen"
+          ></canvas>
         </div>
       </div>
     </>
