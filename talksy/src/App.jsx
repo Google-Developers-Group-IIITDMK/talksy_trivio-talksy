@@ -41,14 +41,8 @@ const App = () => {
       locoScroll.update();
     }
     ScrollTrigger.addEventListener("refresh", handleRefresh);
-    ScrollTrigger.refresh(); 
-    return () => {
-      ScrollTrigger.removeEventListener("refresh", handleRefresh);
-      locoScroll.destroy();
-    };
-  }, []);
+    ScrollTrigger.refresh();
 
-  useGSAP(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     canvas.width = window.innerWidth;
@@ -84,8 +78,11 @@ const App = () => {
         trigger: canvas,
         start: "top top",
         end: "600% top",
+        markers: true,
         scroller: mainRef.current,
         invalidateOnRefresh: true,
+        onUpdate: () =>
+          console.log("ScrollTrigger updating, frame:", imageSeq.frame),
       },
       onUpdate: render,
     });
@@ -97,6 +94,7 @@ const App = () => {
     }
 
     function scaleImage(img, ctx) {
+      var canvas = ctx.canvas;
       const hRatio = canvas.width / img.width;
       const vRatio = canvas.height / img.height;
       const ratio = Math.max(hRatio, vRatio);
@@ -116,11 +114,37 @@ const App = () => {
       );
     }
 
+    ScrollTrigger.create({
+      trigger: canvas,
+      pin: true,
+      scroller: mainRef.current,
+      start: "top top",
+      end: "600% top",
+    });
+
+    ["#page1", "#page2", "#page3"].forEach((id) => {
+      gsap.to(id, {
+        scrollTrigger: {
+          trigger: id,
+          start: "top top",
+          end: "bottom top",
+          pin: true,
+          scroller: mainRef.current,
+          pinType: mainRef.current.style.transform ? "transform" : "fixed",
+          invalidateOnRefresh: true,
+        },
+      });
+    });
+
     return () => {
       ScrollTrigger.getAll().forEach((st) => st.kill());
       window.removeEventListener("resize", setCanvasSize);
+      ScrollTrigger.removeEventListener("refresh", handleRefresh);
+      locoScroll.destroy();
     };
   }, []);
+
+  useGSAP(() => {}, []);
 
   return (
     <>
@@ -135,7 +159,10 @@ const App = () => {
           TRY NOW
         </button>
       </div>
-      <div ref={mainRef} className="main relative overflow-hidden">
+      <div
+        ref={mainRef}
+        className="main relative overflow-hidden data-scroll-container"
+      >
         <div id="page" className="w-full h-screen relative bg-[#f1f1f1]">
           <div
             id="loop"
@@ -191,7 +218,7 @@ const App = () => {
           </h4>
           <canvas
             ref={canvasRef}
-            className="relative z-20 max-w-full max-h-screen"
+            className="absolute inset-0 z-20 max-w-full max-h-screen"
           ></canvas>
         </div>
 
