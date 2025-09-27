@@ -2,10 +2,14 @@ import React, { useState, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import "remixicon/fonts/remixicon.css";
+import ScrollTrigger from "gsap/all";
 
+gsap.registerPlugin(ScrollTrigger);
 const App = () => {
   const [showContent, setShowContent] = useState(false);
+  const mountainRef = useRef(null);
   const mainRef = useRef(null);
+  
   useGSAP(() => {
     const tl = gsap.timeline();
 
@@ -73,6 +77,28 @@ const App = () => {
 
     return () => main.removeEventListener("mousemove", handler);
   }, [showContent]);
+
+  const container = useRef(null);
+
+  useGSAP(() => {
+    if (!showContent) return; 
+  gsap.fromTo(
+    mountainRef.current,
+    { y: "50%" },
+    {
+      y: "0%",
+      ease: "none",
+      scrollTrigger: {
+        trigger: container.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    }
+  );
+}, [showContent]);
+
+
   return (
     <>
       <div className="svg flex items-center justify-center fixed top-0 left-0 z-[100] w-full h-screen overflow-hidden bg-[#000]">
@@ -149,27 +175,23 @@ const App = () => {
               </div>
             </div>
           </div>
-          <div className="relative w-full h-screen overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-screen bg-no-repeat">
-              <img src="./0.png" className="w-full h-screen object-cover" alt="" />
+          <div
+            ref={container}
+            className="relative w-full h-screen overflow-hidden"
+          >
+            <div className="sky absolute top-0 left-0 w-full h-screen bg-no-repeat scale-[1.2]">
+              <img
+                src="./0.png"
+                className="w-full h-screen object-cover"
+                alt=""
+              />
             </div>
-            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
-              <img src="./mount21.png" className="w-full h-screen object-cover" alt="" />
-            </div>
-            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
-              <img src="./mount31.png" className="w-full h-screen object-cover" alt="" />
-            </div>
-            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
-              <img src="./mount41.png" className="w-full h-screen object-cover" alt="" />
-            </div>
-            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
-              <img src="./mount51.png" className="w-full h-screen object-cover" alt="" />
-            </div>
-            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
-              <img src="./mount61.png" className="w-full h-screen object-cover" alt="" />
-            </div>
-            <div className="absolute top-45 -left-35 w-full scale-[1.5] h-screen  bg-no-repeat">
-              <img src="./characs1.png" className="w-full h-screen object-cover" alt="" />
+            <div ref={mountainRef} className="mountain absolute top-130 -left-75 w-full h-screen  bg-no-repeat">
+              <img
+                src="./mount2.png"
+                className="w-full h-screen object-cover"
+                alt=""
+              />
             </div>
           </div>
         </>
