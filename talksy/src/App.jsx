@@ -197,6 +197,87 @@ const App = () => {
             className="relative z-9 max-w-full max-h-screen"
           ></canvas>
         </div>
+
+        <div id="page1">
+          <div id="right-text">
+            <h3>TALKSY / KEY VISION</h3>
+            <h1>
+              TALK FREELY
+              <br />
+              MEET CHARACTERS
+              <br />
+              EXPLORE WORLDS
+            </h1>
+          </div>
+          <div id="left-text">
+            <h1>
+              CREATE STORIES
+              <br />
+              BUILD CONNECTIONS
+              <br />
+              OWN YOUR EXPERIENCE
+            </h1>
+            <h3>..AND CELEBRATE TRUE INTERACTION</h3>
+          </div>
+        </div>
+
+        <div id="page2">
+          <div id="text1">
+            <h3>TALKSY / COME ALIVE</h3>
+            <h1>
+              LET'S
+              <br />
+              TALK
+              <br />
+              TOGETHER
+            </h1>
+          </div>
+          <div id="text2">
+            <p>
+              STEP INTO A SPACE WHERE CHARACTERS AREN’T JUST AVATARS—THEY
+              LISTEN, RESPOND, AND GROW WITH YOU. AGE, REGION, STATUS—NONE OF IT
+              MATTERS HERE. CHAT, LAUGH, AND PLAY WITHOUT LIMITS, CREATING
+              STORIES THAT BELONG TO EVERYONE. THE FUTURE OF CONVERSATION STARTS
+              WITH US.
+            </p>
+          </div>
+        </div>
+
+        <div id="page3">
+          <div id="text3">
+            <h3>TALKSY / DIGITAL PLAYGROUND</h3>
+            <h1>
+              THE METAVERSE
+              <br />
+              IS OUR
+              <br />
+              CONVERSATION SPACE
+            </h1>
+          </div>
+        </div>
+
+        <div id="page1">
+          <div id="right-text">
+            <h3>TALKSY / KEY VISION</h3>
+            <h1>
+              TALK FREELY
+              <br />
+              MEET CHARACTERS
+              <br />
+              EXPLORE WORLDS
+            </h1>
+          </div>
+          <div id="left-text">
+            <h1>
+              CREATE STORIES
+              <br />
+              BUILD CONNECTIONS
+              <br />
+              OWN YOUR EXPERIENCE
+            </h1>
+            <h3>..AND CELEBRATE TRUE INTERACTION</h3>
+          </div>
+        </div>
       </div>
     </>
   );
