@@ -248,6 +248,19 @@ const App = () => {
             </p>
           </div>
         </div>
+        
+<div id="page3">
+  <div id="text3">
+    <h3>TALKSY / DIGITAL PLAYGROUND</h3>
+    <h1>
+      THE METAVERSE
+      <br />
+      IS OUR
+      <br />
+      CONVERSATION SPACE
+    </h1>
+  </div>
+</div>
       </div>
     </>
   );
