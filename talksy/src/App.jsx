@@ -200,7 +200,9 @@ const App = () => {
 
         <div className="relative w-full h-screen bg-[#f1f1f1]" id="page1">
           <div className="absolute top-[30%] left-[10%]" id="right-text">
-            <h3 className=" font-normal text-[#7c7c7c] text-[30px]">TALKSY / KEY VISION</h3>
+            <h3 className=" font-normal text-[#7c7c7c] text-[30px]">
+              TALKSY / KEY VISION
+            </h3>
             <h1 className="text-[50px] leading-[1.5]">
               TALK FREELY
               <br />
@@ -209,7 +211,10 @@ const App = () => {
               EXPLORE WORLDS
             </h1>
           </div>
-          <div className="absolute top-[50%] right-[10%] text-end" id="left-text">
+          <div
+            className="absolute top-[50%] right-[10%] text-end"
+            id="left-text"
+          >
             <h1 className="font text-[50px] leading-[1.5]">
               CREATE STORIES
               <br />
@@ -217,7 +222,30 @@ const App = () => {
               <br />
               OWN YOUR EXPERIENCE
             </h1>
-            <h3 className="text-[#7c7c7c] font-normal text-[30px]">..AND CELEBRATE TRUE INTERACTION</h3>
+            <h3 className="text-[#7c7c7c] font-normal text-[30px]">
+              ..AND CELEBRATE TRUE INTERACTION
+            </h3>
+          </div>
+        </div>
+        <div className="relative w-full h-screen bg-[#f1f1f1]" id="page2">
+          <div className="absolute top-[30%] left-[10%]" id="text1">
+            <h3 className="text-[#7c7c7c] text-[30px] font-normal">TALKSY / COME ALIVE</h3>
+            <h1 className="text-[60px] leading-[1.5]">
+              LET'S
+              <br />
+              TALK
+              <br />
+              TOGETHER
+            </h1>
+          </div>
+          <div id="text2">
+            <p>
+              STEP INTO A SPACE WHERE CHARACTERS AREN’T JUST AVATARS—THEY
+              LISTEN, RESPOND, AND GROW WITH YOU. AGE, REGION, STATUS—NONE OF IT
+              MATTERS HERE. CHAT, LAUGH, AND PLAY WITHOUT LIMITS, CREATING
+              STORIES THAT BELONG TO EVERYONE. THE FUTURE OF CONVERSATION STARTS
+              WITH US.
+            </p>
           </div>
         </div>
       </div>
