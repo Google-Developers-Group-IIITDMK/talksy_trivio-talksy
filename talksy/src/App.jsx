@@ -109,6 +109,7 @@ const App = () => {
           <h4 className="absolute top-[62%] left-[25%] font-500">
             ...SCROLL TO EXPLORE
           </h4>
+          <canvas></canvas>
         </div>
       </div>
     </>
