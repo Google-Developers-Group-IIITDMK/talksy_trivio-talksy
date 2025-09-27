@@ -13,8 +13,6 @@ const App = () => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
     const locoScroll = new LocomotiveScroll({
       el: mainRef.current,
       smooth: true,
@@ -43,7 +41,7 @@ const App = () => {
       locoScroll.update();
     }
     ScrollTrigger.addEventListener("refresh", handleRefresh);
-
+    ScrollTrigger.refresh(); 
     return () => {
       ScrollTrigger.removeEventListener("refresh", handleRefresh);
       locoScroll.destroy();
@@ -87,6 +85,7 @@ const App = () => {
         start: "top top",
         end: "600% top",
         scroller: mainRef.current,
+        invalidateOnRefresh: true,
       },
       onUpdate: render,
     });
@@ -127,7 +126,7 @@ const App = () => {
     <>
       <div
         id="nav"
-        className="flex justify-between items-center w-full h-24 fixed px-10 py-10 z-99 "
+        className="flex justify-between items-center w-full h-24 fixed px-10 py-10 z-[99] "
       >
         <h3 className="font-[gilroy] font-400 text-5xl cursor-pointer">
           TALKSY
@@ -192,7 +191,7 @@ const App = () => {
           </h4>
           <canvas
             ref={canvasRef}
-            className="relative z-9 max-w-full max-h-screen"
+            className="relative z-20 max-w-full max-h-screen"
           ></canvas>
         </div>
 
