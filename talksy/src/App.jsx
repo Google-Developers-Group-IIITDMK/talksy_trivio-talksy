@@ -60,13 +60,13 @@ const App = () => {
       </div>
       <div className="main relative overflow-hidden">
         <div id="page" className="w-full h-screen relative bg-[#f1f1f1]">
-          <div id="loop">
-            <h1>
+          <div id="loop" className="flex absolute top-[20%] h-[25%] w-full text-[14rem] whitespace-nowrap">
+            <h1 className="font-normal [animation-name:anim] [animation-duration:15s] ease-linear animate-infinite">
               <b>TALKSY</b> IS WHERE{" "}
               <b>
                 <i>CHARACTERS</i>
               </b>{" "}
-              <span>
+              <span className="text-transparent font-medium [-webkit-text-stroke:1.2px_#000]">
                 COME <b>ALIVE</b>
               </span>{" "}
               IN THE{" "}
@@ -74,12 +74,12 @@ const App = () => {
                 <i>METAVERSE.</i>
               </span>
             </h1>
-            <h1>
+            <h1 className="font-normal [animation-name:anim] [animation-duration:15s] ease-linear animate-infinite">
               <b>TALKSY</b> IS WHERE{" "}
               <b>
                 <i>CHARACTERS</i>
               </b>{" "}
-              <span>
+              <span className="text-transparent font-medium [-webkit-text-stroke:1.2px_#000]">
                 COME <b>ALIVE</b>
               </span>{" "}
               IN THE{" "}
@@ -87,12 +87,12 @@ const App = () => {
                 <i>METAVERSE.</i>
               </span>
             </h1>
-            <h1>
+            <h1 className="font-normal [animation-name:anim] [animation-duration:15s] ease-linear animate-infinite">
               <b>TALKSY</b> IS WHERE{" "}
               <b>
                 <i>CHARACTERS</i>
               </b>{" "}
-              <span>
+              <span className="text-transparent font-medium [-webkit-text-stroke:1.2px_#000]">
                 COME <b>ALIVE</b>
               </span>{" "}
               IN THE{" "}
@@ -109,7 +109,7 @@ const App = () => {
           <h4 className="absolute top-[62%] left-[25%] font-500">
             ...SCROLL TO EXPLORE
           </h4>
-          <canvas></canvas>
+          <canvas className="relative z-9 max-w-full max-h-screen"></canvas>
         </div>
       </div>
     </>
