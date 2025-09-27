@@ -4,7 +4,7 @@ import "locomotive-scroll/dist/locomotive-scroll.css";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { useGSAP } from "@gsap/react";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,47 +12,37 @@ const App = () => {
   const mainRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const LocomotiveScrollComponent = () => {
-    const scrollRef = useRef(null);
+  useEffect(() => {
+    const locoScroll = new LocomotiveScroll({
+      el: mainRef.current,
+      smooth: true,
+    });
 
-    useEffect(() => {
-      gsap.registerPlugin(ScrollTrigger);
+    locoScroll.on("scroll", ScrollTrigger.update);
 
-      const locoScroll = new LocomotiveScroll({
-        el: scrollRef.current,
-        smooth: true,
-      });
+    ScrollTrigger.scrollerProxy(mainRef.current, {
+      scrollTop(value) {
+        return arguments.length
+          ? locoScroll.scrollTo(value, 0, 0)
+          : locoScroll.scroll.instance.scroll.y;
+      },
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+      },
+      pinType: mainRef.current.style.transform ? "transform" : "fixed",
+    });
 
-      locoScroll.on("scroll", ScrollTrigger.update);
+    function handleRefresh() {
+      locoScroll.update();
+    }
+    ScrollTrigger.addEventListener("refresh", handleRefresh);
+    ScrollTrigger.refresh();
 
-      ScrollTrigger.scrollerProxy(scrollRef.current, {
-        scrollTop(value) {
-          return arguments.length
-            ? locoScroll.scrollTo(value, 0, 0)
-            : locoScroll.scroll.instance.scroll.y;
-        },
-        getBoundingClientRect() {
-          return {
-            top: 0,
-            left: 0,
-            width: window.innerWidth,
-            height: window.innerHeight,
-          };
-        },
-        pinType: scrollRef.current.style.transform ? "transform" : "fixed",
-      });
-
-      ScrollTrigger.addEventListener("refresh", () => locoScroll.update());
-      ScrollTrigger.refresh();
-
-      return () => {
-        ScrollTrigger.removeEventListener("refresh", () => locoScroll.update());
-        locoScroll.destroy();
-      };
-    }, []);
-  };
-
-  useGSAP(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     canvas.width = window.innerWidth;
@@ -88,7 +78,11 @@ const App = () => {
         trigger: canvas,
         start: "top top",
         end: "600% top",
+        markers: true,
         scroller: mainRef.current,
+        invalidateOnRefresh: true,
+        onUpdate: () =>
+          console.log("ScrollTrigger updating, frame:", imageSeq.frame),
       },
       onUpdate: render,
     });
@@ -100,6 +94,7 @@ const App = () => {
     }
 
     function scaleImage(img, ctx) {
+      var canvas = ctx.canvas;
       const hRatio = canvas.width / img.width;
       const vRatio = canvas.height / img.height;
       const ratio = Math.max(hRatio, vRatio);
@@ -119,17 +114,43 @@ const App = () => {
       );
     }
 
+    ScrollTrigger.create({
+      trigger: canvas,
+      pin: true,
+      scroller: mainRef.current,
+      start: "top top",
+      end: "600% top",
+    });
+
+    ["#page1", "#page2", "#page3"].forEach((id) => {
+      gsap.to(id, {
+        scrollTrigger: {
+          trigger: id,
+          start: "top top",
+          end: "bottom top",
+          pin: true,
+          scroller: mainRef.current,
+          pinType: mainRef.current.style.transform ? "transform" : "fixed",
+          invalidateOnRefresh: true,
+        },
+      });
+    });
+
     return () => {
       ScrollTrigger.getAll().forEach((st) => st.kill());
       window.removeEventListener("resize", setCanvasSize);
+      ScrollTrigger.removeEventListener("refresh", handleRefresh);
+      locoScroll.destroy();
     };
   }, []);
+
+  useGSAP(() => {}, []);
 
   return (
     <>
       <div
         id="nav"
-        className="flex justify-between items-center w-full h-24 fixed px-10 py-10 z-99 "
+        className="flex justify-between items-center w-full h-24 fixed px-10 py-10 z-[99] "
       >
         <h3 className="font-[gilroy] font-400 text-5xl cursor-pointer">
           TALKSY
@@ -138,7 +159,10 @@ const App = () => {
           TRY NOW
         </button>
       </div>
-      <div ref={mainRef} className="main relative overflow-hidden">
+      <div
+        ref={mainRef}
+        className="main relative overflow-hidden data-scroll-container"
+      >
         <div id="page" className="w-full h-screen relative bg-[#f1f1f1]">
           <div
             id="loop"
@@ -194,7 +218,7 @@ const App = () => {
           </h4>
           <canvas
             ref={canvasRef}
-            className="relative z-9 max-w-full max-h-screen"
+            className="absolute inset-0 z-20 max-w-full max-h-screen"
           ></canvas>
         </div>
 
@@ -229,7 +253,9 @@ const App = () => {
         </div>
         <div className="relative w-full h-screen bg-[#f1f1f1]" id="page2">
           <div className="absolute top-[30%] left-[10%]" id="text1">
-            <h3 className="text-[#7c7c7c] text-[30px] font-normal">TALKSY / COME ALIVE</h3>
+            <h3 className="text-[#7c7c7c] text-[30px] font-normal">
+              TALKSY / COME ALIVE
+            </h3>
             <h1 className="text-[60px] leading-[1.5]">
               LET'S
               <br />
@@ -238,7 +264,10 @@ const App = () => {
               TOGETHER
             </h1>
           </div>
-          <div className="absolute top-[55%] right-[10%] w-4xl text-end text-3xl" id="text2">
+          <div
+            className="absolute top-[55%] right-[10%] w-4xl text-end text-3xl"
+            id="text2"
+          >
             <p className="text-[#7c7c7c] font-normal">
               STEP INTO A SPACE WHERE CHARACTERS AREN’T JUST AVATARS—THEY
               LISTEN, RESPOND, AND GROW WITH YOU. AGE, REGION, STATUS—NONE OF IT
@@ -246,6 +275,21 @@ const App = () => {
               STORIES THAT BELONG TO EVERYONE. THE FUTURE OF CONVERSATION STARTS
               WITH US.
             </p>
+          </div>
+        </div>
+
+        <div className="relative h-screen w-full bg-[#f1f1f1]" id="page3">
+          <div className="absolute top-[40%] right-[10%] text-end" id="text3">
+            <h3 className="font-normal text-[#7c7c7c] text-[40px]">
+              TALKSY / DIGITAL PLAYGROUND
+            </h3>
+            <h1 className="text-[70px]">
+              THE METAVERSE
+              <br />
+              IS OUR
+              <br />
+              CONVERSATION SPACE
+            </h1>
           </div>
         </div>
       </div>
