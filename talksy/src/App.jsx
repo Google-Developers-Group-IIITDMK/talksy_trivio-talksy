@@ -238,8 +238,8 @@ const App = () => {
               TOGETHER
             </h1>
           </div>
-          <div id="text2">
-            <p>
+          <div className="absolute top-[55%] right-[10%] w-4xl text-end text-3xl" id="text2">
+            <p className="text-[#7c7c7c] font-normal">
               STEP INTO A SPACE WHERE CHARACTERS AREN’T JUST AVATARS—THEY
               LISTEN, RESPOND, AND GROW WITH YOU. AGE, REGION, STATUS—NONE OF IT
               MATTERS HERE. CHAT, LAUGH, AND PLAY WITHOUT LIMITS, CREATING
