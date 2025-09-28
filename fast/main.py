@@ -43,44 +43,44 @@ except FileNotFoundError:
 async def get_home():
     return HTMLResponse(html_content)
 
-# --- WebSocket Endpoint (MAJOR CHANGES) ---
+
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
     await websocket.accept()
     print(f"Client {client_id} connected.")
 
-    voice_id = "21m00Tcm4TlvDq8ikWAM"  # Rachel's voice ID
+    voice_id = "21m00Tcm4TlvDq8ikWAM"
     uri = f"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream-input"
 
     try:
-        # Use httpx.AsyncClient to manage the connection
+        
         async with aiohttp.ClientSession() as session:
             async with session.ws_connect(uri, headers={"xi-api-key": ELEVEN_API_KEY}) as eleven_ws:
-                # Send initial configuration message to ElevenLabs
+                
                 await eleven_ws.send_json({
                     "text": " ",
                     "voice_settings": { "stability": 0.7, "similarity_boost": 0.8 },
                 })
 
-                # Asynchronous task to forward audio from ElevenLabs to the client
+                
                 async def audio_forwarder():
                     try:
                         while True:
                             message = await eleven_ws.receive()
-                             # Binary audio frames
+                            
                             if message.type == aiohttp.WSMsgType.BINARY:
                                 await websocket.send_bytes(message.data)
 
-                            # JSON control/meta messages
+                            
                             elif message.type == aiohttp.WSMsgType.TEXT:
                                 data = json.loads(message.data)
                                 if data.get("audio"):
-                                    # some endpoints send base64 audio in JSON (rare)
+                                    
                                     await websocket.send_bytes(data["audio"])
                                 if data.get("isFinal"):
                                     break
 
-                            # Connection closed or error
+                            
                             elif message.type in (aiohttp.WSMsgType.CLOSED,
                                             aiohttp.WSMsgType.ERROR):
                                 break
@@ -91,11 +91,11 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                     conversations[client_id] = model.start_chat(history=[])
                 chat_session = conversations[client_id]
 
-                # Stream initial greeting
+                
                 await eleven_ws.send_json({"text": "Hello! I am your AI friend. Let's have a chat.", "try_trigger_generation": True})
                 await audio_forwarder()
 
-                # Main conversation loop
+                
                 while True:
                     user_text = await websocket.receive_text()
                     if user_text.lower().strip() in ("exit", "quit", "bye"):
@@ -103,10 +103,10 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                         await audio_forwarder()
                         break
                     
-                    # Get Gemini's response
+                    
                     response = await chat_session.send_message_async(user_text)
                     
-                    # Send response to ElevenLabs and forward audio
+                    
                     await eleven_ws.send_json({"text": response.text, "try_trigger_generation": True})
                     await audio_forwarder()
 
