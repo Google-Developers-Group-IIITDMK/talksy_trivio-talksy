@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { useGSAP } from "@gsap/react";
 import { useRef, useEffect } from "react";
+import CircularText from './components/CircularText.jsx';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -78,11 +79,8 @@ const App = () => {
         trigger: canvas,
         start: "top top",
         end: "600% top",
-        markers: true,
         scroller: mainRef.current,
         invalidateOnRefresh: true,
-        onUpdate: () =>
-          console.log("ScrollTrigger updating, frame:", imageSeq.frame),
       },
       onUpdate: render,
     });
@@ -144,7 +142,7 @@ const App = () => {
     };
   }, []);
 
-  useGSAP(() => {}, []);
+  useGSAP(() => { }, []);
 
   return (
     <>
@@ -161,19 +159,19 @@ const App = () => {
       </div>
       <div
         ref={mainRef}
-        className="main relative overflow-hidden data-scroll-container"
+        className="main relative overflow-hidden data-scroll-container bg-black"
       >
         <div id="page" className="w-full h-screen relative bg-black">
           <div
             id="loop"
-            className="flex absolute top-[20%] h-[25%] w-full text-[14rem] whitespace-nowrap text-white"
+            className="flex absolute top-[20%] h-[25%] w-full text-[10rem] whitespace-nowrap text-white"
           >
             <h1 className="font-normal [animation-name:anim] [animation-duration:15s] ease-linear animate-infinite">
               <b>TALKSY</b> IS WHERE{" "}
               <b>
                 <i>CHARACTERS</i>
               </b>{" "}
-              <span className="text-transparent font-medium [-webkit-text-stroke:1.2px_#000]">
+              <span className="font-medium">
                 COME <b>ALIVE</b>
               </span>{" "}
               IN THE{" "}
@@ -186,7 +184,7 @@ const App = () => {
               <b>
                 <i>CHARACTERS</i>
               </b>{" "}
-              <span className="text-transparent font-medium [-webkit-text-stroke:1.2px_#000] ">
+              <span className="text-transparent font-medium [-webkit-text-stroke:1.2px_#111] ">
                 COME <b>ALIVE</b>
               </span>{" "}
               IN THE{" "}
@@ -199,11 +197,11 @@ const App = () => {
               <b>
                 <i>CHARACTERS</i>
               </b>{" "}
-              <span className="text-white font-medium [-webkit-text-stroke:1.2px_#000]">
+              <span className="text-white font-medium">
                 COME <b>ALIVE</b>
               </span>{" "}
               IN THE{" "}
-              <span>
+              <span className="text-white">
                 <i>METAVERSE.</i>
               </span>
             </h1>
@@ -213,8 +211,8 @@ const App = () => {
             CHAT, PLAY, AND CONNECT WITH CHARACTERS IN A <br />
             TRULY INTERACTIVE WORLD.
           </h3>
-          <h4 className="absolute top-[62%] left-[25%] font-500 text-white">
-            <br/>...SCROLL TO EXPLORE
+          <h4 className="absolute top-[65%] left-[20%] font-500 text-white">
+            <br />...SCROLL TO EXPLORE
           </h4>
           <canvas
             ref={canvasRef}
@@ -223,7 +221,7 @@ const App = () => {
         </div>
 
         <div className="relative w-full h-screen bg-black" id="page1">
-          <div className="absolute top-[30%] left-[10%]" id="right-text">
+          <div className="absolute top-[30%] left-[5%]" id="right-text">
             <h3 className=" font-normal text-[#7c7c7c] text-[30px]">
               TALKSY / KEY VISION
             </h3>
@@ -236,10 +234,10 @@ const App = () => {
             </h1>
           </div>
           <div
-            className="absolute top-[50%] right-[10%] text-end"
+            className="absolute top-[50%] right-[5%] text-end"
             id="left-text"
           >
-            <h1 className="font text-[50px] leading-[1.5]">
+            <h1 className="font text-[40px] leading-[1.5] text-white">
               CREATE STORIES
               <br />
               BUILD CONNECTIONS
@@ -265,14 +263,14 @@ const App = () => {
             </h1>
           </div>
           <div text-align="center"
-            className="absolute top-[55%] -right-[65px] w-4xl text-center text-3xl bg-white"
+            className="absolute top-[55%] -right-[65px] w-4xl text-center text-3xl"
             id="text2"
           >
             <p className="text-[#7c7c7c] font-light text-[25px] leading-[1.5]">
-              STEP INTO A SPACE WHERE CHARACTERS <br /> AREN’T JUST AVATARS —THEY <br/>
-              LISTEN, RESPOND, AND GROW WITH YOU.<br/> AGE, REGION, STATUS <br/>NONE OF IT
-              MATTERS HERE.<br/> CHAT, LAUGH, AND PLAY WITHOUT LIMITS,<br/> CREATING
-              STORIES THAT BELONG<br/> TO EVERYONE. <br/>THE FUTURE OF CONVERSATION<br/> STARTS
+              STEP INTO A SPACE WHERE CHARACTERS <br /> AREN’T JUST AVATARS —THEY <br />
+              LISTEN, RESPOND, AND GROW WITH YOU.<br /> AGE, REGION, STATUS <br />NONE OF IT
+              MATTERS HERE.<br /> CHAT, LAUGH, AND PLAY WITHOUT LIMITS,<br /> CREATING
+              STORIES THAT BELONG<br /> TO EVERYONE. <br />THE FUTURE OF CONVERSATION<br /> STARTS
               WITH US.
             </p>
           </div>
@@ -281,7 +279,7 @@ const App = () => {
         <div className="relative h-screen w-full bg-black" id="page3 ">
           <div className="absolute top-[40%] right-[10%] text-end" id="text3">
             <h3 className="font-normal text-[#7c7c7c] text-[40px]">
-              TALKSY <br/>DIGITAL PLAYGROUND
+              TALKSY <br />DIGITAL PLAYGROUND
             </h3>
             <h1 className="text-[70px] text-white ">
               THE METAVERSE
@@ -292,7 +290,20 @@ const App = () => {
             </h1>
           </div>
         </div>
+        <footer>
+          <div className=" w-full h-48 text-white flex justify-start relative">
+            <div className="m-0 mx-auto -my-3 absolute top-1 left-1.5 cursor-pointer w-48 h-48 z-20">
+            <CircularText
+              text="TALKSY*TRIVIO*"
+              onHover="speedUp"
+              spinDuration={20}
+              className="custom-class"
+            />
+            </div>
+          </div>
+        </footer>
       </div>
+
     </>
   );
 };
