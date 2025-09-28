@@ -170,3 +170,34 @@ html,body{
     @apply bg-background text-foreground;
   }
 }
+
+*::selection {
+  background-color: #D3FD50;
+  color: black;
+}
+
+
+.moveX {
+  
+  flex-shrink: 0;
+  animation: moveAnimation 15s linear infinite;
+}
+
+@keyframes moveAnimation {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%); 
+  }
+}
+
+.moveLink{
+  height:0;
+  overflow:hidden;
+}
+
+.link:hover .moveLink{
+  height:100%;
+  transition: all ease 0.3s;
+}
