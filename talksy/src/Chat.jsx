@@ -67,7 +67,7 @@ const FullScreenNav = () => {
           <Link to="/doremon">
             <div className="h-28 origin-top cursor-pointer link relative border-y border-black uppercase overflow-hidden mt-[-90px]">
               <h1 className="text-center font-[font1] font-black text-[6vw] text-black mt-[-12px]">
-                doremon
+                doraemon
               </h1>
               
               <div className="moveLink absolute top-0 left-0 w-full flex bg-[#D3FD50] text-black">
@@ -76,16 +76,16 @@ const FullScreenNav = () => {
                     Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
                   <img
-                    src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
-                    className="h-18 w-48 shrink-0 rounded-full object-cover mx-8"
+                    src="/doraemonn.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
                   />
                   
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                     Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
                   <img
-                    src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
-                    className="h-18 w-48 shrink-0 rounded-full object-cover mx-8"
+                    src="/doraemonn.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
                   />
                   
                 </div>
@@ -95,16 +95,16 @@ const FullScreenNav = () => {
                     Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
                   <img
-                    src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
-                    className="h-18 w-48 shrink-0 rounded-full object-cover mx-8"
+                    src="/doraemonn.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
                   />
                   
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                     Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
                   <img
-                    src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
-                    className="h-18 w-48 shrink-0 rounded-full object-cover mx-8"
+                    src="/doraemonn.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
                   />
                 </div>
               </div>
@@ -120,11 +120,11 @@ const FullScreenNav = () => {
               </h1>
             
               <div className="moveLink absolute top-0 left-0 w-full flex bg-[#D3FD50] text-black">
-            
                 <div className="moveX flex items-center whitespace-nowrap animate-moveX">
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                     I promise no spells—just friendly conversation (unless you’re a Death Eater 😜).
                   </h2>
+                  
                   
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                     I promise no spells—just friendly conversation (unless you’re a Death Eater 😜).
@@ -148,19 +148,26 @@ const FullScreenNav = () => {
           </Link>
           <div className="h-28 origin-top cursor-pointer link relative border-y border-white uppercase overflow-hidden">
             <h1 className="text-center font-[font1] font-black text-[6vw] text-black mt-[-12px]">
-              VOLmaort
+              Voldemort
             </h1>
            
             <div className="moveLink absolute top-0 left-0 w-full flex bg-[#D3FD50] text-black">
-              
               <div className="moveX flex items-center whitespace-nowrap animate-moveX">
                 <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                   You dare hover over the Dark Lord? Bold move… I like it.
                 </h2>
+                <img
+                    src="/voldemort.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
+                  />
                 
                 <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                   You dare hover over the Dark Lord? Bold move… I like it.
                 </h2>
+                <img
+                    src="/voldemort.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
+                  />
                 
               </div>
 
@@ -169,10 +176,18 @@ const FullScreenNav = () => {
                 <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                   You dare hover over the Dark Lord? Bold move… I like it.
                 </h2>
+                <img
+                    src="/voldemort.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
+                  />
                 
                 <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                   You dare hover over the Dark Lord? Bold move… I like it.
                 </h2>
+                <img
+                    src="/voldemort.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
+                  />
                 
               </div>
             </div>
@@ -188,10 +203,18 @@ const FullScreenNav = () => {
                 <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                   Pssst… keep quiet or Jerry will hear us!
                 </h2>
+                <img
+                    src="/tom.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
+                  />
                 
                 <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                   Pssst… keep quiet or Jerry will hear us!
                 </h2>
+                <img
+                    src="/tom.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
+                  />
                 
               </div>
 
@@ -200,10 +223,18 @@ const FullScreenNav = () => {
                 <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                   Pssst… keep quiet or Jerry will hear us!
                 </h2>
+                <img
+                    src="/tom.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
+                  />
                 
                 <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                   Pssst… keep quiet or Jerry will hear us!
                 </h2>
+                <img
+                    src="/tom.png"
+                    className="h-24 w-24 rounded-full object-contain mx-8 bg-gray-200"
+                  />
                 
               </div>
             </div>
