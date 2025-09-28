@@ -64,12 +64,17 @@
     <div id="container">
       <h1>AI Voice Assistant</h1>
       <div id="status">Click "Start" to begin the conversation</div>
+      <div
+        id="chat"
+        style="margin: 20px 0; max-height: 300px; overflow-y: auto"
+      ></div>
       <button id="controlButton" class="start">Start</button>
     </div>
 
     <script>
       const controlButton = document.getElementById("controlButton");
       const statusDiv = document.getElementById("status");
+      const chatDiv = document.getElementById("chat");
 
       let socket;
       let recognition;
@@ -114,6 +119,17 @@
         controlButton.disabled = true;
       }
 
+      function setStatus(text) {
+        statusDiv.textContent = text;
+      }
+
+      function appendMessage(sender, text) {
+        const div = document.createElement("div");
+        div.innerHTML = `<strong>${sender}:</strong> ${text}`;
+        chatDiv.appendChild(div);
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+      }
+
       function connect() {
         const wsUrl = `ws://${window.location.host}/ws/${clientId}`;
         socket = new WebSocket(wsUrl);
@@ -126,10 +142,8 @@
 
         socket.onmessage = async (event) => {
           if (event.data instanceof ArrayBuffer) {
-            
             audioChunks.push(event.data);
 
-           
             const blob = new Blob(audioChunks, { type: "audio/mpeg" });
             const url = URL.createObjectURL(blob);
 
@@ -165,20 +179,20 @@
       }
 
       function playNextInQueue() {
-        if (isPlaying || audioQueue.length === 0) {
-          return;
-        }
+        if (isPlaying || audioQueue.length === 0) return;
         isPlaying = true;
-        statusDiv.textContent = "Speaking...";
+        setStatus("Speaking...");
 
         const audioBlob = audioQueue.shift();
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
 
         audio.play();
+        appendMessage("AI", "(speaking...)");
 
         audio.onended = () => {
           isPlaying = false;
+          if (isConversationActive) setStatus("Listening...");
           playNextInQueue();
         };
       }
