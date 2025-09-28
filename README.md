@@ -10,7 +10,7 @@
 [![Forks](https://img.shields.io/github/forks/Google-Developers-Group-IIITDMK/talksy_trivio-talksy?style=for-the-badge&color=7B4B94)](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/network/members)
 [![Stars](https://img.shields.io/github/stars/Google-Developers-Group-IIITDMK/talksy_trivio-talksy?style=for-the-badge&color=E8871E)](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/stargazers)
 
-[Live Demo](https://talksy-trivio.vercel.app/) | [Report Bug](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/issues) | [Request Feature](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/issues)
+[Report Bug](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/issues) | [Request Feature](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/issues)
 
 </div>
 
@@ -236,9 +236,9 @@ Project Link: [https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-
   
   <br />
   
-  <img src="https://i.imgur.com/8dZU8VY.png" width="100px" alt="GDG Logo"/>
+  <img src="images/logo.png" width="100px" alt="GDG Logo"/>
   
-  <p>Created with ❤️ by Team Talksie</a> and the Google Developers Group IIITDMK</p>
+  <p>Created by Team Talksie</a> and the Google Developers Group IIITDMK</p>
   
   <p>Last updated: 2025-09-28</p>
   
