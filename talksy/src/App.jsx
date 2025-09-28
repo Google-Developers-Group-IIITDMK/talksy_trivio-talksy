@@ -152,10 +152,10 @@ const App = () => {
         id="nav"
         className="flex justify-between items-center w-full h-24 fixed px-10 py-10 z-[99] "
       >
-        <h3 className="font-[gilroy] font-400 text-5xl cursor-pointer">
+        <h3 className="font-[Avenir] font-400 text-5xl cursor-pointer text-white">
           TALKSY
         </h3>
-        <button className="px-5 py-5 bg-black text-white text-4xl border-none font-[gilroy] rounded-4xl cursor-pointer">
+        <button className="px-5 py-5 bg-black text-white text-4xl border-none font-[Avenir] rounded-4xl cursor-pointer hover:bg-white hover:text-black">
           TRY NOW
         </button>
       </div>
@@ -163,10 +163,10 @@ const App = () => {
         ref={mainRef}
         className="main relative overflow-hidden data-scroll-container"
       >
-        <div id="page" className="w-full h-screen relative bg-[#f1f1f1]">
+        <div id="page" className="w-full h-screen relative bg-black">
           <div
             id="loop"
-            className="flex absolute top-[20%] h-[25%] w-full text-[14rem] whitespace-nowrap"
+            className="flex absolute top-[20%] h-[25%] w-full text-[14rem] whitespace-nowrap text-white"
           >
             <h1 className="font-normal [animation-name:anim] [animation-duration:15s] ease-linear animate-infinite">
               <b>TALKSY</b> IS WHERE{" "}
@@ -186,7 +186,7 @@ const App = () => {
               <b>
                 <i>CHARACTERS</i>
               </b>{" "}
-              <span className="text-transparent font-medium [-webkit-text-stroke:1.2px_#000]">
+              <span className="text-transparent font-medium [-webkit-text-stroke:1.2px_#000] ">
                 COME <b>ALIVE</b>
               </span>{" "}
               IN THE{" "}
@@ -199,7 +199,7 @@ const App = () => {
               <b>
                 <i>CHARACTERS</i>
               </b>{" "}
-              <span className="text-transparent font-medium [-webkit-text-stroke:1.2px_#000]">
+              <span className="text-white font-medium [-webkit-text-stroke:1.2px_#000]">
                 COME <b>ALIVE</b>
               </span>{" "}
               IN THE{" "}
@@ -208,13 +208,13 @@ const App = () => {
               </span>
             </h1>
           </div>
-          <h3 className="absolute top-[55%] font-400 text-[#7c7c7c] left-[5%]">
+          <h3 className="absolute top-[55%] font-normal text-[20px] text-[#7c7c7c] left-[5%]">
             TALKSY AIMS TO BE A LIVING PLATFORM WHERE YOU CAN <br />
             CHAT, PLAY, AND CONNECT WITH CHARACTERS IN A <br />
             TRULY INTERACTIVE WORLD.
           </h3>
-          <h4 className="absolute top-[62%] left-[25%] font-500">
-            ...SCROLL TO EXPLORE
+          <h4 className="absolute top-[62%] left-[25%] font-500 text-white">
+            <br/>...SCROLL TO EXPLORE
           </h4>
           <canvas
             ref={canvasRef}
@@ -222,12 +222,12 @@ const App = () => {
           ></canvas>
         </div>
 
-        <div className="relative w-full h-screen bg-[#f1f1f1]" id="page1">
+        <div className="relative w-full h-screen bg-black" id="page1">
           <div className="absolute top-[30%] left-[10%]" id="right-text">
             <h3 className=" font-normal text-[#7c7c7c] text-[30px]">
               TALKSY / KEY VISION
             </h3>
-            <h1 className="text-[50px] leading-[1.5]">
+            <h1 className="text-[50px] leading-[1.5] text-white">
               TALK FREELY
               <br />
               MEET CHARACTERS
@@ -251,12 +251,12 @@ const App = () => {
             </h3>
           </div>
         </div>
-        <div className="relative w-full h-screen bg-[#f1f1f1]" id="page2">
+        <div className="relative w-full h-screen bg-black" id="page2">
           <div className="absolute top-[30%] left-[10%]" id="text1">
             <h3 className="text-[#7c7c7c] text-[30px] font-normal">
               TALKSY / COME ALIVE
             </h3>
-            <h1 className="text-[60px] leading-[1.5]">
+            <h1 className="text-[60px] leading-[1.5] text-white">
               LET'S
               <br />
               TALK
@@ -264,26 +264,26 @@ const App = () => {
               TOGETHER
             </h1>
           </div>
-          <div
-            className="absolute top-[55%] right-[10%] w-4xl text-end text-3xl"
+          <div text-align="center"
+            className="absolute top-[55%] -right-[65px] w-4xl text-center text-3xl bg-white"
             id="text2"
           >
-            <p className="text-[#7c7c7c] font-normal">
-              STEP INTO A SPACE WHERE CHARACTERS AREN’T JUST AVATARS—THEY
-              LISTEN, RESPOND, AND GROW WITH YOU. AGE, REGION, STATUS—NONE OF IT
-              MATTERS HERE. CHAT, LAUGH, AND PLAY WITHOUT LIMITS, CREATING
-              STORIES THAT BELONG TO EVERYONE. THE FUTURE OF CONVERSATION STARTS
+            <p className="text-[#7c7c7c] font-light text-[25px] leading-[1.5]">
+              STEP INTO A SPACE WHERE CHARACTERS <br /> AREN’T JUST AVATARS —THEY <br/>
+              LISTEN, RESPOND, AND GROW WITH YOU.<br/> AGE, REGION, STATUS <br/>NONE OF IT
+              MATTERS HERE.<br/> CHAT, LAUGH, AND PLAY WITHOUT LIMITS,<br/> CREATING
+              STORIES THAT BELONG<br/> TO EVERYONE. <br/>THE FUTURE OF CONVERSATION<br/> STARTS
               WITH US.
             </p>
           </div>
         </div>
 
-        <div className="relative h-screen w-full bg-[#f1f1f1]" id="page3">
+        <div className="relative h-screen w-full bg-black" id="page3 ">
           <div className="absolute top-[40%] right-[10%] text-end" id="text3">
             <h3 className="font-normal text-[#7c7c7c] text-[40px]">
-              TALKSY / DIGITAL PLAYGROUND
+              TALKSY <br/>DIGITAL PLAYGROUND
             </h3>
-            <h1 className="text-[70px]">
+            <h1 className="text-[70px] text-white ">
               THE METAVERSE
               <br />
               IS OUR
