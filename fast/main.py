@@ -1,108 +1,172 @@
 import os
-import re
 import asyncio
-from dotenv import load_dotenv
+import json
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
+from dotenv import load_dotenv
 import google.generativeai as genai
-from elevenlabs import generate, voices, set_api_key
+import websockets
+from elevenlabs import VoiceSettings
+
 
 load_dotenv()
 
-# Configure APIs
-GENAI_API_KEY = os.getenv("GENAI_API_KEY")
-ELEVEN_API_KEY = os.getenv("ELEVEN_API_KEY")
-genai.configure(api_key=GENAI_API_KEY)
-set_api_key(ELEVEN_API_KEY)
 
-# FastAPI app
+GOOGLE_API_KEY = os.getenv("GENAI_API_KEY")
+ELEVEN_API_KEY = os.getenv("ELEVEN_API_KEY")
+
+
+genai.configure(api_key=GOOGLE_API_KEY)
+
+
 app = FastAPI()
 
-# Utility: Split long text into small TTS chunks
-def chunk_text(text, max_len=250):
-    sentences = re.split(r'(?<=[.!?]) +', text)
-    chunks, current = [], ""
-    for s in sentences:
-        if len(current) + len(s) + 1 > max_len:
-            if current:
-                chunks.append(current.strip())
-            current = s
-        else:
-            current += " " + s
-    if current:
-        chunks.append(current.strip())
-    return chunks
 
-@app.websocket("/ws/chat")
-async def chat_endpoint(websocket: WebSocket):
-    """
-    WebSocket endpoint for real-time AI chat.
-    Client sends: { "type": "message", "data": "Hello AI" }
-    Server sends:
-        - {"type":"reply","data":"AI text"}
-        - Binary audio frames
-    """
+generation_config = {
+    "temperature": 0.7,
+    "top_p": 1,
+    "top_k": 1,
+    "max_output_tokens": 2048,
+}
+safety_settings = [
+    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+]
+model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    generation_config=generation_config,
+    safety_settings=safety_settings
+)
+
+
+conversations = {}
+
+
+with open("index.html", "r") as f:
+    html_content = f.read()
+
+@app.get("/")
+async def get_home():
+    return HTMLResponse(html_content)
+
+
+@app.websocket("/ws/{client_id}")
+async def websocket_endpoint(websocket: WebSocket, client_id: str):
     await websocket.accept()
-    conversation = []
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    print(f"Client {client_id} connected.")
 
-    # Send welcome
-    await websocket.send_json({"type": "reply", "data": "Hello! I am your AI friend. Let's have a chat."})
+    
+    voice_id = "Rachel"  
+    model_id = "eleven_flash_v2_5"  
+    uri = f"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream-input?model_id={model_id}"
 
     try:
-        while True:
-            # Receive user message
-            data = await websocket.receive_json()
-            if data["type"] != "message":
-                continue
+        async with websockets.connect(uri,headers=[("xi-api-key", ELEVEN_API_KEY)]) as ws:
+            
+            voice_settings = VoiceSettings(
+                stability=0.8,
+                similarity_boost=0.8,
+                style=0.0,
+                use_speaker_boost=True,
+                speed=1.0
+            )
 
-            user_msg = data["data"].strip()
-            print(f"User :: {user_msg}")
+            
+            init_message = {
+                "text": " ",
+                "voice_settings": voice_settings.dict(),
+                "generation_config": generation_config,
+                "xi_api_key": ELEVEN_API_KEY
+            }
+            await ws.send(json.dumps(init_message))
 
-            if user_msg.lower() in ("exit", "quit", "bye"):
-                await websocket.send_json({"type": "reply", "data": "Goodbye! It was nice talking to you."})
-                break
+            if client_id not in conversations:
+                conversations[client_id] = model.start_chat(history=[])
+                print(f"Started new conversation for client {client_id}.")
 
-            conversation.append(f"User: {user_msg}")
+            chat_session = conversations[client_id]
 
-            # Call Gemini
             try:
-                prompt = "\n".join(conversation) + "\nAI:"
-                response = await model.generate_content(
-                    prompt,
-                    generation_config=genai.GenerationConfig(
-                        max_output_tokens=150,
-                        temperature=0.7,
-                        top_p=0.9,
-                        stop_sequences=["\n"]
-                    )
-                )
-                ai_reply = response.text.strip()
-                conversation.append(f"AI: {ai_reply}")
+                greeting_text = "Hello! I am your AI friend. Let's have a chat."
+
+                async def stream_greeting():
+                    await ws.send(json.dumps({"text": greeting_text + " "}))
+                    while True:
+                        response = await ws.recv()
+                        data = json.loads(response)
+                        if "audioOutput" in data:
+                            audio_data = data["audioOutput"]
+                            await websocket.send_bytes(audio_data)
+                        if "finalOutput" in data:
+                            await websocket.send_text("EOS")
+                            break
+
+                asyncio.create_task(stream_greeting())
+
+                while True:
+                    user_text = await websocket.receive_text()
+                    print(f"Client {client_id} (You) :: {user_text}")
+
+                    if user_text.lower().strip() in ("exit", "quit", "bye"):
+                        goodbye_text = "Goodbye! It was nice talking to you."
+                        await ws.send(json.dumps({"text": goodbye_text + " "}))
+                        while True:
+                            response = await ws.recv()
+                            data = json.loads(response)
+                            if "audioOutput" in data:
+                                audio_data = data["audioOutput"]
+                                await websocket.send_bytes(audio_data)
+                            if "finalOutput" in data:
+                                await websocket.send_text("EOS")
+                                break
+                        break
+
+                    try:
+                        response = await chat_session.send_message_async(user_text, stream=True)
+
+                        full_bot_reply = ""
+                        async def text_iterator():
+                            nonlocal full_bot_reply
+                            async for chunk in response:
+                                text_part = chunk.text
+                                full_bot_reply += text_part
+                                yield text_part
+
+                        await ws.send(json.dumps({"text": full_bot_reply + " "}))
+                        while True:
+                            response = await ws.recv()
+                            data = json.loads(response)
+                            if "audioOutput" in data:
+                                audio_data = data["audioOutput"]
+                                await websocket.send_bytes(audio_data)
+                            if "finalOutput" in data:
+                                await websocket.send_text("EOS")
+                                break
+
+                    except Exception as e:
+                        print(f"Error with Gemini or ElevenLabs: {e}")
+                        error_message = "Sorry, something went wrong. Please say that again."
+                        await ws.send(json.dumps({"text": error_message + " "}))
+                        while True:
+                            response = await ws.recv()
+                            data = json.loads(response)
+                            if "audioOutput" in data:
+                                audio_data = data["audioOutput"]
+                                await websocket.send_bytes(audio_data)
+                            if "finalOutput" in data:
+                                await websocket.send_text("EOS")
+                                break
+
             except Exception as e:
-                ai_reply = "Sorry, something went wrong."
-                print("Gemini API error:", e)
-
-            # Send AI text to client
-            await websocket.send_json({"type": "reply", "data": ai_reply})
-
-            # Generate TTS audio in chunks and send as binary
-            try:
-                available_voices = voices()
-                selected_voice = next((v for v in available_voices if v["name"] == "Rachel"), None)
-
-                if selected_voice:
-                    for chunk in chunk_text(ai_reply):
-                        audio = generate(
-                            text=chunk,
-                            voice=selected_voice,
-                            model="eleven_multilingual_v2"
-                        )
-                        await websocket.send_bytes(audio)  # Send audio chunk
-                else:
-                    print("Voice 'Rachel' not found.")
-            except Exception as e:
-                print("ElevenLabs TTS error:", e)
+                print(f"Error with ElevenLabs WebSocket: {e}")
+                await websocket.send_text("An error occurred with the voice service. Please try again later.")
 
     except WebSocketDisconnect:
-        print("Client disconnected")
+        print(f"Client {client_id} disconnected.")
+    finally:
+        if client_id in conversations:
+            del conversations[client_id]
+            print(f"Cleared conversation history for client {client_id}.")
+        await websocket.close()
