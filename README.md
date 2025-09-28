@@ -238,7 +238,7 @@ Project Link: [https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-
   
   <img src="https://i.imgur.com/8dZU8VY.png" width="100px" alt="GDG Logo"/>
   
-  <p>Created with ❤️ by <a href="https://github.com/anjani-kr-singh-ai">Anjani Kumar Singh</a> and the Google Developers Group IIITDMK</p>
+  <p>Created with ❤️ by Team Talksie</a> and the Google Developers Group IIITDMK</p>
   
   <p>Last updated: 2025-09-28</p>
   
