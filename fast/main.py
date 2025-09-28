@@ -1,150 +1,145 @@
 import os
 import asyncio
-import json
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
-from dotenv import load_dotenv
+import platform
+import urllib.parse
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, StreamingResponse
+import io
+import edge_tts
 import google.generativeai as genai
-import aiohttp
-import base64
+from googleapiclient.discovery import build
+from pydantic import BaseModel
+from dotenv import load_dotenv
 
 load_dotenv()
 
-GOOGLE_API_KEY = os.getenv("GENAI_API_KEY")
-ELEVEN_API_KEY = os.getenv("ELEVEN_API_KEY")
+# ---------------- CONFIG -----------------
+GENAI_API_KEY = os.getenv("GENAI_API_KEY")
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
-genai.configure(api_key=GOOGLE_API_KEY)
+genai.configure(api_key=GENAI_API_KEY)
+youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
+model = genai.GenerativeModel("gemini-2.5-flash")
 
+conversation = []
+
+# Fix Windows loop
+if platform.system() == "Windows":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+loop = asyncio.get_event_loop()
+
+# ---------------- FastAPI APP -----------------
 app = FastAPI()
 
-generation_config = {
-    "temperature": 0.7,
-    "top_p": 1,
-    "top_k": 1,
-    "max_output_tokens": 2048,
-}
-safety_settings = [
-    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
-]
-
-model = genai.GenerativeModel(
-    model_name="gemini-2.5-flash",
-    generation_config=generation_config,
-    safety_settings=safety_settings,
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For development only
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-conversations = {}
+# ----------------- TTS STREAMING -----------------
+async def generate_tts_audio(text: str, mood="neutral") -> io.BytesIO:
+    voice = "en-IN-NeerjaNeural"
+    mood_map = {
+        "neutral": ("+0%", "+0%"),
+        "happy": ("+15%", "+10%"),
+        "sad": ("-10%", "-5%"),
+        "angry": ("+10%", "+15%"),
+        "excited": ("+20%", "+12%"),
+        "romantic": ("+5%", "+8%"),
+        "chill": ("-5%", "+0%"),
+        "energetic": ("+18%", "+12%"),
+        "serious": ("-5%", "-5%"),
+        "confident": ("+8%", "+5%"),
+        "playful": ("+12%", "+10%"),
+        "narrative": ("+0%", "+3%"),
+        "calm": ("-8%", "-3%"),
+    }
+    rate, volume = mood_map.get(mood, ("+0%", "+0%"))
 
-try:
-    with open("index.html", "r", encoding="utf-8") as f:
-        html_content = f.read()
-except FileNotFoundError:
-    html_content = "<h1>WebSocket Client</h1><p>index.html not found.</p>"
+    # Save TTS to temporary file, then load into memory
+    temp_file = "temp.mp3"
+    communicate = edge_tts.Communicate(text, voice=voice, rate=rate, volume=volume)
+    await communicate.save(temp_file)
 
+    buf = io.BytesIO()
+    with open(temp_file, "rb") as f:
+        buf.write(f.read())
+    buf.seek(0)
+    os.remove(temp_file)
+    return buf
 
-@app.get("/")
-async def get_home():
-    return HTMLResponse(html_content)
+@app.get("/tts")
+async def tts_endpoint(text: str, mood: str = "neutral"):
+    audio_buf = await generate_tts_audio(text, mood)
+    return StreamingResponse(audio_buf, media_type="audio/mpeg",
+                             headers={"Content-Disposition": "inline; filename=tts.mp3"})
 
-
-@app.websocket("/ws/{client_id}")
-async def websocket_endpoint(websocket: WebSocket, client_id: str):
-    await websocket.accept()
-    print(f"Client {client_id} connected.")
-
-    voice_id = "21m00Tcm4TlvDq8ikWAM"  # ElevenLabs voice ID
-    uri = f"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream-input"
-
+# ----------------- YOUTUBE -----------------
+def yt_best_video_id(query: str):
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.ws_connect(uri, headers={"xi-api-key": ELEVEN_API_KEY}) as eleven_ws:
+        resp = youtube.search().list(
+            q=query,
+            part="snippet",
+            type="video",
+            maxResults=3,
+            order="relevance",
+            videoEmbeddable="true"
+        ).execute()
+        items = resp.get("items", [])
+        if items:
+            return items[0]["id"]["videoId"]
+    except:
+        return None
+    return None
 
-                async def audio_forwarder():
-                    """Forwards ElevenLabs audio back to the client browser"""
-                    try:
-                        while True:
-                            message = await eleven_ws.receive()
-                            if message.type == aiohttp.WSMsgType.BINARY:
-                                await websocket.send_bytes(message.data)
+# ----------------- CHAT -----------------
+class ChatRequest(BaseModel):
+    text: str
 
-                            elif message.type == aiohttp.WSMsgType.TEXT:
-                                data = json.loads(message.data)
-                                if data.get("audio"):
-                                    audio_bytes = base64.b64decode(data["audio"])
-                                    await websocket.send_bytes(audio_bytes)
-                                    with open("output_stream.mp3", "ab") as f:
-                                        f.write(audio_bytes)
+@app.post("/api/chat")
+async def chat(req: ChatRequest):
+    user_text = req.text.strip()
+    conversation.append(user_text)
 
-                                if data.get("isFinal"):
-                                    break
+    # Call LLM
+    try:
+        resp = model.generate_content(
+            f"Conversation so far: {conversation}\n\n"
+            "1. Reply briefly (<=15 words).\n"
+            "2. Guess mood: [happy, sad, excited, romantic, chill, angry].\n"
+            "3. Suggest ONE popular Indian song title (no artist).\n"
+            "Format strictly as:\n"
+            "reply=...\nmood=...\nsong=..."
+        )
+        reply, mood, song = "Okay!", "neutral", "Kesariya"
+        text_resp = resp.text.strip()
+        for line in text_resp.splitlines():
+            if line.startswith("reply="): reply = line.replace("reply=", "").strip()
+            elif line.startswith("mood="): mood = line.replace("mood=", "").strip().lower()
+            elif line.startswith("song="): song = line.replace("song=", "").strip()
+    except Exception:
+        reply, mood, song = "Hmm, I had a brain freeze!", "neutral", "Kesariya"
 
-                            elif message.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.ERROR):
-                                break
-                    except Exception as e:
-                        print(f"Error receiving from ElevenLabs: {e}")
+    # TTS URL for browser
+    tts_url = f"/tts?text={urllib.parse.quote(reply)}&mood={mood}"
 
-                # Start chat session for this client
-                if client_id not in conversations:
-                    conversations[client_id] = model.start_chat(history=[
-                        {"role": "user", "parts": [
-                            "From now on, always reply in 10 words or fewer. "
-                            "Speak naturally like a voice assistant, keep it short."
-                        ]}
-                    ])
-                chat_session = conversations[client_id]
+    # YouTube link
+    vid_id = yt_best_video_id(song)
+    youtube_url = f"https://www.youtube.com/watch?v={vid_id}" if vid_id else f"https://www.youtube.com/results?search_query={urllib.parse.quote(song)}"
 
+    return {
+        "reply": reply,
+        "mood": mood,
+        "song": song,
+        "youtube": youtube_url,
+        "tts_url": tts_url
+    }
 
-                # Gemini introduces itself
-                response = await chat_session.send_message_async(
-                    "Introduce yourself to the user in a friendly and conversational way."
-                )
-                print("AI intro:", response.text)
-
-                # Speak the introduction
-                await eleven_ws.send_json({
-                    "text": response.text,
-                    "voice_settings": {"stability": 0.7, "similarity_boost": 0.8},
-                    "try_trigger_generation": True,
-                })
-                await eleven_ws.send_json({"text": ""})
-                await audio_forwarder()
-
-                # Main chat loop
-                while True:
-                    user_text = await websocket.receive_text()
-                    print(f"User said: {user_text}")
-
-                    if user_text.lower().strip() in ("exit", "quit", "bye"):
-                        farewell = "Goodbye! It was nice talking to you."
-                        await eleven_ws.send_json({
-                            "text": farewell,
-                            "try_trigger_generation": True,
-                        })
-                        await eleven_ws.send_json({"text": ""})
-                        await audio_forwarder()
-                        break
-
-                    # Get Gemini reply
-                    response = await chat_session.send_message_async(user_text)
-                    print("AI response:", response.text)
-
-                    # Send reply to ElevenLabs for speech
-                    await eleven_ws.send_json({
-                        "text": response.text,
-                        "voice_settings": {"stability": 0.7, "similarity_boost": 0.8},
-                        "try_trigger_generation": True,
-                    })
-                    await eleven_ws.send_json({"text": ""})
-                    await audio_forwarder()
-
-    except WebSocketDisconnect:
-        print(f"Client {client_id} disconnected.")
-    except Exception as e:
-        print(f"An unexpected error occurred in the main endpoint: {e}")
-    finally:
-        if client_id in conversations:
-            del conversations[client_id]
-        print("Connection closed.")
+# ----------------- SERVE INDEX.HTML -----------------
+@app.get("/")
+async def serve_index():
+    with open("index.html", "r", encoding="utf-8") as f:
+        return HTMLResponse(content=f.read())
