@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 from dotenv import load_dotenv
 import google.generativeai as genai
 import aiohttp
+import base64
 
 
 load_dotenv()
@@ -58,9 +59,10 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             async with session.ws_connect(uri, headers={"xi-api-key": ELEVEN_API_KEY}) as eleven_ws:
                 print("Send message to eleven labs.")
                 await eleven_ws.send_json({
-                    "text": "",
+                    "text": "Hello",
                     "voice_settings": { "stability": 0.7, "similarity_boost": 0.8 },
                 })
+                await eleven_ws.send_json({"text": ""}) 
                 print("response from eleven labs received")
                 
                 async def audio_forwarder():
@@ -75,8 +77,11 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                             elif message.type == aiohttp.WSMsgType.TEXT:
                                 data = json.loads(message.data)
                                 if data.get("audio"):
-                                    
-                                    await websocket.send_bytes(data["audio"])
+                                    audio_bytes = base64.b64decode(data["audio"])
+                                    await websocket.send_bytes(audio_bytes)
+                                    with open("output_stream.mp3", "ab") as f:
+                                        f.write(audio_bytes)    
+                                
                                 if data.get("isFinal"):
                                     break
 
@@ -100,6 +105,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                     user_text = await websocket.receive_text()
                     if user_text.lower().strip() in ("exit", "quit", "bye"):
                         await eleven_ws.send_json({"text": "Goodbye! It was nice talking to you.", "try_trigger_generation": True})
+                        await eleven_ws.send_json({"text": ""}) 
                         await audio_forwarder()
                         break
                     

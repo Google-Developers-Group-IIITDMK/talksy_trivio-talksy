@@ -1,202 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Voice Chat</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            flex-direction: column;
-        }
-        #container {
-            text-align: center;
-            background-color: #1e1e1e;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-        h1 {
-            color: #ffffff;
-            margin-bottom: 20px;
-        }
-        #status {
-            margin: 20px 0;
-            font-size: 1.1em;
-            color: #b0b0b0;
-            height: 25px;
-        }
-        #controlButton {
-            padding: 15px 30px;
-            font-size: 1.2em;
-            cursor: pointer;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            transition: background-color 0.3s, transform 0.1s;
-        }
-        .start {
-            background-color: #4CAF50;
-        }
-        .start:hover {
-            background-color: #45a049;
-        }
-        .stop {
-            background-color: #f44336;
-        }
-        .stop:hover {
-            background-color: #e53935;
-        }
-        #controlButton:active {
-            transform: scale(0.98);
-        }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: #121212;
+        color: #e0e0e0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        flex-direction: column;
+      }
+      #container {
+        text-align: center;
+        background-color: #1e1e1e;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      }
+      h1 {
+        color: #ffffff;
+        margin-bottom: 20px;
+      }
+      #status {
+        margin: 20px 0;
+        font-size: 1.1em;
+        color: #b0b0b0;
+        height: 25px;
+      }
+      #controlButton {
+        padding: 15px 30px;
+        font-size: 1.2em;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        transition: background-color 0.3s, transform 0.1s;
+      }
+      .start {
+        background-color: #4caf50;
+      }
+      .start:hover {
+        background-color: #45a049;
+      }
+      .stop {
+        background-color: #f44336;
+      }
+      .stop:hover {
+        background-color: #e53935;
+      }
+      #controlButton:active {
+        transform: scale(0.98);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="container">
-        <h1>AI Voice Assistant</h1>
-        <div id="status">Click "Start" to begin the conversation</div>
-        <button id="controlButton" class="start">Start</button>
+      <h1>AI Voice Assistant</h1>
+      <div id="status">Click "Start" to begin the conversation</div>
+      <button id="controlButton" class="start">Start</button>
     </div>
 
     <script>
-        const controlButton = document.getElementById('controlButton');
-        const statusDiv = document.getElementById('status');
-        
-        
-        let socket;
-        let recognition;
-        let isConversationActive = false;
-        let audioQueue = [];
-        let isPlaying = false;
-        
-        const clientId = Date.now();
+      const controlButton = document.getElementById("controlButton");
+      const statusDiv = document.getElementById("status");
 
-        
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.interimResults = false;
-            recognition.lang = 'en-US';
+      let socket;
+      let recognition;
+      let isConversationActive = false;
+      let audioQueue = [];
+      let isPlaying = false;
+      let audioChunks = [];
 
-            recognition.onresult = (event) => {
-                const transcript = event.results[event.results.length - 1][0].transcript.trim();
-                console.log('You said:', transcript);
-                if (socket && socket.readyState === WebSocket.OPEN) {
-                    socket.send(transcript);
-                    statusDiv.textContent = 'Thinking...';
-                }
-            };
+      const clientId = Date.now();
+      console.log(clientId);
+
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+
+        recognition.onresult = (event) => {
+          const transcript =
+            event.results[event.results.length - 1][0].transcript.trim();
+          console.log("You said:", transcript);
+          if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(transcript);
+            statusDiv.textContent = "Thinking...";
+          }
+        };
+
+        recognition.onend = () => {
+          if (isConversationActive) {
+            recognition.start();
+          }
+        };
+
+        recognition.onerror = (event) => {
+          console.error("Speech recognition error:", event.error);
+          statusDiv.textContent = `Error: ${event.error}`;
+        };
+      } else {
+        statusDiv.textContent =
+          "Sorry, your browser doesn't support Speech Recognition.";
+        controlButton.disabled = true;
+      }
+
+      function connect() {
+        const wsUrl = `ws://${window.location.host}/ws/${clientId}`;
+        socket = new WebSocket(wsUrl);
+        socket.binaryType = "arraybuffer";
+
+        socket.onopen = () => {
+          console.log("WebSocket connection established.");
+          statusDiv.textContent = "Waiting for greeting...";
+        };
+
+        socket.onmessage = async (event) => {
+          if (event.data instanceof ArrayBuffer) {
             
-            recognition.onend = () => {
-                
-                if (isConversationActive) {
-                    recognition.start();
-                }
-            };
-            
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-                statusDiv.textContent = `Error: ${event.error}`;
-            };
+            audioChunks.push(event.data);
 
+           
+            const blob = new Blob(audioChunks, { type: "audio/mpeg" });
+            const url = URL.createObjectURL(blob);
+
+            const audioPlayer = document.getElementById("audioPlayer");
+            if (!audioPlayer) {
+              const audioEl = document.createElement("audio");
+              audioEl.id = "audioPlayer";
+              audioEl.controls = true;
+              document.body.appendChild(audioEl);
+            }
+            const audioEl = document.getElementById("audioPlayer");
+            audioEl.src = url;
+            audioEl.play();
+          } else if (typeof event.data === "string") {
+            if (event.data === "EOS") {
+              statusDiv.textContent = "Listening...";
+              if (isConversationActive) recognition.start();
+            }
+          }
+        };
+
+        socket.onclose = () => {
+          console.log("WebSocket connection closed.");
+          statusDiv.textContent = "Connection lost. Please refresh.";
+          isConversationActive = false;
+          updateButton();
+        };
+
+        socket.onerror = (error) => {
+          console.error("WebSocket error:", error);
+          statusDiv.textContent = "Connection error.";
+        };
+      }
+
+      function playNextInQueue() {
+        if (isPlaying || audioQueue.length === 0) {
+          return;
+        }
+        isPlaying = true;
+        statusDiv.textContent = "Speaking...";
+
+        const audioBlob = audioQueue.shift();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+
+        audio.play();
+
+        audio.onended = () => {
+          isPlaying = false;
+          playNextInQueue();
+        };
+      }
+
+      function updateButton() {
+        if (isConversationActive) {
+          controlButton.textContent = "Stop";
+          controlButton.classList.remove("start");
+          controlButton.classList.add("stop");
         } else {
-            statusDiv.textContent = "Sorry, your browser doesn't support Speech Recognition.";
-            controlButton.disabled = true;
+          controlButton.textContent = "Start";
+          controlButton.classList.remove("stop");
+          controlButton.classList.add("start");
         }
+      }
 
-        
-        function connect() {
-            const wsUrl = `ws://${window.location.host}/ws/${clientId}`;
-            socket = new WebSocket(wsUrl);
-
-            socket.onopen = () => {
-                console.log('WebSocket connection established.');
-                statusDiv.textContent = 'Waiting for greeting...';
-            };
-
-            socket.onmessage = async (event) => {
-                if (typeof event.data === 'string') {
-                   
-                    if (event.data === 'EOS') {
-                        statusDiv.textContent = 'Listening...';
-                        if (isConversationActive) {
-                           recognition.start(); 
-                        }
-                    }
-                } else {
-                    
-                    recognition.stop(); 
-                    audioQueue.push(event.data);
-                    playNextInQueue();
-                }
-            };
-
-            socket.onclose = () => {
-                console.log('WebSocket connection closed.');
-                statusDiv.textContent = 'Connection lost. Please refresh.';
-                isConversationActive = false;
-                updateButton();
-            };
-
-            socket.onerror = (error) => {
-                console.error('WebSocket error:', error);
-                statusDiv.textContent = 'Connection error.';
-            };
+      controlButton.addEventListener("click", () => {
+        isConversationActive = !isConversationActive;
+        if (isConversationActive) {
+          connect();
+        } else {
+          if (recognition) recognition.stop();
+          if (socket) socket.close();
+          statusDiv.textContent = 'Click "Start" to begin the conversation';
         }
-
-        
-        function playNextInQueue() {
-            if (isPlaying || audioQueue.length === 0) {
-                return;
-            }
-            isPlaying = true;
-            statusDiv.textContent = 'Speaking...';
-            
-            const audioBlob = audioQueue.shift();
-            const audioUrl = URL.createObjectURL(audioBlob);
-            const audio = new Audio(audioUrl);
-            
-            audio.play();
-
-            audio.onended = () => {
-                isPlaying = false;
-                playNextInQueue();
-            };
-        }
-
-     
-        function updateButton() {
-            if (isConversationActive) {
-                controlButton.textContent = 'Stop';
-                controlButton.classList.remove('start');
-                controlButton.classList.add('stop');
-            } else {
-                controlButton.textContent = 'Start';
-                controlButton.classList.remove('stop');
-                controlButton.classList.add('start');
-            }
-        }
-
-        controlButton.addEventListener('click', () => {
-            isConversationActive = !isConversationActive;
-            if (isConversationActive) {
-                connect();
-            } else {
-                if (recognition) recognition.stop();
-                if (socket) socket.close();
-                statusDiv.textContent = 'Click "Start" to begin the conversation';
-            }
-            updateButton();
-        });
-
+        updateButton();
+      });
     </script>
-</body>
+  </body>
 </html>
