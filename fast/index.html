@@ -8,8 +8,8 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Helvetica, Arial, sans-serif;
-        background-color: #121212;
-        color: #e0e0e0;
+        background-color: white;
+        color: black;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -19,19 +19,19 @@
       }
       #container {
         text-align: center;
-        background-color: #1e1e1e;
+        background-color: white;
         padding: 40px;
         border-radius: 12px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
       }
       h1 {
-        color: #ffffff;
+        color: black;
         margin-bottom: 20px;
       }
       #status {
         margin: 20px 0;
         font-size: 1.1em;
-        color: #b0b0b0;
+        color: #1b1919;
         height: 25px;
       }
       #controlButton {
@@ -64,12 +64,17 @@
     <div id="container">
       <h1>AI Voice Assistant</h1>
       <div id="status">Click "Start" to begin the conversation</div>
+      <div
+        id="chat"
+        style="margin: 20px 0; max-height: 300px; overflow-y: auto"
+      ></div>
       <button id="controlButton" class="start">Start</button>
     </div>
 
     <script>
       const controlButton = document.getElementById("controlButton");
       const statusDiv = document.getElementById("status");
+      const chatDiv = document.getElementById("chat");
 
       let socket;
       let recognition;
@@ -92,6 +97,7 @@
           const transcript =
             event.results[event.results.length - 1][0].transcript.trim();
           console.log("You said:", transcript);
+          appendMessage("You", transcript);
           if (socket && socket.readyState === WebSocket.OPEN) {
             socket.send(transcript);
             statusDiv.textContent = "Thinking...";
@@ -114,6 +120,17 @@
         controlButton.disabled = true;
       }
 
+      function setStatus(text) {
+        statusDiv.textContent = text;
+      }
+
+      function appendMessage(sender, text) {
+        const div = document.createElement("div");
+        div.innerHTML = `<strong>${sender}:</strong> ${text}`;
+        chatDiv.appendChild(div);
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+      }
+
       function connect() {
         const wsUrl = `ws://${window.location.host}/ws/${clientId}`;
         socket = new WebSocket(wsUrl);
@@ -126,27 +143,32 @@
 
         socket.onmessage = async (event) => {
           if (event.data instanceof ArrayBuffer) {
-            
-            audioChunks.push(event.data);
+            audioQueue.push(new Blob([event.data], { type: "audio/mpeg" }));
+            playNextInQueue();
+            // audioChunks.push(event.data);
 
-           
-            const blob = new Blob(audioChunks, { type: "audio/mpeg" });
-            const url = URL.createObjectURL(blob);
+            // const blob = new Blob(audioChunks, { type: "audio/mpeg" });
+            // const url = URL.createObjectURL(blob);
 
-            const audioPlayer = document.getElementById("audioPlayer");
-            if (!audioPlayer) {
-              const audioEl = document.createElement("audio");
-              audioEl.id = "audioPlayer";
-              audioEl.controls = true;
-              document.body.appendChild(audioEl);
-            }
-            const audioEl = document.getElementById("audioPlayer");
-            audioEl.src = url;
-            audioEl.play();
+            // const audioPlayer = document.getElementById("audioPlayer");
+            // if (!audioPlayer) {
+            //   const audioEl = document.createElement("audio");
+            //   audioEl.id = "audioPlayer";
+            //   audioEl.controls = true;
+            //   document.body.appendChild(audioEl);
+            // }
+            // const audioEl = document.getElementById("audioPlayer");
+            // audioEl.src = url;
+            // audioEl.play();
           } else if (typeof event.data === "string") {
             if (event.data === "EOS") {
               statusDiv.textContent = "Listening...";
               if (isConversationActive) recognition.start();
+            } else {
+              const data = JSON.parse(event.data);
+              if (data.type === "reply") {
+                appendMessage("AI", data.text);
+              }
             }
           }
         };
@@ -165,20 +187,20 @@
       }
 
       function playNextInQueue() {
-        if (isPlaying || audioQueue.length === 0) {
-          return;
-        }
+        if (isPlaying || audioQueue.length === 0) return;
         isPlaying = true;
-        statusDiv.textContent = "Speaking...";
+        setStatus("Speaking...");
 
         const audioBlob = audioQueue.shift();
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
 
         audio.play();
+        appendMessage("AI", "(speaking...)");
 
         audio.onended = () => {
           isPlaying = false;
+          if (isConversationActive) setStatus("Listening...");
           playNextInQueue();
         };
       }
