@@ -56,18 +56,18 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         
         async with aiohttp.ClientSession() as session:
             async with session.ws_connect(uri, headers={"xi-api-key": ELEVEN_API_KEY}) as eleven_ws:
-                
+                print("Send message to eleven labs.")
                 await eleven_ws.send_json({
-                    "text": " ",
+                    "text": "",
                     "voice_settings": { "stability": 0.7, "similarity_boost": 0.8 },
                 })
-
+                print("response from eleven labs received")
                 
                 async def audio_forwarder():
                     try:
                         while True:
                             message = await eleven_ws.receive()
-                            
+                            print("message from eleven lab",message)
                             if message.type == aiohttp.WSMsgType.BINARY:
                                 await websocket.send_bytes(message.data)
 

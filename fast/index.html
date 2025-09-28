@@ -43,13 +43,13 @@
             transition: background-color 0.3s, transform 0.1s;
         }
         .start {
-            background-color: #4CAF50; /* Green */
+            background-color: #4CAF50;
         }
         .start:hover {
             background-color: #45a049;
         }
         .stop {
-            background-color: #f44336; /* Red */
+            background-color: #f44336;
         }
         .stop:hover {
             background-color: #e53935;
@@ -70,20 +70,20 @@
         const controlButton = document.getElementById('controlButton');
         const statusDiv = document.getElementById('status');
         
-        // --- State Management ---
+        
         let socket;
         let recognition;
         let isConversationActive = false;
         let audioQueue = [];
         let isPlaying = false;
         
-        const clientId = Date.now(); // Simple unique ID for this session
+        const clientId = Date.now();
 
-        // --- Web Speech API for Speech Recognition ---
+        
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
-            recognition.interimResults = false; // We only want final results
+            recognition.interimResults = false;
             recognition.lang = 'en-US';
 
             recognition.onresult = (event) => {
@@ -96,7 +96,7 @@
             };
             
             recognition.onend = () => {
-                // If the conversation is still supposed to be active, restart recognition
+                
                 if (isConversationActive) {
                     recognition.start();
                 }
@@ -112,7 +112,7 @@
             controlButton.disabled = true;
         }
 
-        // --- WebSocket Connection Handler ---
+        
         function connect() {
             const wsUrl = `ws://${window.location.host}/ws/${clientId}`;
             socket = new WebSocket(wsUrl);
@@ -124,16 +124,16 @@
 
             socket.onmessage = async (event) => {
                 if (typeof event.data === 'string') {
-                    // This is a control message, e.g., "EOS" (End of Stream)
+                   
                     if (event.data === 'EOS') {
                         statusDiv.textContent = 'Listening...';
                         if (isConversationActive) {
-                           recognition.start(); // Start listening for the user's response
+                           recognition.start(); 
                         }
                     }
                 } else {
-                    // This is binary audio data
-                    recognition.stop(); // Stop listening while the bot is speaking
+                    
+                    recognition.stop(); 
                     audioQueue.push(event.data);
                     playNextInQueue();
                 }
@@ -152,7 +152,7 @@
             };
         }
 
-        // --- Audio Playback Queue ---
+        
         function playNextInQueue() {
             if (isPlaying || audioQueue.length === 0) {
                 return;
@@ -172,7 +172,7 @@
             };
         }
 
-        // --- UI Control ---
+     
         function updateButton() {
             if (isConversationActive) {
                 controlButton.textContent = 'Stop';
