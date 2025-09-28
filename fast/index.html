@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>WebSocket AI Chat</h1>
+<textarea id="log" rows="10" cols="60"></textarea><br>
+<input id="msg" placeholder="Type message...">
+<button onclick="sendMsg()">Send</button>
+
+<script>
+const log = document.getElementById("log");
+const msg = document.getElementById("msg");
+const ws = new WebSocket("ws://localhost:8000/ws/chat");
+const audioCtx = new AudioContext();
+
+ws.onmessage = async (event) => {
+    if (typeof event.data === "string") {
+        const data = JSON.parse(event.data);
+        if (data.type === "reply") {
+            log.value += "AI: " + data.data + "\n";
+        }
+    } else {
+        // Binary audio
+        const arrayBuffer = await event.data.arrayBuffer();
+        audioCtx.decodeAudioData(arrayBuffer, (buffer) => {
+            const src = audioCtx.createBufferSource();
+            src.buffer = buffer;
+            src.connect(audioCtx.destination);
+            src.start(0);
+        });
+    }
+};
+
+function sendMsg() {
+    ws.send(JSON.stringify({type: "message", data: msg.value}));
+    log.value += "You: " + msg.value + "\n";
+    msg.value = "";
+}
+</script>
+</body>
+</html>
