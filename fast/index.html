@@ -97,6 +97,7 @@
           const transcript =
             event.results[event.results.length - 1][0].transcript.trim();
           console.log("You said:", transcript);
+          appendMessage("You", transcript);
           if (socket && socket.readyState === WebSocket.OPEN) {
             socket.send(transcript);
             statusDiv.textContent = "Thinking...";
@@ -142,25 +143,32 @@
 
         socket.onmessage = async (event) => {
           if (event.data instanceof ArrayBuffer) {
-            audioChunks.push(event.data);
+            audioQueue.push(new Blob([event.data], { type: "audio/mpeg" }));
+            playNextInQueue();
+            // audioChunks.push(event.data);
 
-            const blob = new Blob(audioChunks, { type: "audio/mpeg" });
-            const url = URL.createObjectURL(blob);
+            // const blob = new Blob(audioChunks, { type: "audio/mpeg" });
+            // const url = URL.createObjectURL(blob);
 
-            const audioPlayer = document.getElementById("audioPlayer");
-            if (!audioPlayer) {
-              const audioEl = document.createElement("audio");
-              audioEl.id = "audioPlayer";
-              audioEl.controls = true;
-              document.body.appendChild(audioEl);
-            }
-            const audioEl = document.getElementById("audioPlayer");
-            audioEl.src = url;
-            audioEl.play();
+            // const audioPlayer = document.getElementById("audioPlayer");
+            // if (!audioPlayer) {
+            //   const audioEl = document.createElement("audio");
+            //   audioEl.id = "audioPlayer";
+            //   audioEl.controls = true;
+            //   document.body.appendChild(audioEl);
+            // }
+            // const audioEl = document.getElementById("audioPlayer");
+            // audioEl.src = url;
+            // audioEl.play();
           } else if (typeof event.data === "string") {
             if (event.data === "EOS") {
               statusDiv.textContent = "Listening...";
               if (isConversationActive) recognition.start();
+            } else {
+              const data = JSON.parse(event.data);
+              if (data.type === "reply") {
+                appendMessage("AI", data.text);
+              }
             }
           }
         };
