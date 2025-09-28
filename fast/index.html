@@ -1,233 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Voice Chat</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mood Music Bot</title>
     <style>
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Helvetica, Arial, sans-serif;
-        background-color: white;
-        color: black;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        flex-direction: column;
-      }
-      #container {
-        text-align: center;
-        background-color: white;
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      }
-      h1 {
-        color: black;
-        margin-bottom: 20px;
-      }
-      #status {
-        margin: 20px 0;
-        font-size: 1.1em;
-        color: #1b1919;
-        height: 25px;
-      }
-      #controlButton {
-        padding: 15px 30px;
-        font-size: 1.2em;
-        cursor: pointer;
-        border: none;
-        border-radius: 8px;
-        color: white;
-        transition: background-color 0.3s, transform 0.1s;
-      }
-      .start {
-        background-color: #4caf50;
-      }
-      .start:hover {
-        background-color: #45a049;
-      }
-      .stop {
-        background-color: #f44336;
-      }
-      .stop:hover {
-        background-color: #e53935;
-      }
-      #controlButton:active {
-        transform: scale(0.98);
-      }
+        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; }
+        #chat { max-width: 600px; margin: auto; }
+        .message { padding: 10px; margin: 5px 0; border-radius: 5px; }
+        .user { background: #cce5ff; text-align: right; }
+        .bot { background: #e2e3e5; text-align: left; }
+        input { width: 80%; padding: 10px; }
+        button { padding: 10px; }
     </style>
-  </head>
-  <body>
-    <div id="container">
-      <h1>AI Voice Assistant</h1>
-      <div id="status">Click "Start" to begin the conversation</div>
-      <div
-        id="chat"
-        style="margin: 20px 0; max-height: 300px; overflow-y: auto"
-      ></div>
-      <button id="controlButton" class="start">Start</button>
-    </div>
+</head>
+<body>
+    <div id="chat"></div>
+    <input type="text" id="userInput" placeholder="Type something..." />
+    <button onclick="sendMessage()">Send</button>
 
     <script>
-      const controlButton = document.getElementById("controlButton");
-      const statusDiv = document.getElementById("status");
-      const chatDiv = document.getElementById("chat");
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if (!text) return;
+            addMessage(text, 'user');
+            input.value = '';
 
-      let socket;
-      let recognition;
-      let isConversationActive = false;
-      let audioQueue = [];
-      let isPlaying = false;
-      let audioChunks = [];
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({text})
+            });
+            const data = await res.json();
 
-      const clientId = Date.now();
-      console.log(clientId);
+            addMessage(`${data.reply} 🎵 Song: ${data.song}`, 'bot');
 
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        recognition = new SpeechRecognition();
-        recognition.interimResults = false;
-        recognition.lang = "en-US";
+            // Play TTS directly in browser
+            const audio = new Audio(window.location.origin + data.tts_url);
+            audio.play();
 
-        recognition.onresult = (event) => {
-          const transcript =
-            event.results[event.results.length - 1][0].transcript.trim();
-          console.log("You said:", transcript);
-          appendMessage("You", transcript);
-          if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send(transcript);
-            statusDiv.textContent = "Thinking...";
-          }
-        };
-
-        recognition.onend = () => {
-          if (isConversationActive) {
-            recognition.start();
-          }
-        };
-
-        recognition.onerror = (event) => {
-          console.error("Speech recognition error:", event.error);
-          statusDiv.textContent = `Error: ${event.error}`;
-        };
-      } else {
-        statusDiv.textContent =
-          "Sorry, your browser doesn't support Speech Recognition.";
-        controlButton.disabled = true;
-      }
-
-      function setStatus(text) {
-        statusDiv.textContent = text;
-      }
-
-      function appendMessage(sender, text) {
-        const div = document.createElement("div");
-        div.innerHTML = `<strong>${sender}:</strong> ${text}`;
-        chatDiv.appendChild(div);
-        chatDiv.scrollTop = chatDiv.scrollHeight;
-      }
-
-      function connect() {
-        const wsUrl = `ws://${window.location.host}/ws/${clientId}`;
-        socket = new WebSocket(wsUrl);
-        socket.binaryType = "arraybuffer";
-
-        socket.onopen = () => {
-          console.log("WebSocket connection established.");
-          statusDiv.textContent = "Waiting for greeting...";
-        };
-
-        socket.onmessage = async (event) => {
-          if (event.data instanceof ArrayBuffer) {
-            audioQueue.push(new Blob([event.data], { type: "audio/mpeg" }));
-            playNextInQueue();
-            // audioChunks.push(event.data);
-
-            // const blob = new Blob(audioChunks, { type: "audio/mpeg" });
-            // const url = URL.createObjectURL(blob);
-
-            // const audioPlayer = document.getElementById("audioPlayer");
-            // if (!audioPlayer) {
-            //   const audioEl = document.createElement("audio");
-            //   audioEl.id = "audioPlayer";
-            //   audioEl.controls = true;
-            //   document.body.appendChild(audioEl);
-            // }
-            // const audioEl = document.getElementById("audioPlayer");
-            // audioEl.src = url;
-            // audioEl.play();
-          } else if (typeof event.data === "string") {
-            if (event.data === "EOS") {
-              statusDiv.textContent = "Listening...";
-              if (isConversationActive) recognition.start();
-            } else {
-              const data = JSON.parse(event.data);
-              if (data.type === "reply") {
-                appendMessage("AI", data.text);
-              }
-            }
-          }
-        };
-
-        socket.onclose = () => {
-          console.log("WebSocket connection closed.");
-          statusDiv.textContent = "Connection lost. Please refresh.";
-          isConversationActive = false;
-          updateButton();
-        };
-
-        socket.onerror = (error) => {
-          console.error("WebSocket error:", error);
-          statusDiv.textContent = "Connection error.";
-        };
-      }
-
-      function playNextInQueue() {
-        if (isPlaying || audioQueue.length === 0) return;
-        isPlaying = true;
-        setStatus("Speaking...");
-
-        const audioBlob = audioQueue.shift();
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioUrl);
-
-        audio.play();
-        appendMessage("AI", "(speaking...)");
-
-        audio.onended = () => {
-          isPlaying = false;
-          if (isConversationActive) setStatus("Listening...");
-          playNextInQueue();
-        };
-      }
-
-      function updateButton() {
-        if (isConversationActive) {
-          controlButton.textContent = "Stop";
-          controlButton.classList.remove("start");
-          controlButton.classList.add("stop");
-        } else {
-          controlButton.textContent = "Start";
-          controlButton.classList.remove("stop");
-          controlButton.classList.add("start");
+            // Show YouTube link
+            const ytLink = document.createElement('a');
+            ytLink.href = data.youtube;
+            ytLink.target = "_blank";
+            ytLink.innerText = `🎶 Listen: ${data.song}`;
+            addMessage(ytLink.outerHTML, 'bot');
         }
-      }
 
-      controlButton.addEventListener("click", () => {
-        isConversationActive = !isConversationActive;
-        if (isConversationActive) {
-          connect();
-        } else {
-          if (recognition) recognition.stop();
-          if (socket) socket.close();
-          statusDiv.textContent = 'Click "Start" to begin the conversation';
+        function addMessage(text, type) {
+            const chat = document.getElementById('chat');
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.innerHTML = text;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
         }
-        updateButton();
-      });
     </script>
-  </body>
+</body>
 </html>
