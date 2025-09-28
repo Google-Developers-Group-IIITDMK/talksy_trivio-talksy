@@ -64,7 +64,7 @@ const FullScreenNav = () => {
         <div
           id="all-links"
         >
-          <Link to="/projects">
+          <Link to="/doremon">
             <div className="h-28 origin-top cursor-pointer link relative border-y border-black uppercase overflow-hidden mt-[-90px]">
               <h1 className="text-center font-[font1] font-black text-[6vw] text-black mt-[-12px]">
                 doremon
@@ -75,10 +75,18 @@ const FullScreenNav = () => {
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                     Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
+                    className="h-18 w-48 shrink-0 rounded-full object-cover mx-8"
+                  />
                   
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                     Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
+                    className="h-18 w-48 shrink-0 rounded-full object-cover mx-8"
+                  />
                   
                 </div>
 
@@ -86,11 +94,18 @@ const FullScreenNav = () => {
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                     Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
+                    className="h-18 w-48 shrink-0 rounded-full object-cover mx-8"
+                  />
                   
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
                     Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
-                  
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
+                    className="h-18 w-48 shrink-0 rounded-full object-cover mx-8"
+                  />
                 </div>
               </div>
             </div>

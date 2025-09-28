@@ -5,7 +5,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { useGSAP } from "@gsap/react";
 import { useRef, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import CircularText from "./components/CircularText";
+
 import transition from "./transition";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -157,30 +159,30 @@ const Home = () => {
         <h3 className="font-[gilroy] font-400 text-5xl cursor-pointer">
           TALKSY
         </h3>
-        <Link to='/chat'>
-        {/* <button className="px-5 py-5 bg-black text-white text-4xl border-none font-[gilroy] rounded-4xl cursor-pointer">
+        <Link to="/chat">
+          {/* <button className="px-5 py-5 bg-black text-white text-4xl border-none font-[gilroy] rounded-4xl cursor-pointer">
           TRY NOW
         </button> */}
-        <div
-        onClick={() => {
-          setNavOpen(true);
-        }}
-        onMouseEnter={() => {
-          navGreenRef.current.style.height = "100%";
-        }}
-        onMouseLeave={() => {
-          navGreenRef.current.style.height = "0%";
-        }}
-        className="bg-black relative h-10 lg:w-60 md:w-60 md:h-12 cursor-pointer w-40"
-      >
-        <div
-          ref={navGreenRef}
-          className="bg-[#D3FD50] transition-all ease-in absolute top-0 w-full"
-        ></div>
-        <div className="group h-full relative flex flex-col gap-2 justify-center px-5 text-3xl text-white text-center hover:text-black rounded-4xl">
-            TRY NOW!
-        </div>
-      </div>
+          <div
+            onClick={() => {
+              setNavOpen(true);
+            }}
+            onMouseEnter={() => {
+              navGreenRef.current.style.height = "100%";
+            }}
+            onMouseLeave={() => {
+              navGreenRef.current.style.height = "0%";
+            }}
+            className="bg-black relative h-10 lg:w-60 md:w-60 md:h-12 cursor-pointer w-40"
+          >
+            <div
+              ref={navGreenRef}
+              className="bg-[#D3FD50] transition-all ease-in absolute top-0 w-full"
+            ></div>
+            <div className="group h-full relative flex flex-col gap-2 justify-center px-5 text-3xl text-white text-center hover:text-black rounded-4xl">
+              TRY NOW!
+            </div>
+          </div>
         </Link>
       </div>
       <div
@@ -315,6 +317,14 @@ const Home = () => {
               CONVERSATION SPACE
             </h1>
           </div>
+        </div>
+        <div className="footer h-48 w-full bg-[#f1f1f1] text-black">
+          <CircularText
+            text="TALKSY*TRIVIO*"
+            onHover="speedUp"
+            spinDuration={20}
+            className="custom-class text-black"
+          />
         </div>
       </div>
     </>
