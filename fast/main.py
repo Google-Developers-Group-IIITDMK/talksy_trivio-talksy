@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 import google.generativeai as genai
-from elevenlabs import generate, set_api_key
+from elevenlabs import generate, voices, set_api_key
 
 load_dotenv()
 
@@ -68,7 +68,15 @@ async def chat_endpoint(websocket: WebSocket):
             # Call Gemini
             try:
                 prompt = "\n".join(conversation) + "\nAI:"
-                response = model.generate_content(prompt)
+                response = await model.generate_content(
+                    prompt,
+                    generation_config=genai.GenerationConfig(
+                        max_output_tokens=150,
+                        temperature=0.7,
+                        top_p=0.9,
+                        stop_sequences=["\n"]
+                    )
+                )
                 ai_reply = response.text.strip()
                 conversation.append(f"AI: {ai_reply}")
             except Exception as e:
@@ -80,11 +88,19 @@ async def chat_endpoint(websocket: WebSocket):
 
             # Generate TTS audio in chunks and send as binary
             try:
-                for chunk in chunk_text(ai_reply):
-                    audio = generate(text=chunk,
-                                     voice="Rachel",
-                                     model="eleven_multilingual_v2")
-                    await websocket.send_bytes(audio)  # Send audio chunk
+                available_voices = voices()
+                selected_voice = next((v for v in available_voices if v["name"] == "Rachel"), None)
+
+                if selected_voice:
+                    for chunk in chunk_text(ai_reply):
+                        audio = generate(
+                            text=chunk,
+                            voice=selected_voice,
+                            model="eleven_multilingual_v2"
+                        )
+                        await websocket.send_bytes(audio)  # Send audio chunk
+                else:
+                    print("Voice 'Rachel' not found.")
             except Exception as e:
                 print("ElevenLabs TTS error:", e)
 
