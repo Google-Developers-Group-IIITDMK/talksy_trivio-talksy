@@ -714,7 +714,7 @@ const CharacterRoom = ({ character, userData, onEndCall, onChangeCharacter }) =>
 
             {/* Character Info */}
             <div className="character-info-display">
-              <h2 className="character-name-display">{character.name}</h2>
+              <h2 className="character-name-display">Character Name</h2>
               <div className="status-indicator">
                 <div className={`status-dot ${isCharacterSpeaking ? 'speaking' : 'listening'}`}></div>
                 <span className="status-text">

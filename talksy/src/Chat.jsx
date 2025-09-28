@@ -5,4 +5,4 @@ const Chat = () => {
   return <div className="w-full h-screen bg-red-700">Chat</div>;
 };
 
-export default transition(Chat);
+export default Chat;

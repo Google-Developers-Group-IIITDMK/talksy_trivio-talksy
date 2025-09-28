@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { useGSAP } from "@gsap/react";
 import { useRef, useEffect } from "react";
+import { Link } from 'react-router-dom';
 import transition from "./transition";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -12,6 +13,7 @@ gsap.registerPlugin(ScrollTrigger);
 const Home = () => {
   const mainRef = useRef(null);
   const canvasRef = useRef(null);
+  const navGreenRef = useRef(null);
 
   useEffect(() => {
     const locoScroll = new LocomotiveScroll({
@@ -79,7 +81,6 @@ const Home = () => {
         trigger: canvas,
         start: "top top",
         end: "600% top",
-        markers: true,
         scroller: mainRef.current,
         invalidateOnRefresh: true,
         onUpdate: () =>
@@ -156,9 +157,31 @@ const Home = () => {
         <h3 className="font-[gilroy] font-400 text-5xl cursor-pointer">
           TALKSY
         </h3>
-        <button className="px-5 py-5 bg-black text-white text-4xl border-none font-[gilroy] rounded-4xl cursor-pointer">
+        <Link to='/chat'>
+        {/* <button className="px-5 py-5 bg-black text-white text-4xl border-none font-[gilroy] rounded-4xl cursor-pointer">
           TRY NOW
-        </button>
+        </button> */}
+        <div
+        onClick={() => {
+          setNavOpen(true);
+        }}
+        onMouseEnter={() => {
+          navGreenRef.current.style.height = "100%";
+        }}
+        onMouseLeave={() => {
+          navGreenRef.current.style.height = "0%";
+        }}
+        className="bg-black relative h-10 lg:w-60 md:w-60 md:h-12 cursor-pointer w-40"
+      >
+        <div
+          ref={navGreenRef}
+          className="bg-[#D3FD50] transition-all ease-in absolute top-0 w-full"
+        ></div>
+        <div className="group h-full relative flex flex-col gap-2 justify-center px-5 text-3xl text-white text-center hover:text-black rounded-4xl">
+            TRY NOW!
+        </div>
+      </div>
+        </Link>
       </div>
       <div
         ref={mainRef}
