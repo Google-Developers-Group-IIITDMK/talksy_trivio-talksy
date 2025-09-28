@@ -106,7 +106,6 @@ const FullScreenNav = () => {
                     src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
                     className="h-18 w-48 shrink-0 rounded-full object-cover mx-8"
                   />
-                  
                 </div>
               </div>
             </div>
