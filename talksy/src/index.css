@@ -178,9 +178,9 @@ html,body{
 
 
 .moveX {
-  /* force width > 100% to hold both strips inside each container */
+  
   flex-shrink: 0;
-  animation: moveAnimation 9s linear infinite;
+  animation: moveAnimation 15s linear infinite;
 }
 
 @keyframes moveAnimation {
@@ -188,7 +188,7 @@ html,body{
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%); /* move one full track to the left */
+    transform: translateX(-50%); 
   }
 }
 

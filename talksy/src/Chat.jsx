@@ -1,7 +1,7 @@
 import React, { useRef, useContext, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
 
 const FullScreenNav = () => {
   const fullNavLinksRef = useRef(null);
@@ -53,197 +53,149 @@ const FullScreenNav = () => {
   );
 
   return (
-    <div className="flex justify-center items-center w-full h-screen">
+    <div className="flex justify-center items-center w-full h-screen bg-amber-800">
       <div
-        ref={fullScreenRef}
-        id="fullscreennav"
-        className="absolute inset-0 bg-black h-[50rem] w-1/2 z-400 pt-[10rem]"
-      >
-        <div ref={fullNavLinksRef} className="relative">
-          <div id="all-links">
-            <Link to="/projects">
-              <div className="h-28 origin-top cursor-pointer link relative border-y border-white uppercase overflow-hidden mt-[-90px]">
-                <h1 className="text-center font-[font1] font-black text-[6vw] text-white mt-[-12px]">
-                  Work
-                </h1>
+      ref={fullScreenRef}
+      id="fullscreennav"
+      className="absolute inset-0 bg-white h-[38rem] w-[70rem] z-400 pt-[10rem] left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%]"
+    >
+      <div ref={fullNavLinksRef} className="relative">
 
-                <div className="moveLink absolute top-0 left-0 w-full flex bg-[#D3FD50] text-black">
-                  <div className="moveX flex items-center whitespace-nowrap animate-moveX">
-                    <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                      See Everything
-                    </h2>
-                    <img
-                      src="https://k72.ca/uploads/caseStudies/PJC/Thumbnails/PJC_SiteK72_Thumbnail_1280x960-1280x960.jpg"
-                      className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                    />
-                    <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                      See Everything
-                    </h2>
-                    <img
-                      src="https://k72.ca/uploads/caseStudies/WIDESCAPE/WS---K72.ca---Thumbnail-1280x960.jpg"
-                      className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                    />
-                  </div>
-
-                  <div className="moveX flex items-center whitespace-nowrap animate-moveX">
-                    <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                      See Everything
-                    </h2>
-                    <img
-                      src="https://k72.ca/uploads/caseStudies/PJC/Thumbnails/PJC_SiteK72_Thumbnail_1280x960-1280x960.jpg"
-                      className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                    />
-                    <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                      See Everything
-                    </h2>
-                    <img
-                      src="https://k72.ca/uploads/caseStudies/WIDESCAPE/WS---K72.ca---Thumbnail-1280x960.jpg"
-                      className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                    />
-                  </div>
-                </div>
-              </div>
-            </Link>
-
-            <Link
-              to="/agence"
-              onClick={() => {
-                setNavOpen(false);
-              }}
-            >
-              <div className="h-28 origin-top cursor-pointer link relative border-y border-white uppercase overflow-hidden">
-                <h1 className="text-center font-[font1] font-black text-[6vw] text-white mt-[-12px]">
-                  agency
-                </h1>
-                {/* Infinite Moving Strip */}
-                <div className="moveLink absolute top-0 left-0 w-full flex bg-[#D3FD50] text-black">
-                  {/* First loop */}
-                  <div className="moveX flex items-center whitespace-nowrap animate-moveX">
-                    <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                      Know Us
-                    </h2>
-                    <img
-                      src="https://k72.ca/uploads/caseStudies/PJC/Thumbnails/PJC_SiteK72_Thumbnail_1280x960-1280x960.jpg"
-                      className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                    />
-                    <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                      Know us
-                    </h2>
-                    <img
-                      src="https://k72.ca/uploads/caseStudies/WIDESCAPE/WS---K72.ca---Thumbnail-1280x960.jpg"
-                      className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                    />
-                  </div>
-
-                  {/* Duplicate for seamless loop */}
-                  <div className="moveX flex items-center whitespace-nowrap animate-moveX">
-                    <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                      Know us
-                    </h2>
-                    <img
-                      src="https://k72.ca/uploads/caseStudies/PJC/Thumbnails/PJC_SiteK72_Thumbnail_1280x960-1280x960.jpg"
-                      className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                    />
-                    <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                      know us
-                    </h2>
-                    <img
-                      src="https://k72.ca/uploads/caseStudies/WIDESCAPE/WS---K72.ca---Thumbnail-1280x960.jpg"
-                      className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                    />
-                  </div>
-                </div>
-              </div>
-            </Link>
-            <div className="h-28 origin-top cursor-pointer link relative border-y border-white uppercase overflow-hidden">
-              <h1 className="text-center font-[font1] font-black text-[6vw] text-white mt-[-12px]">
-                contact
+        <div
+          id="all-links"
+        >
+          <Link to="/projects">
+            <div className="h-28 origin-top cursor-pointer link relative border-y border-black uppercase overflow-hidden mt-[-90px]">
+              <h1 className="text-center font-[font1] font-black text-[6vw] text-black mt-[-12px]">
+                doremon
               </h1>
-              {/* Infinite Moving Strip */}
+              
               <div className="moveLink absolute top-0 left-0 w-full flex bg-[#D3FD50] text-black">
-                {/* First loop */}
                 <div className="moveX flex items-center whitespace-nowrap animate-moveX">
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                    send us fax
+                    Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
-                  <img
-                    src="https://k72.ca/uploads/caseStudies/PJC/Thumbnails/PJC_SiteK72_Thumbnail_1280x960-1280x960.jpg"
-                    className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                  />
+                  
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                    send us fax
+                    Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
-                  <img
-                    src="https://k72.ca/uploads/caseStudies/WIDESCAPE/WS---K72.ca---Thumbnail-1280x960.jpg"
-                    className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                  />
+                  
                 </div>
 
-                {/* Duplicate for seamless loop */}
                 <div className="moveX flex items-center whitespace-nowrap animate-moveX">
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                    send us fax
+                    Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
-                  <img
-                    src="https://k72.ca/uploads/caseStudies/PJC/Thumbnails/PJC_SiteK72_Thumbnail_1280x960-1280x960.jpg"
-                    className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                  />
+                  
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                    send us fax
+                    Heyyy! I’m Doraemon—ready with a gadget or two. Wanna chat before Nobita calls me?
                   </h2>
-                  <img
-                    src="https://k72.ca/uploads/caseStudies/WIDESCAPE/WS---K72.ca---Thumbnail-1280x960.jpg"
-                    className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                  />
+                  
                 </div>
               </div>
             </div>
-            <div className="h-28 origin-top cursor-pointer link relative border-y border-white uppercase overflow-hidden">
-              <h1 className="text-center font-[font1] font-black text-[6vw] text-white mt-[-12px]">
-                blog
+          </Link>
+
+          <Link
+            to="/agence"
+          >
+            <div className="h-28 origin-top cursor-pointer link relative border-y border-black uppercase overflow-hidden">
+              <h1 className="text-center font-[font1] font-black text-[6vw] text-black mt-[-12px]">
+                Harry
               </h1>
-              {/* Infinite Moving Strip */}
+            
               <div className="moveLink absolute top-0 left-0 w-full flex bg-[#D3FD50] text-black">
-                {/* First loop */}
+            
                 <div className="moveX flex items-center whitespace-nowrap animate-moveX">
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                    read article
+                    I promise no spells—just friendly conversation (unless you’re a Death Eater 😜).
                   </h2>
-                  <img
-                    src="https://k72.ca/uploads/caseStudies/PJC/Thumbnails/PJC_SiteK72_Thumbnail_1280x960-1280x960.jpg"
-                    className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                  />
+                  
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                    read article
+                    I promise no spells—just friendly conversation (unless you’re a Death Eater 😜).
                   </h2>
-                  <img
-                    src="https://k72.ca/uploads/caseStudies/WIDESCAPE/WS---K72.ca---Thumbnail-1280x960.jpg"
-                    className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                  />
+                  
                 </div>
 
-                {/* Duplicate for seamless loop */}
+                
                 <div className="moveX flex items-center whitespace-nowrap animate-moveX">
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                    read article
+                    I promise no spells—just friendly conversation (unless you’re a Death Eater 😜).
                   </h2>
-                  <img
-                    src="https://k72.ca/uploads/caseStudies/PJC/Thumbnails/PJC_SiteK72_Thumbnail_1280x960-1280x960.jpg"
-                    className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                  />
+                 
                   <h2 className="mx-8 font-[font1] font-black text-[6vw]">
-                    read article
+                    I promise no spells—just friendly conversation (unless you’re a Death Eater 😜).
                   </h2>
-                  <img
-                    src="https://k72.ca/uploads/caseStudies/WIDESCAPE/WS---K72.ca---Thumbnail-1280x960.jpg"
-                    className="h-24 w-48 shrink-0 rounded-full object-cover mx-8"
-                  />
+                  
                 </div>
+              </div>
+            </div>
+          </Link>
+          <div className="h-28 origin-top cursor-pointer link relative border-y border-white uppercase overflow-hidden">
+            <h1 className="text-center font-[font1] font-black text-[6vw] text-black mt-[-12px]">
+              VOLmaort
+            </h1>
+           
+            <div className="moveLink absolute top-0 left-0 w-full flex bg-[#D3FD50] text-black">
+              
+              <div className="moveX flex items-center whitespace-nowrap animate-moveX">
+                <h2 className="mx-8 font-[font1] font-black text-[6vw]">
+                  You dare hover over the Dark Lord? Bold move… I like it.
+                </h2>
+                
+                <h2 className="mx-8 font-[font1] font-black text-[6vw]">
+                  You dare hover over the Dark Lord? Bold move… I like it.
+                </h2>
+                
+              </div>
+
+            
+              <div className="moveX flex items-center whitespace-nowrap animate-moveX">
+                <h2 className="mx-8 font-[font1] font-black text-[6vw]">
+                  You dare hover over the Dark Lord? Bold move… I like it.
+                </h2>
+                
+                <h2 className="mx-8 font-[font1] font-black text-[6vw]">
+                  You dare hover over the Dark Lord? Bold move… I like it.
+                </h2>
+                
+              </div>
+            </div>
+          </div>
+          <div className="h-28 origin-top cursor-pointer link relative border-y border-black uppercase overflow-hidden">
+            <h1 className="text-center font-[font1] font-black text-[6vw] text-black mt-[-12px]">
+              Tom
+            </h1>
+            
+            <div className="moveLink absolute top-0 left-0 w-full flex bg-[#D3FD50] text-black">
+              
+              <div className="moveX flex items-center whitespace-nowrap animate-moveX">
+                <h2 className="mx-8 font-[font1] font-black text-[6vw]">
+                  Pssst… keep quiet or Jerry will hear us!
+                </h2>
+                
+                <h2 className="mx-8 font-[font1] font-black text-[6vw]">
+                  Pssst… keep quiet or Jerry will hear us!
+                </h2>
+                
+              </div>
+
+              
+              <div className="moveX flex items-center whitespace-nowrap animate-moveX">
+                <h2 className="mx-8 font-[font1] font-black text-[6vw]">
+                  Pssst… keep quiet or Jerry will hear us!
+                </h2>
+                
+                <h2 className="mx-8 font-[font1] font-black text-[6vw]">
+                  Pssst… keep quiet or Jerry will hear us!
+                </h2>
+                
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };
