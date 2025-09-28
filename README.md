@@ -9,8 +9,6 @@
 [![Contributors](https://img.shields.io/github/contributors/Google-Developers-Group-IIITDMK/talksy_trivio-talksy?style=for-the-badge&color=5D87BF)](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/graphs/contributors)
 [![Forks](https://img.shields.io/github/forks/Google-Developers-Group-IIITDMK/talksy_trivio-talksy?style=for-the-badge&color=7B4B94)](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/network/members)
 [![Stars](https://img.shields.io/github/stars/Google-Developers-Group-IIITDMK/talksy_trivio-talksy?style=for-the-badge&color=E8871E)](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/stargazers)
-[![Last Commit](https://img.shields.io/github/last-commit/Google-Developers-Group-IIITDMK/talksy_trivio-talksy?style=for-the-badge&color=45B69C)](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/commits/main)
-[![License](https://img.shields.io/badge/license-MIT-brightgreen?style=for-the-badge)](LICENSE)
 
 [Live Demo](https://talksy-trivio.vercel.app/) | [Report Bug](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/issues) | [Request Feature](https://github.com/Google-Developers-Group-IIITDMK/talksy_trivio-talksy/issues)
 
