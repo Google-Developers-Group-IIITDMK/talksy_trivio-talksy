@@ -47,6 +47,7 @@ html,body{
     height:100vh;
     background-color: #f1f1f1;
     transform-origin: top;
+}
 /* globals.css */
 .stroke-white {
   -webkit-text-stroke: 2px white;
