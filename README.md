@@ -24,7 +24,7 @@
 
 Whether you want to discuss wizardry with Voldemort, technology with Iron Man, or adventure with Doraemon, Talksy creates an engaging, personalized interaction that makes each character feel authentic and present.
 
-## 🚀 Key Featur
+## 🚀 Key Feature
 
 - **🎭 Character Selection** - Browse through a catalog of iconic fictional personalities
 - **🗣️ Voice Interaction** - Talk naturally with characters using speech recognition
